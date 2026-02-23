@@ -1,2 +1,65 @@
-build
+# CMake / build
+/build/
+/cmake-build-debug/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+
+# Generated object files and binaries
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.dylib
+*.exe
+
+# VSCode / JetBrains
+/.vscode/
+/.idea/
+
+# Editor temp files
+*.swp
+*.swo
+*.tmp
+*.log
+.DS_Store
+
+# GoogleTest / FetchContent artifacts
+_deps/
+googletest-build/
+
+# Coverage
+*.gcno
+*.gcda
+
+# vcpkg
+/vcpkg_installed/
+vcpkg-configuration.json
+
+# ROMs, large binaries
+/roms/
+
+# Misc
+*.bak
+*.orig
+
+# CMake / CLion build files
+build/
+*/build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+Testing/
+DartConfiguration.tcl
+
+# CLion
 .idea/
+
+# Binaries
+*.out
+*.exe
+main
