@@ -33,7 +33,7 @@ int load_rom(const char* _filepath){
         throw std::runtime_error("ROM too small");
     }
 
-    rom_header _header;{};
+    rom_header _header{};
     std::memcpy(&_header, &rom[0x100], sizeof(rom_header));
 
     /* avoid Null-terminator error */
