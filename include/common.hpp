@@ -1,9 +1,10 @@
 #pragma once
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdint>
+#include <iostdio>
+#include <string>
+#include <fstream>
+#include <vector>
 
 typedef uint8_t u8;
 typedef uint16_t u16;
