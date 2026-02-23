@@ -40,7 +40,7 @@ int load_rom(const char* _filepath){
     char title[17]{};
     std::memcpy(title, _header.title, 16);
 
-    std::cout << "Tile: " << " " << title << std::endl;
+    std::cout << "Title: " << " " << title << std::endl;
     std::cout << "Type:  0x" << std::hex << (int)_header.type << "\n";
     std::cout << "ROM:   0x" << std::hex << (int)_header.rom_size << "\n";
     std::cout << "RAM:   0x" << std::hex << (int)_header.ram_size << "\n";
