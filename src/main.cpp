@@ -3,7 +3,6 @@
 #include <cstring>
 #include <stdexcept>
 
-#define filepath argv[1]
 
 void _success(){
     std::cout<<"--------------------"<<std::endl;
