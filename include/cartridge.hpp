@@ -1,7 +1,7 @@
 #pragma once
 #include "common.hpp"
 
-typedef struct {
+typedef struct {            // Memory Map
   u8 entry[4];              // 0x0100-0x0103
   u8 nintendo_logo[0x30];   // 0x0104-0x0133
 /*-----------------------------------------*/
