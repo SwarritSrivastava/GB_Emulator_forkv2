@@ -1,15 +1,9 @@
 #include "../include/cartridge.hpp"
+#include "../include/success.hpp"
 #include <iostream>
 #include <cstring>
 #include <stdexcept>
-
-
-void _success(){
-    std::cout<<"--------------------"<<std::endl;
-    std::cout<<"      Success!      "<<std::endl;
-    std::cout<<"--------------------"<<std::endl;
-}
-
+#include <iterator>
 
 int load_rom(const char* _filepath){
     std::ifstream file(_filepath, std::ios::binary);
@@ -19,10 +13,10 @@ int load_rom(const char* _filepath){
     }
 
     std::vector<u8> rom(
-        (std::istreambuf_iterator<char>(file)),
+        (std::istreambuf_iterator(file)),
          std::istreambuf_iterator<char>()
     );
-    std::cout << rom.size() << std::endl;
+    std::cout << "ROM Size: " << (rom.size()/1024) << "K" << std::endl;
 
     if(rom.empty()){
         throw std::runtime_error("ROM file is empty");
@@ -40,9 +34,9 @@ int load_rom(const char* _filepath){
     std::memcpy(title, _header.title, 16);
 
     std::cout << "Title: " << " " << title << std::endl;
-    std::cout << "Type:  0x" << std::hex << (int)_header.type << "\n";
-    std::cout << "ROM:   0x" << std::hex << (int)_header.rom_size << "\n";
-    std::cout << "RAM:   0x" << std::hex << (int)_header.ram_size << "\n";
+    std::cout << "Type:  0x" << std::hex << static_cast<int>(_header.type) << "\n";
+    std::cout << "ROM:   0x" << std::hex << static_cast<int>(_header.rom_size) << "\n";
+    std::cout << "RAM:   0x" << std::hex << static_cast<int>(_header.ram_size) << "\n";
 
     u8 sum = 0;
 
@@ -58,7 +52,7 @@ int load_rom(const char* _filepath){
     return 0; // success
 }
 
-int main(int argc, char** argv) {
+int main(const int argc, char** argv) {
 
     if(argc < 2){
         std::cerr << "Usage: gb_emu <rom_file>\n";
@@ -67,7 +61,7 @@ int main(int argc, char** argv) {
 
     try{
         load_rom(argv[1]);
-        _success();
+        success();
     }
     catch(const std::exception& e){
         std::cerr << "Error: " << e.what() << "\n";
