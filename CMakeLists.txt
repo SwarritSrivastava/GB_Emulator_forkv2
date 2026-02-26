@@ -52,6 +52,8 @@ list(FILTER EMU_SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 add_executable(gb_emu
     ${PROJECT_SOURCE_DIR}/src/main.cpp
         include/success.hpp
+        src/core/ProcessingUnit.cpp
+        include/ProcessingUnit.hpp
 )
 
 target_include_directories(gb_emu
