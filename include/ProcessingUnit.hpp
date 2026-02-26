@@ -24,8 +24,5 @@ private:
 public:
     ProcessingUnit();
     void reset();
-
-bool isHalt();
-
-bool isHalt() const;
+    bool isHalt() const;
 };
