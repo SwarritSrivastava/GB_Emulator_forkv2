@@ -1,6 +1,6 @@
 #include "../include/cartridge.hpp"
 #include "../include/success.hpp"
-#include "functions/readROM.cpp"
+#include "../include/readROM.hpp"
 #include <iostream>
 #include <cstring>
 #include <stdexcept>

@@ -1,7 +1,7 @@
 //
 // Created by wizard on 25/02/26.
 //
-#include "../../include/cartridge.hpp"
+#include "cartridge.hpp"
 #include <iostream>
 #include <cstring>
 #include <stdexcept>
