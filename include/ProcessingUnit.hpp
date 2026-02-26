@@ -1,11 +1,11 @@
 //
 // Created by wizard on 25/02/26.
 //
-#include "common.hpp"
 #pragma once
+#include "common.hpp"
 
 class ProcessingUnit{
-public:
+private:
 /* -------------------------------- */
 /*         16-bit Registers         */
 /* -------------------------------- */
@@ -20,6 +20,12 @@ public:
 /* -------------------------------- */
     bool IME;   // Interrupt Master Enable
     bool halt;  // HALT State { When CPU paused, waiting for interrupt}
+
+public:
     ProcessingUnit();
     void reset();
+
+bool isHalt();
+
+bool isHalt() const;
 };
