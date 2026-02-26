@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <iterator>
 
-int load_rom(const char* _filepath){
+inline int load_rom(const char* _filepath){
     std::ifstream file(_filepath, std::ios::binary);
 
     if (!file){
