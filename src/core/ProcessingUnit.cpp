@@ -5,8 +5,7 @@
 #include "../../include/ProcessingUnit.hpp"
 
 ProcessingUnit::ProcessingUnit(){
-    void reset();
-    bool isHalt();
+    reset();
 }
 
 void ProcessingUnit::reset(){
