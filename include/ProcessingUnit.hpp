@@ -4,7 +4,7 @@
 #include "common.hpp"
 #pragma once
 
-class processingUnit{
+class ProcessingUnit{
 public:
 /* -------------------------------- */
 /*         16-bit Registers         */
@@ -18,6 +18,8 @@ public:
     u16 SP;     // Stack Pointer
     u16 PC;     // Program Counter
 /* -------------------------------- */
-    processingUnit();
+    bool IME;   // Interrupt Master Enable
+    bool halt;  // HALT State { When CPU paused, waiting for interrupt}
+    ProcessingUnit();
     void reset();
 };
