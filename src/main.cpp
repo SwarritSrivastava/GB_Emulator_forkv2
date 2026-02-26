@@ -64,11 +64,11 @@ int main(const int argc, char** argv) {
         success();
     }
     catch(const std::exception& e){
-        std::cerr << "Error: " << e.what() << "\n";
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
     catch(...) {
-        std::cerr << "Unknown error occurred\n";
+        std::cerr << "Unknown error occurred" << std::endl;
         return 1;
     }
     return 0;
