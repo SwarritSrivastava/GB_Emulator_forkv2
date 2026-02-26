@@ -54,7 +54,6 @@ add_executable(gb_emu
         include/success.hpp
         src/core/ProcessingUnit.cpp
         include/ProcessingUnit.hpp
-        src/functions/readROM.cpp
 )
 
 target_include_directories(gb_emu
