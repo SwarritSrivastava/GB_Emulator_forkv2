@@ -23,6 +23,6 @@ void ProcessingUnit::reset(){
     halt = false;
 }
 
-bool ProcessingUnit::isHalt(){
+bool ProcessingUnit::isHalt() const{
     return halt;
 }
