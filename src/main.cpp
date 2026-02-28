@@ -1,6 +1,7 @@
 #include "../include/cartridge.hpp"
 #include "../include/success.hpp"
 #include "../include/readROM.hpp"
+#include "../include/ProcessingUnit.hpp"
 #include <iostream>
 #include <cstring>
 #include <stdexcept>
@@ -23,6 +24,18 @@ int main(const int argc, char** argv) {
     }
     catch(...) {
         std::cerr << "Unknown error occurred" << std::endl;
+        return 1;
+    }
+    
+    ProcessingUnit cpu;
+    try {
+        cpu.reset();
+        std::cout << "Initial State (Post-Reset):" << std::endl;
+        cpu.print_status();
+        success();
+    }
+    catch(...) {
+        std::cerr << "Unknown Error Occurred" << std::endl;
         return 1;
     }
     return 0;
