@@ -4,8 +4,7 @@
 
 #include "../../include/ProcessingUnit.hpp"
 
-ProcessingUnit::ProcessingUnit()
-{
+ProcessingUnit::ProcessingUnit(){
     reset();
 }
 
@@ -27,8 +26,7 @@ void ProcessingUnit::reset()
     halt = false;
 }
 
-void ProcessingUnit::print_status() const
-{
+void ProcessingUnit::print_status() const{
     std::cout << std::endl;
     std::cout << "--- CPU State ---" << std::endl;
     std::cout << std::hex << std::uppercase << std::setfill('0');
@@ -48,7 +46,7 @@ void ProcessingUnit::print_status() const
               << " [IME:" << IME << " HALT:" << halt << "]" << std::endl;
     std::cout << std::endl;
 }
-bool ProcessingUnit::isHalt() const
-{
+
+bool ProcessingUnit::isHalt() const{
     return halt;
 }
