@@ -27,8 +27,10 @@ void ProcessingUnit::reset()
     halt = false;
 }
 
-void ProcessingUnit::print_status() const
+void ProcessingUnit::printStatus() const
 {
+    std::ios oldState(nullptr);
+    oldState.copyfmt(std::cout); // copy old format
     std::cout << std::endl;
     std::cout << "--- CPU State ---" << std::endl;
     std::cout << std::hex << std::uppercase << std::setfill('0');
@@ -47,6 +49,7 @@ void ProcessingUnit::print_status() const
               << (get_flag_c() ? 'C' : '-')
               << " [IME:" << IME << " HALT:" << halt << "]" << std::endl;
     std::cout << std::endl;
+    std::cout.copyfmt(oldState); // set to old format
 }
 bool ProcessingUnit::isHalt() const
 {

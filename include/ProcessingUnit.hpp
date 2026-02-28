@@ -25,7 +25,7 @@ private:
 public:
     ProcessingUnit();
     void reset();
-    void print_status() const; // print task
+    void printStatus() const; // print task
 
     // Getting Full 16bit Register Values
     u16 get_bc() const { return (B << 8) | C; }
