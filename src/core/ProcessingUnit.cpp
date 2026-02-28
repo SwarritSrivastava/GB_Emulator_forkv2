@@ -4,13 +4,11 @@
 
 #include "../../include/ProcessingUnit.hpp"
 
-ProcessingUnit::ProcessingUnit()
-{
+ProcessingUnit::ProcessingUnit(){
     reset();
 }
 
-void ProcessingUnit::reset()
-{
+void ProcessingUnit::reset(){
     // DMG Default
     A = 0x01;
     F = 0xB0;
@@ -51,7 +49,7 @@ void ProcessingUnit::printStatus() const
     std::cout << std::endl;
     std::cout.copyfmt(oldState); // set to old format
 }
-bool ProcessingUnit::isHalt() const
-{
+
+bool ProcessingUnit::isHalt() const{
     return halt;
 }
