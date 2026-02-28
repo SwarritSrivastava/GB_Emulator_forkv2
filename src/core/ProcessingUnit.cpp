@@ -8,8 +8,7 @@ ProcessingUnit::ProcessingUnit(){
     reset();
 }
 
-void ProcessingUnit::reset()
-{
+void ProcessingUnit::reset(){
     // DMG Default
     A = 0x01;
     F = 0xB0;
