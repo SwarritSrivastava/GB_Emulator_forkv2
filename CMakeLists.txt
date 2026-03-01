@@ -54,6 +54,8 @@ add_executable(gb_emu
         include/success.hpp
         src/core/ProcessingUnit.cpp
         include/ProcessingUnit.hpp
+        src/core/mmu.cpp
+        include/mmu.hpp
 )
 
 target_include_directories(gb_emu
