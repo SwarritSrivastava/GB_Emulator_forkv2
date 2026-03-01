@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <iterator>
 
-inline int load_rom(const char* _filepath){
+inline std::vector<u8> load_rom(const char* _filepath){
     std::ifstream file(_filepath, std::ios::binary);
 
     if (!file){
@@ -51,5 +51,5 @@ inline int load_rom(const char* _filepath){
     else
         std::cout << "Bad header\n" << std::endl;
 
-    return 0; // success
+    return rom; // success
 }

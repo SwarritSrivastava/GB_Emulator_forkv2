@@ -2,6 +2,7 @@
 #include "../include/success.hpp"
 #include "../include/readROM.hpp"
 #include "../include/ProcessingUnit.hpp"
+#include "../include/mmu.hpp"
 #include <iostream>
 #include <cstring>
 #include <stdexcept>
@@ -18,7 +19,19 @@ int main(const int argc, char **argv)
 
     try
     {
-        load_rom(argv[1]);
+        std::cout << "Loading ROM : " << argv[1] << " ... " << std::endl;
+        std::vector<u8> rom_data = load_rom(argv[1]);
+
+        // ----- MMU ------
+        MMU mmu;
+        if(mmu.map_rom(rom_data)) {
+            std::cout << "ROM successfully mapped to MMU memory ..." << std::endl;
+        }
+        else {
+            std::cerr << "failed to map ROM ... " << std::endl;
+            return 1;
+        }
+
         ProcessingUnit cpu;
         std::cout << "Initial State (Post-Reset):" << std::endl;
         cpu.printStatus();

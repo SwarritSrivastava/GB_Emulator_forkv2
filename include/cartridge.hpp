@@ -27,4 +27,4 @@ In older cartridges these bytes were part of the Title (see above). In newer car
   u16 global_checksum;      // 0x014E-0x014F
 } rom_header;
 
-bool cart_load(char *cart);
+std::vector<u8> cart_load(char *cart);
