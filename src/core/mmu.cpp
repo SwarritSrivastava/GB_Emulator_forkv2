@@ -1,10 +1,10 @@
 #include "../../include/mmu.hpp"
+#include <algorithm>
+#include <iterator>
 
 MMU::MMU() {
     // zero out the memory
-    for (int i = 0; i < 0x10000; i++) {
-        memory[i] = 0;   
-    }
+    std::fill(std::begin(memory), std::end(memory), 0);
 }
 
 u8 MMU::read(u16 address) {
