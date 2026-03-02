@@ -1,7 +1,3 @@
-//
-// Created by wizard on 25/02/26.
-//
-
 #include "../../include/ProcessingUnit.hpp"
 
 ProcessingUnit::ProcessingUnit(){
