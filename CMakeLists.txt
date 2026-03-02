@@ -56,7 +56,6 @@ add_executable(gb_emu
         include/ProcessingUnit.hpp
         src/core/mmu.cpp
         include/mmu.hpp
-        src/display/port.cpp
 )
 
 target_include_directories(gb_emu
