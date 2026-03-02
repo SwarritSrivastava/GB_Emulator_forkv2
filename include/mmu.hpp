@@ -24,7 +24,7 @@ class MMU {
          * @param address The 16-bit memory address to read from.
          * @return The 8-bit value at the specified address.
          */
-        u8 read(u16 address);
+        u8 read(u16 address) const;
 
         /**
          * @brief Writes a single byte to the emulated memory bus.

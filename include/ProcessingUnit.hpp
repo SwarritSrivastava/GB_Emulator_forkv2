@@ -36,5 +36,7 @@ public:
     bool get_flag_h() const { return (F >> 5) & 1; }
     bool get_flag_c() const { return (F >> 4) & 1; }
 
+    int step(const class MMU& mmu);
+
     bool isHalt() const;
 };

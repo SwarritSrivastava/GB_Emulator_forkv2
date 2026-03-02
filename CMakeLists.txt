@@ -42,7 +42,7 @@ file(GLOB_RECURSE EMU_SOURCES CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/src/*.cpp
     ${PROJECT_SOURCE_DIR}/src/*.c
 )
-
+list(FILTER EMU_SOURCES EXCLUDE REGEX ".*port.cpp$")
 list(FILTER EMU_SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 
 # ===============================

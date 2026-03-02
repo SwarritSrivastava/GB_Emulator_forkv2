@@ -19,8 +19,7 @@ int main(const int argc, char **argv)
 
     try
     {
-        std::cout << "Loading ROM : " << argv[1] << " ... " << std::endl;
-        std::vector<u8> rom_data = load_rom(argv[1]);
+        const std::vector<u8> rom_data = load_rom(argv[1]);
 
         // ----- MMU ------
         MMU mmu;
@@ -31,11 +30,15 @@ int main(const int argc, char **argv)
             std::cerr << "failed to map ROM ... " << std::endl;
             return 1;
         }
-
+        // ----- CPU ------
         ProcessingUnit cpu;
         std::cout << "Initial State (Post-Reset):" << std::endl;
         cpu.printStatus();
         success();
+        cpu.reset();
+        while (!cpu.isHalt()){
+            cpu.step(mmu);
+        }
     }
     catch (const std::exception &e)
     {
