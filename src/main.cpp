@@ -34,7 +34,6 @@ int main(const int argc, char **argv)
         std::cout << "Initial State (Post-Reset):" << std::endl;
         cpu.printStatus();
         success();
-        cpu.reset();
         int con = 0;
         while (!cpu.isHalt())
         {
