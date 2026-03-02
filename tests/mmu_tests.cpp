@@ -28,3 +28,19 @@ TEST(MMUTest, MapRomAndSimulateFetch) {
     EXPECT_TRUE(mmu.map_rom(dummy_rom));
     EXPECT_EQ(mmu.read(0x0100), 0xC3);
 }
+
+TEST(MMUTest, MapRomFailsOnEmptyRom) {
+    MMU mmu;
+    std::vector<u8> empty_rom;
+    EXPECT_FALSE(mmu.map_rom(empty_rom)); 
+}
+
+TEST(MMUTest, MapRomTruncatesOversizedRom) {
+    MMU mmu;
+    std::vector<u8> oversized_rom(0x9000, 0xAA);
+    
+    EXPECT_TRUE(mmu.map_rom(oversized_rom));
+
+    EXPECT_EQ(mmu.read(0x7FFF), 0xAA);
+    EXPECT_EQ(mmu.read(0x8000), 0x00); 
+}

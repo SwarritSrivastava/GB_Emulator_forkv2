@@ -1,6 +1,7 @@
 //
 // Created by wizard on 25/02/26.
 //
+#pragma once
 #include "cartridge.hpp"
 #include <iostream>
 #include <cstring>
