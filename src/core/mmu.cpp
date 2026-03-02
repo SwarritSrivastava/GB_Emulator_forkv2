@@ -10,7 +10,7 @@ MMU::MMU() {
 u8 MMU::read(u16 address) const {
     // warm
     if (address >= 0xC000 && address <= 0xDFFF) {
-        return wram[address - 0xC000];
+        return warm[address - 0xC000];
     }
     // return what is in the array
     return memory[address];
@@ -22,9 +22,9 @@ void MMU::write(u16 address, u8 value) {
         return; 
     }
 
-    // instead of the flat array save it into our dedicated wram chip
+    // instead of the flat array save it into our dedicated warm chip
     if (address >= 0xC000 && address <= 0xDFFF) {
-        wram[address - 0xC000] = value;
+        warm[address - 0xC000] = value;
         return;
     }
 
