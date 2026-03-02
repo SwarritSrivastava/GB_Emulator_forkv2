@@ -20,7 +20,6 @@ int main(const int argc, char **argv)
     try
     {
         const std::vector<u8> rom_data = load_rom(argv[1]);
-
         // ----- MMU ------
         MMU mmu;
         if(mmu.map_rom(rom_data)) {
@@ -36,9 +35,13 @@ int main(const int argc, char **argv)
         cpu.printStatus();
         success();
         cpu.reset();
-        while (!cpu.isHalt()){
+        int con = 0;
+        while (!cpu.isHalt())
+        {
+            con++;
             cpu.step(mmu);
         }
+        std::cout << std::dec << std::endl << con  << " opcodes printed" << std::endl;
     }
     catch (const std::exception &e)
     {

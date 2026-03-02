@@ -59,7 +59,6 @@ int ProcessingUnit::step(const class MMU &mmu)
     PC++; // increment
 
     int cycles = 0;
-    
     switch (opcode)
     {
         case 0x00: // NOP
@@ -70,7 +69,7 @@ int ProcessingUnit::step(const class MMU &mmu)
             cycles = 4;
             break;
         default: // DEFAULT
-            std::cout << "Opcode: 0x" << std::hex << static_cast<int>(opcode) << std::endl;
+            //std::cout << "Opcode: 0x" << std::hex << static_cast<int>(opcode) << std::endl;
             cycles = 4;
             break;
     }
@@ -79,4 +78,8 @@ int ProcessingUnit::step(const class MMU &mmu)
 
 bool ProcessingUnit::isHalt() const{
     return halt;
+}
+
+u16 ProcessingUnit::get_pc() const {
+    return PC;
 }

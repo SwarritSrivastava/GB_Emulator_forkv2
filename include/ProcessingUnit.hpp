@@ -23,7 +23,7 @@ public:
     ProcessingUnit();
     void reset();
     void printStatus() const; // print task
-
+    u16 get_pc() const;
     // Getting Full 16bit Register Values
     u16 get_bc() const { return (B << 8) | C; }
     u16 get_de() const { return (D << 8) | E; }
