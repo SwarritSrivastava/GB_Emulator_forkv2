@@ -1,0 +1,27 @@
+\doxysection{common.\+hpp}
+\hypertarget{common_8hpp_source}{}\label{common_8hpp_source}\index{include/common.hpp@{include/common.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <iomanip>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ uint8\_t\ u8;}
+\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ uint16\_t\ u16;}
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ uint32\_t\ u32;}
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ uint64\_t\ u64;}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ BIT(a,\ n)\ ((a\ \&\ (1\ <<\ n))\ ?\ 1\ :\ 0)}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BIT\_SET(a,\ n,\ on)\ (on\ ?\ (a)\ |=\ (1\ <<\ n)\ :\ (a)\ \&=\ \string~(1\ <<\ n))}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ BETWEEN(a,\ b,\ c)\ ((a\ >=\ b)\ \&\&\ (a\ <=\ c))}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ delay(u32\ ms);}
+
+\end{DoxyCode}
