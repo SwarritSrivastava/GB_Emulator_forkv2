@@ -44,3 +44,16 @@ TEST(MMUTest, MapRomTruncatesOversizedRom) {
     EXPECT_EQ(mmu.read(0x7FFF), 0xAA);
     EXPECT_EQ(mmu.read(0x8000), 0x00); 
 }
+
+TEST(MMUTest, WramValuesPersist) {
+    MMU mmu;
+    mmu.write(0xC000, 0xAA); // first byte of wram
+    mmu.write(0xC500, 0x42); // middle of wram
+    mmu.write(0xCAAA, 0xFF); // random spot
+    mmu.write(0xDFFF, 0xBB); // last byte of wram
+
+    EXPECT_EQ(mmu.read(0xC000), 0xAA);
+    EXPECT_EQ(mmu.read(0xC500), 0x42);
+    EXPECT_EQ(mmu.read(0xCAAA), 0xFF);
+    EXPECT_EQ(mmu.read(0xDFFF), 0xBB);
+}
