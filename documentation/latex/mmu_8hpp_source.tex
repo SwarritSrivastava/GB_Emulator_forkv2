@@ -1,0 +1,19 @@
+\doxysection{mmu.\+hpp}
+\hypertarget{mmu_8hpp_source}{}\label{mmu_8hpp_source}\index{include/mmu.hpp@{include/mmu.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{class\ }MMU\ \{}
+\DoxyCodeLine{00005\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00006\ \ \ \ \ \ \ \ \ u8\ memory[0x10000];}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ MMU();}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ u8\ read(u16\ address);}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ write(u16\ address,\ u8\ value);}
+\DoxyCodeLine{00013\ \};}
+
+\end{DoxyCode}

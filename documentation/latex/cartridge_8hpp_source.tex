@@ -1,0 +1,36 @@
+\doxysection{cartridge.\+hpp}
+\hypertarget{cartridge_8hpp_source}{}\label{cartridge_8hpp_source}\index{include/cartridge.hpp@{include/cartridge.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Memory\ Map}}
+\DoxyCodeLine{00005\ \ \ u8\ entry[4];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0100-\/0x0103}}
+\DoxyCodeLine{00006\ \ \ u8\ nintendo\_logo[0x30];\ \ \ \textcolor{comment}{//\ 0x0104-\/0x0133}}
+\DoxyCodeLine{00007\ \textcolor{comment}{/*-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00008\ \ \ \textcolor{keywordtype}{char}\ title[11];\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0134-\/0x013E}}
+\DoxyCodeLine{00009\ \ \ u8\ manufacturer\_code[4];\ \ \textcolor{comment}{//\ 0x013F-\/0x0142\ -\/\ part\ of\ title\ (in\ older\ versions)}}
+\DoxyCodeLine{00010\ \ \ u8\ cgb\_flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0143\ -\/\ part\ of\ title}}
+\DoxyCodeLine{00011\ \textcolor{comment}{/*-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\#\ 0134-\/0143\ —\ Title}}
+\DoxyCodeLine{00013\ \textcolor{comment}{These\ bytes\ contain\ the\ title\ of\ the\ game\ in\ upper\ case\ ASCII.\ If\ the\ title\ is\ less\ than\ 16\ characters\ long,\ the\ remaining\ bytes\ should\ be\ padded\ with\ \$00s.}}
+\DoxyCodeLine{00014\ \textcolor{comment}{Parts\ of\ this\ area\ actually\ have\ a\ different\ meaning\ on\ later\ cartridges,\ reducing\ the\ actual\ title\ size\ to\ 15\ (\$0134–\$0142)\ or\ 11\ (\$0134–\$013E)\ characters;\ see\ below.}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\#\ 013F-\/0142\ —\ Manufacturer\ code}}
+\DoxyCodeLine{00016\ \textcolor{comment}{In\ older\ cartridges\ these\ bytes\ were\ part\ of\ the\ Title\ (see\ above).\ In\ newer\ cartridges\ they\ contain\ a\ 4-\/character\ manufacturer\ code\ (in\ uppercase\ ASCII).\ The\ purpose\ of\ the\ manufacturer\ code\ is\ unknown.}}
+\DoxyCodeLine{00017\ \textcolor{comment}{-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/*/}}
+\DoxyCodeLine{00018\ \ \ u16\ new\_lic\_code;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0144-\/0x0145}}
+\DoxyCodeLine{00019\ \ \ u8\ sgb\_flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0146}}
+\DoxyCodeLine{00020\ \ \ u8\ type;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0147}}
+\DoxyCodeLine{00021\ \ \ u8\ rom\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0148}}
+\DoxyCodeLine{00022\ \ \ u8\ ram\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0149}}
+\DoxyCodeLine{00023\ \ \ u8\ dest\_code;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014A}}
+\DoxyCodeLine{00024\ \ \ u8\ old\_lic\_code;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014B}}
+\DoxyCodeLine{00025\ \ \ u8\ version;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014C}}
+\DoxyCodeLine{00026\ \ \ u8\ checksum;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014D}}
+\DoxyCodeLine{00027\ \ \ u16\ global\_checksum;\ \ \ \ \ \ \textcolor{comment}{//\ 0x014E-\/0x014F}}
+\DoxyCodeLine{00028\ \}\ \doxymbox{\hyperlink{structrom__header}{rom\_header}};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{bool}\ cart\_load(\textcolor{keywordtype}{char}\ *cart);}
+
+\end{DoxyCode}

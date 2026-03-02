@@ -1,0 +1,61 @@
+\doxysection{read\+ROM.\+hpp}
+\hypertarget{readROM_8hpp_source}{}\label{readROM_8hpp_source}\index{include/readROM.hpp@{include/readROM.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ wizard\ on\ 25/02/26.}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}cartridge.hpp"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <iterator>}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ load\_rom(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ \_filepath)\{}
+\DoxyCodeLine{00011\ \ \ \ \ std::ifstream\ file(\_filepath,\ std::ios::binary);}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordflow}{if}\ (!file)\{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Error\ opening\ file"{}});}
+\DoxyCodeLine{00015\ \ \ \ \ \}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ std::vector<u8>\ rom(}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ (std::istreambuf\_iterator(file)),}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ std::istreambuf\_iterator<char>()}
+\DoxyCodeLine{00020\ \ \ \ \ );}
+\DoxyCodeLine{00021\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}ROM\ Size:\ "{}}\ <<\ (rom.size()/1024)\ <<\ \textcolor{stringliteral}{"{}K"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordflow}{if}(rom.empty())\{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}ROM\ file\ is\ empty"{}});}
+\DoxyCodeLine{00025\ \ \ \ \ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordflow}{if}(rom.size()\ <\ 0x150)\{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}ROM\ too\ small"{}});}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \doxymbox{\hyperlink{structrom__header}{rom\_header}}\ \_header\{\};}
+\DoxyCodeLine{00032\ \ \ \ \ std::memcpy(\&\_header,\ \&rom[0x100],\ \textcolor{keyword}{sizeof}(\doxymbox{\hyperlink{structrom__header}{rom\_header}}));}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{/*\ avoid\ Null-\/terminator\ error\ */}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{char}\ title[17]\{\};}
+\DoxyCodeLine{00036\ \ \ \ \ std::memcpy(title,\ \_header.title,\ 16);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Title:\ "{}}\ <<\ \textcolor{stringliteral}{"{}\ "{}}\ <<\ title\ <<\ std::endl;}
+\DoxyCodeLine{00039\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Type:\ \ 0x"{}}\ <<\ std::hex\ <<\ static\_cast<int>(\_header.type)\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00040\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}ROM:\ \ \ 0x"{}}\ <<\ std::hex\ <<\ static\_cast<int>(\_header.rom\_size)\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00041\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}RAM:\ \ \ 0x"{}}\ <<\ std::hex\ <<\ static\_cast<int>(\_header.ram\_size)\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ u8\ sum\ =\ 0;}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0x134;\ i\ <=\ 0x14C;\ i++)\ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ sum\ =\ sum\ -\/\ rom[i]\ -\/\ 1;}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordflow}{if}\ (sum\ ==\ \_header.checksum)}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Header\ OK\(\backslash\)n"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Bad\ header\(\backslash\)n"{}}\ <<\ std::endl;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;\ \textcolor{comment}{//\ success}}
+\DoxyCodeLine{00055\ \}}
+
+\end{DoxyCode}
