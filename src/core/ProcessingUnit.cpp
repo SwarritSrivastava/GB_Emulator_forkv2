@@ -1,7 +1,6 @@
 #include "../../include/ProcessingUnit.hpp"
 
 #include "mmu.hpp"
-#include <fstream>
 
 ProcessingUnit::ProcessingUnit(){
     reset();
