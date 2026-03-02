@@ -59,16 +59,21 @@ int ProcessingUnit::step(const class MMU &mmu)
     PC++; // increment
 
     int cycles = 0;
-    std::ofstream file("opcodes.txt", std::ios::app);
-    // std::cout << "Opcode: 0x" << std::hex << static_cast<int>(opcode) << std::endl;
-    if (!file.is_open())
+    
+    switch (opcode)
     {
-        std::cerr << "Failed to open file\n";
-        return 1;
+        case 0x00: // NOP
+            cycles = 4;
+            break;
+        case 0x76: //HALT
+            halt = true;
+            cycles = 4;
+            break;
+        default: // DEFAULT
+            std::cout << "Opcode: 0x" << std::hex << static_cast<int>(opcode) << std::endl;
+            cycles = 4;
+            break;
     }
-    file << "Opcode: 0x" << std::hex << static_cast<int>(opcode) << std::endl;
-
-    cycles = 4;
     return cycles;
 }
 
