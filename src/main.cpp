@@ -34,13 +34,13 @@ int main(const int argc, char **argv)
         std::cout << "Initial State (Post-Reset):" << std::endl;
         cpu.printStatus();
         success();
-        int opcode_count = 0;
+        int con = 0;
         while (!cpu.isHalt())
         {
-            opcode_count++;
+            con++;
             cpu.step(mmu);
         }
-        std::cout << std::dec << std::endl << opcode_count  << " opcodes printed" << std::endl;
+        std::cout << std::dec << std::endl << con  << " instructions executed" << std::endl;
     }
     catch (const std::exception &e)
     {
