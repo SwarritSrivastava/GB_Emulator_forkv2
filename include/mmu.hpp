@@ -6,8 +6,8 @@ class MMU {
     private:
         u8 memory[0x10000]; // old flat memory array, will be phased out eventually
 
-        // 8KB warm chip init to 0
-        std::array<u8, 0x2000> warm{}; // (0xC000 - 0xDFFF)
+        // 8KB wram chip init to 0
+        std::array<u8, 0x2000> wram{}; // (0xC000 - 0xDFFF)
 
     public:
         MMU();
