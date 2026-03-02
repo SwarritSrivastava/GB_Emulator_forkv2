@@ -20,3 +20,17 @@ void MMU::write(u16 address, u8 value) {
 
     memory[address] = value;
 }
+
+bool MMU::map_rom(const std::vector<u8>& rom_data) {
+    if(rom_data.empty()) return false;
+
+    size_t copy_size = rom_data.size();
+    // fixed ROM is strictly 32 KB, chop off if size is greater
+    if(copy_size > 0x8000) {
+        copy_size = 0x8000;
+    }
+
+    std::copy(rom_data.begin(), rom_data.begin() + copy_size, std::begin(memory));
+
+    return true;
+}

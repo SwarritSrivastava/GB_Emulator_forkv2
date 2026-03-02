@@ -18,3 +18,29 @@ TEST(MMUTest, CannotWriteToROM) {
     mmu.write(0x0100, 0xFF);
     EXPECT_EQ(mmu.read(0x0100), 0x00); 
 }
+
+TEST(MMUTest, MapRomAndSimulateFetch) {
+    MMU mmu;
+    
+    std::vector<u8> dummy_rom(0x150, 0x00);
+    dummy_rom[0x0100] = 0xC3; 
+
+    EXPECT_TRUE(mmu.map_rom(dummy_rom));
+    EXPECT_EQ(mmu.read(0x0100), 0xC3);
+}
+
+TEST(MMUTest, MapRomFailsOnEmptyRom) {
+    MMU mmu;
+    std::vector<u8> empty_rom;
+    EXPECT_FALSE(mmu.map_rom(empty_rom)); 
+}
+
+TEST(MMUTest, MapRomTruncatesOversizedRom) {
+    MMU mmu;
+    std::vector<u8> oversized_rom(0x9000, 0xAA);
+    
+    EXPECT_TRUE(mmu.map_rom(oversized_rom));
+
+    EXPECT_EQ(mmu.read(0x7FFF), 0xAA);
+    EXPECT_EQ(mmu.read(0x8000), 0x00); 
+}
