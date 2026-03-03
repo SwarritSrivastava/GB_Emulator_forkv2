@@ -22,13 +22,11 @@ int main(const int argc, char **argv)
         const std::vector<u8> rom_data = load_rom(argv[1]);
         // ----- MMU ------
         MMU mmu;
-        if(mmu.map_rom(rom_data)) {
-            std::cout << "ROM successfully mapped to MMU memory ..." << std::endl;
-        }
-        else {
+        if(!mmu.map_rom(rom_data)){
             std::cerr << "failed to map ROM ... " << std::endl;
             return 1;
         }
+        std::cout << "ROM successfully mapped to MMU memory ..." << std::endl;
         // ----- CPU ------
         ProcessingUnit cpu;
         std::cout << "Initial State (Post-Reset):" << std::endl;
