@@ -83,7 +83,7 @@ if(EMU_SOURCES)
 
     target_compile_features(emu_lib PUBLIC cxx_std_23)
 
-    target_link_libraries(gb_emu PRIVATE emu_lib)
+#    target_link_libraries(gb_emu PRIVATE emu_lib)
 
 endif()
 
