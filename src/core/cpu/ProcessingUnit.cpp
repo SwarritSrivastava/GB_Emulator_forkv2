@@ -1,5 +1,6 @@
 #include "../../../include/ProcessingUnit.hpp"
 #include "../../../include/mmu.hpp"
+#include "../../../include/opcode_table.hpp"
 
 ProcessingUnit::ProcessingUnit(){
     reset();
@@ -47,31 +48,14 @@ void ProcessingUnit::printStatus() const
     std::cout.copyfmt(oldState); // set to old format
 }
 
-int ProcessingUnit::step(const MMU &mmu)
+int ProcessingUnit::step(MMU &mmu)
 {
     if (isHalt()) {
         return 4; // Minimum instruction time = 4 cycles
     }
 
-    const u8 opcode = mmu.read(PC); // fetch opcode
-    PC++; // increment
-
-    int cycles = 0;
-    switch (opcode)
-    {
-        case 0x00: // NOP
-            cycles = 4;
-            break;
-        case 0x76: //HALT
-            halt = true;
-            cycles = 4;
-            break;
-        default: // DEFAULT
-            //std::cout << "Opcode: 0x" << std::hex << static_cast<int>(opcode) << std::endl;
-            cycles = 4;
-            break;
-    }
-    return cycles;
+    const u8 opcode = mmu.read(PC++);
+    return instructionTable[opcode](*this, mmu);
 }
 
 bool ProcessingUnit::isHalt() const{
@@ -80,4 +64,8 @@ bool ProcessingUnit::isHalt() const{
 
 u16 ProcessingUnit::get_pc() const {
     return PC;
+}
+
+void ProcessingUnit::setHalt(const bool newValue) {
+    halt = newValue;
 }

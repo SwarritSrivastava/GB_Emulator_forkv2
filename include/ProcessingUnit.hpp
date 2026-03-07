@@ -2,6 +2,8 @@
 
 #include "common.hpp"
 
+class MMU;
+
 class ProcessingUnit{
 private:
 /* -------------------------------- */
@@ -36,7 +38,9 @@ public:
     [[nodiscard]] bool get_flag_h() const { return (F >> 5) & 1; }
     [[nodiscard]] bool get_flag_c() const { return (F >> 4) & 1; }
 
-    int step(const class MMU& mmu);
+    int step(MMU &mmu);
+
+    void setHalt(bool newValue);
 
     [[nodiscard]] bool isHalt() const;
 };
