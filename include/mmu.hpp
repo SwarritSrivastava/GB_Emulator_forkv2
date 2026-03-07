@@ -1,6 +1,7 @@
 #pragma once
 #include "common.hpp"
 #include <array>
+#include <vector>
 
 class MMU {
     private:

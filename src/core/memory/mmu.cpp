@@ -1,13 +1,14 @@
-#include "../../include/mmu.hpp"
+#include "../../../include/mmu.hpp"
 #include <algorithm>
 #include <iterator>
+#include <vector>
 
 MMU::MMU() {
     // zero out the memory
     std::ranges::fill(memory, 0);
 }
 
-u8 MMU::read(u16 address) const {
+u8 MMU::read(const u16 address) const {
     // wram
     if (address >= 0xC000 && address <= 0xDFFF) {
         return wram[address - 0xC000];
@@ -16,7 +17,7 @@ u8 MMU::read(u16 address) const {
     return memory[address];
 }
 
-void MMU::write(u16 address, u8 value) {
+void MMU::write(const u16 address, u8 value) {
     // cannot overwrite the physical game cartridge i.e from 0x0000 to 0x7FFF
     if (address < 0x8000) {
         return; 
