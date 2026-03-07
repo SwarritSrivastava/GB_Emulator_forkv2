@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(GB_Emulator
-    VERSION 0.1
-    LANGUAGES C CXX
+        VERSION 0.1
+        LANGUAGES CXX
 )
 
 # ===============================
@@ -13,9 +13,10 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "In-source builds are forbidden. Use build/ directory.")
 endif()
+
 # ===============================
 # Output Directories
 # ===============================
@@ -25,67 +26,40 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # ===============================
-# Auto Reconfigure on File Change
-# ===============================
-
-set(CMAKE_CONFIGURE_DEPENDS
-    ${PROJECT_SOURCE_DIR}/src
-    ${PROJECT_SOURCE_DIR}/include
-    ${PROJECT_SOURCE_DIR}/tests
-)
-
-# ===============================
-# Collect Sources
+# Collect Core Sources
 # ===============================
 
 file(GLOB_RECURSE EMU_SOURCES CONFIGURE_DEPENDS
-    ${PROJECT_SOURCE_DIR}/src/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/*.c
+        ${PROJECT_SOURCE_DIR}/src/*.cpp
 )
-list(FILTER EMU_SOURCES EXCLUDE REGEX ".*port.cpp$")
+
+# Remove frontend files from core
 list(FILTER EMU_SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
+list(FILTER EMU_SOURCES EXCLUDE REGEX ".*port.cpp$")
 
 # ===============================
-# Main Executable
+# Core Emulator Library
+# ===============================
+
+add_library(emu_lib STATIC ${EMU_SOURCES})
+
+target_include_directories(emu_lib
+        PUBLIC ${PROJECT_SOURCE_DIR}/include
+)
+
+target_compile_features(emu_lib PUBLIC cxx_std_23)
+
+# ===============================
+# Main Emulator Executable
 # ===============================
 
 add_executable(gb_emu
-    ${PROJECT_SOURCE_DIR}/src/main.cpp
-        include/success.hpp
-#       CPU
-        src/core/cpu/ProcessingUnit.cpp
-        src/core/cpu/instructions/opcodes.cpp
-        src/core/cpu/instructions/cb_opcodes.cpp
-        src/core/cpu/instructions/opcode_table.cpp
-        include/ProcessingUnit.hpp
-#       Memory
-        src/core/memory/mmu.cpp
-        include/mmu.hpp
+        src/main.cpp
 )
 
-target_include_directories(gb_emu
-    PRIVATE ${PROJECT_SOURCE_DIR}/include
+target_link_libraries(gb_emu
+        PRIVATE emu_lib
 )
-
-target_compile_features(gb_emu PRIVATE cxx_std_23)
-
-# ===============================
-# Core Library (If Exists)
-# ===============================
-
-if(EMU_SOURCES)
-
-    add_library(emu_lib STATIC ${EMU_SOURCES})
-
-    target_include_directories(emu_lib
-        PUBLIC ${PROJECT_SOURCE_DIR}/include
-    )
-
-    target_compile_features(emu_lib PUBLIC cxx_std_23)
-
-#    target_link_libraries(gb_emu PRIVATE emu_lib)
-
-endif()
 
 # ===============================
 # Testing
@@ -97,9 +71,9 @@ enable_testing()
 include(FetchContent)
 
 FetchContent_Declare(
-    googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG v1.14.0
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG v1.14.0
 )
 
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
