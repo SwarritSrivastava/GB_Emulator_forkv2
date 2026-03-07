@@ -5,11 +5,8 @@
 class CPUTest : public testing::Test {
 protected:
     ProcessingUnit cpu; //Init cpu
+    MMU mmu; //Init MMU
 };
-static void writeOpcode(MMU& mmu, const u16 addr, const u8 opcode)
-{
-    mmu.write(addr, opcode);
-}
 
 TEST_F(CPUTest, ResetValuesAreCorrect) {
     // Check 16-bit combined registers
@@ -31,11 +28,6 @@ TEST_F(CPUTest, HaltStateInitial) {
 
 TEST_F(CPUTest, ExecutesHALT)
 {
-    ProcessingUnit cpu;
-    MMU mmu;
-
-    cpu.reset();
-
     std::vector<u8> rom(0x8000, 0x00);
     rom[0x0100] = 0x76; // HALT
 
@@ -49,11 +41,6 @@ TEST_F(CPUTest, ExecutesHALT)
 
 TEST_F(CPUTest, PCIncrementsAfterStep)
 {
-    ProcessingUnit cpu;
-    MMU mmu;
-
-    cpu.reset();
-
     std::vector<u8> rom(0x8000, 0x00);
     rom[0x0100] = 0x00; // NOP
 
@@ -66,32 +53,24 @@ TEST_F(CPUTest, PCIncrementsAfterStep)
 
 TEST_F(CPUTest, HandlesUnknownOpcodeGracefully)
 {
-    ProcessingUnit cpu;
-    MMU mmu;
-
-    cpu.reset();
-
     // Invalid opcode
-    writeOpcode(mmu, 0x0100, 0xFF);
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x0100] = 0xFF;
+    mmu.map_rom(rom);
 
     const int cycles = cpu.step(mmu);
 
     // Should not crash
     EXPECT_EQ(cycles, 4);
     EXPECT_FALSE(cpu.isHalt());
+    EXPECT_EQ(cpu.get_pc(), 0x0101); // check opcode consumed
 }
 
 TEST_F(CPUTest, ExecutesMultipleNOPs)
 {
-    ProcessingUnit cpu;
-    MMU mmu;
-
-    cpu.reset();
-
     // Fill with NOPs
-    writeOpcode(mmu, 0x0100, 0x00);
-    writeOpcode(mmu, 0x0101, 0x00);
-    writeOpcode(mmu, 0x0102, 0x00);
+    const std::vector<u8> rom(0x8000, 0x00); // NOPs everywhere
+    mmu.map_rom(rom);
 
     cpu.step(mmu);
     cpu.step(mmu);
