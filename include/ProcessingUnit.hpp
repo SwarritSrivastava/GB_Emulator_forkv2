@@ -2,22 +2,24 @@
 
 #include "common.hpp"
 
+class MMU;
+
 class ProcessingUnit{
 private:
 /* -------------------------------- */
 /*         16-bit Registers         */
 /* -------------------------------- */
     // Hi Lo       Name/Function
-    u8 A, F;   // Accumulator & Flags
-    u8 B, C;   // BC
-    u8 D, E;   // DE
-    u8 H, L;   // HL
+    u8 A{}, F{};   // Accumulator & Flags
+    u8 B{}, C{};   // BC
+    u8 D{}, E{};   // DE
+    u8 H{}, L{};   // HL
 /* -------------------------------- */
-    u16 SP;    // Stack Pointer
-    u16 PC;    // Program Counter
+    u16 SP{};    // Stack Pointer
+    u16 PC{};    // Program Counter
 /* -------------------------------- */
-    bool IME;  // Interrupt Master Enable
-    bool halt; // HALT State { When CPU paused, waiting for interrupt}
+    bool IME{};  // Interrupt Master Enable
+    bool halt{}; // HALT State { When CPU paused, waiting for interrupt}
 
 public:
     ProcessingUnit();
@@ -36,7 +38,9 @@ public:
     [[nodiscard]] bool get_flag_h() const { return (F >> 5) & 1; }
     [[nodiscard]] bool get_flag_c() const { return (F >> 4) & 1; }
 
-    int step(const class MMU& mmu);
+    int step(MMU &mmu);
+
+    void setHalt(bool newValue);
 
     [[nodiscard]] bool isHalt() const;
 };
