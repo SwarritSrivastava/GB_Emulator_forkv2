@@ -3,6 +3,8 @@
 #include "cartridge.hpp"
 #include <iostream>
 #include <cstring>
+#include <fstream>
+#include <vector>
 #include <stdexcept>
 #include <iterator>
 

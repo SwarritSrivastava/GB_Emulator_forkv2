@@ -1,6 +1,5 @@
-#include "../../include/ProcessingUnit.hpp"
-
-#include "mmu.hpp"
+#include "../../../include/ProcessingUnit.hpp"
+#include "../../../include/mmu.hpp"
 
 ProcessingUnit::ProcessingUnit(){
     reset();
@@ -48,7 +47,7 @@ void ProcessingUnit::printStatus() const
     std::cout.copyfmt(oldState); // set to old format
 }
 
-int ProcessingUnit::step(const class MMU &mmu)
+int ProcessingUnit::step(const MMU &mmu)
 {
     if (isHalt()) {
         return 4; // Minimum instruction time = 4 cycles

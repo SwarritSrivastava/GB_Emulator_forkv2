@@ -52,9 +52,14 @@ list(FILTER EMU_SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 add_executable(gb_emu
     ${PROJECT_SOURCE_DIR}/src/main.cpp
         include/success.hpp
-        src/core/ProcessingUnit.cpp
+#       CPU
+        src/core/cpu/ProcessingUnit.cpp
+        src/core/cpu/instructions/opcodes.cpp
+        src/core/cpu/instructions/cb_opcodes.cpp
+        src/core/cpu/instructions/opcode_table.cpp
         include/ProcessingUnit.hpp
-        src/core/mmu.cpp
+#       Memory
+        src/core/memory/mmu.cpp
         include/mmu.hpp
 )
 

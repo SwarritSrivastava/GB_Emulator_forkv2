@@ -1,4 +1,6 @@
 #pragma once
+
+#include <vector>
 #include "common.hpp"
 
 typedef struct {            // Memory Map
