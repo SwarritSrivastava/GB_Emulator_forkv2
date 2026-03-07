@@ -23,7 +23,7 @@ public:
     ProcessingUnit();
     void reset();
     void printStatus() const; // print task
-
+    u16 get_pc() const;
     // Getting Full 16bit Register Values
     u16 get_bc() const { return (B << 8) | C; }
     u16 get_de() const { return (D << 8) | E; }
@@ -35,6 +35,8 @@ public:
     bool get_flag_n() const { return (F >> 6) & 1; }
     bool get_flag_h() const { return (F >> 5) & 1; }
     bool get_flag_c() const { return (F >> 4) & 1; }
+
+    int step(const class MMU& mmu);
 
     bool isHalt() const;
 };

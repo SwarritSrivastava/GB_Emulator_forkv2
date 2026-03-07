@@ -6,7 +6,7 @@ class MMU {
     private:
         u8 memory[0x10000]; // old flat memory array, will be phased out eventually
 
-        // 8KB wram chip init to 0 
+        // 8KB wram chip init to 0
         std::array<u8, 0x2000> wram{}; // (0xC000 - 0xDFFF)
 
     public:
@@ -24,7 +24,7 @@ class MMU {
          * @param address The 16-bit memory address to read from.
          * @return The 8-bit value at the specified address.
          */
-        u8 read(u16 address);
+        u8 read(u16 address) const;
 
         /**
          * @brief Writes a single byte to the emulated memory bus.

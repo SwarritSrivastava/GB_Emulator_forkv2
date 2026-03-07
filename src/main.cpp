@@ -19,23 +19,26 @@ int main(const int argc, char **argv)
 
     try
     {
-        std::cout << "Loading ROM : " << argv[1] << " ... " << std::endl;
-        std::vector<u8> rom_data = load_rom(argv[1]);
-
+        const std::vector<u8> rom_data = load_rom(argv[1]);
         // ----- MMU ------
         MMU mmu;
-        if(mmu.map_rom(rom_data)) {
-            std::cout << "ROM successfully mapped to MMU memory ..." << std::endl;
-        }
-        else {
+        if(!mmu.map_rom(rom_data)){
             std::cerr << "failed to map ROM ... " << std::endl;
             return 1;
         }
-
+        std::cout << "ROM successfully mapped to MMU memory ..." << std::endl;
+        // ----- CPU ------
         ProcessingUnit cpu;
         std::cout << "Initial State (Post-Reset):" << std::endl;
         cpu.printStatus();
         success();
+        int con = 0;
+        while (!cpu.isHalt())
+        {
+            con++;
+            cpu.step(mmu);
+        }
+        std::cout << std::dec << std::endl << con  << " instructions executed" << std::endl;
     }
     catch (const std::exception &e)
     {

@@ -4,10 +4,10 @@
 
 MMU::MMU() {
     // zero out the memory
-    std::fill(std::begin(memory), std::end(memory), 0);
+    std::ranges::fill(memory, 0);
 }
 
-u8 MMU::read(u16 address) {
+u8 MMU::read(u16 address) const {
     // wram
     if (address >= 0xC000 && address <= 0xDFFF) {
         return wram[address - 0xC000];
@@ -40,7 +40,7 @@ bool MMU::map_rom(const std::vector<u8>& rom_data) {
         copy_size = 0x8000;
     }
 
-    std::copy(rom_data.begin(), rom_data.begin() + copy_size, std::begin(memory));
+    std::copy_n(rom_data.begin(), copy_size, std::begin(memory));
 
     return true;
 }

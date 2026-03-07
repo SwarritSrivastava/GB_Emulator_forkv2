@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
 #include "../include/ProcessingUnit.hpp"
+#include "../include/mmu.hpp"
 
-
-class CPUTest : public ::testing::Test {
+class CPUTest : public testing::Test {
 protected:
     ProcessingUnit cpu; //Init cpu
+    MMU mmu; //Init MMU
 };
 
 TEST_F(CPUTest, ResetValuesAreCorrect) {
@@ -22,5 +23,59 @@ TEST_F(CPUTest, ResetValuesAreCorrect) {
 }
 
 TEST_F(CPUTest, HaltStateInitial) {
+    EXPECT_FALSE(cpu.isHalt());
+}
+
+TEST_F(CPUTest, ExecutesHALT)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x0100] = 0x76; // HALT
+
+    mmu.map_rom(rom);
+
+    const int cycles = cpu.step(mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_TRUE(cpu.isHalt());
+}
+
+TEST_F(CPUTest, PCIncrementsAfterStep)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x0100] = 0x00; // NOP
+
+    mmu.map_rom(rom);
+
+    cpu.step(mmu);
+
+    EXPECT_EQ(cpu.get_pc(), 0x0101);
+}
+
+TEST_F(CPUTest, HandlesUnknownOpcodeGracefully)
+{
+    // Invalid opcode
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x0100] = 0xFF;
+    mmu.map_rom(rom);
+
+    const int cycles = cpu.step(mmu);
+
+    // Should not crash
+    EXPECT_EQ(cycles, 4);
+    EXPECT_FALSE(cpu.isHalt());
+    EXPECT_EQ(cpu.get_pc(), 0x0101); // check opcode consumed
+}
+
+TEST_F(CPUTest, ExecutesMultipleNOPs)
+{
+    // Fill with NOPs
+    const std::vector<u8> rom(0x8000, 0x00); // NOPs everywhere
+    mmu.map_rom(rom);
+
+    cpu.step(mmu);
+    cpu.step(mmu);
+    cpu.step(mmu);
+
+    EXPECT_EQ(cpu.get_pc(), 0x0103);
     EXPECT_FALSE(cpu.isHalt());
 }
