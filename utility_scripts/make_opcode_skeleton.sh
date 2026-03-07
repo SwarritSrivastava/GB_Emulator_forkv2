@@ -55,3 +55,7 @@ opcodes=(
 for i in "${!opcodes[@]}"; do
     printf "int %s(ProcessingUnit &processing_unit, MMU &mmu); // 0x%02X\n" "${opcodes[$i]}" "$i"
 done
+
+for i in "${!opcodes[@]}"; do
+    printf "STUB(%s) // 0x%02X\n" "${opcodes[$i]}" "$i"
+done
