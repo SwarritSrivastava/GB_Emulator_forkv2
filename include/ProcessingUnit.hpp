@@ -10,16 +10,16 @@ private:
 /*         16-bit Registers         */
 /* -------------------------------- */
     // Hi Lo       Name/Function
-    u8 A, F;   // Accumulator & Flags
-    u8 B, C;   // BC
-    u8 D, E;   // DE
-    u8 H, L;   // HL
+    u8 A{}, F{};   // Accumulator & Flags
+    u8 B{}, C{};   // BC
+    u8 D{}, E{};   // DE
+    u8 H{}, L{};   // HL
 /* -------------------------------- */
-    u16 SP;    // Stack Pointer
-    u16 PC;    // Program Counter
+    u16 SP{};    // Stack Pointer
+    u16 PC{};    // Program Counter
 /* -------------------------------- */
-    bool IME;  // Interrupt Master Enable
-    bool halt; // HALT State { When CPU paused, waiting for interrupt}
+    bool IME{};  // Interrupt Master Enable
+    bool halt{}; // HALT State { When CPU paused, waiting for interrupt}
 
 public:
     ProcessingUnit();
