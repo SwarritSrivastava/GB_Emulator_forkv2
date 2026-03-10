@@ -2,19 +2,33 @@
 #include "../../../../include/opcodes.hpp"
 #include "../../../../include/mmu.hpp"
 
+constexpr int machine_cycles = 4;
+#define totalMachineCycles(n) ((n) * machine_cycles)
+
+#define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
+
 int op_nop(ProcessingUnit &cpu, MMU &mmu)  // 0x00
 {
-    return 4;
+    return totalMachineCycles(1);
+}
+
+int op_ld_bc_d16(ProcessingUnit &cpu, MMU &mmu) // 0x01
+{
+    const u8 lo = mmu.read(cpu.inc_pc());
+    const u8 hi = mmu.read(cpu.inc_pc());
+
+    cpu.reg(ProcessingUnit::Register::B) = hi;
+    cpu.reg(ProcessingUnit::Register::C) = lo;
+
+    return totalMachineCycles(3);
 }
 
 int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
 {
     cpu.setHalt(true);
-    return 4;
+    return totalMachineCycles(1);
 }
-#define DUMMY(name) int name(ProcessingUnit&, MMU&) { return 4; }
 
-DUMMY(op_ld_bc_d16) // 0x01
 DUMMY(op_ld_bc_a) // 0x02
 DUMMY(op_inc_bc) // 0x03
 DUMMY(op_inc_b) // 0x04
