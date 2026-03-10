@@ -65,3 +65,31 @@ TEST_F(OpcodesCPUTest, INC_BC_IncrementsRegisterPair)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x12);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x35);
 }
+
+TEST_F(OpcodesCPUTest, INC_B_IncrementsRegisterPair)
+{
+    cpu.reg(ProcessingUnit::Register::B) = 0x12;
+    cpu.reg(ProcessingUnit::Register::C) = 0x34;
+
+    const int cycles = op_inc_b(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+
+    EXPECT_EQ(cpu.get_bc(), 0x1334); // BC should now be 0x1235
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x13);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x34);
+}
+
+TEST_F(OpcodesCPUTest, DEC_B_DecreasesRegisterPair)
+{
+    cpu.reg(ProcessingUnit::Register::B) = 0x12;
+    cpu.reg(ProcessingUnit::Register::C) = 0x34;
+
+    const int cycles = op_dec_b(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+
+    EXPECT_EQ(cpu.get_bc(), 0x1134); // BC should now be 0x1235
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x11);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x34);
+}
