@@ -43,4 +43,19 @@ public:
     void setHalt(bool newValue);
 
     [[nodiscard]] bool isHalt() const;
+
+/* -------------------------------- */
+/*        Register Identifiers      */
+/* -------------------------------- */
+    enum class Register {
+        B, C, D, E, H, L, A, F
+    };
+
+/* -------------------------------- */
+/*         Register Access          */
+/* -------------------------------- */
+    u8& reg(Register r);
+    const u8& reg(Register r) const;
+
+    u16 inc_pc();
 };

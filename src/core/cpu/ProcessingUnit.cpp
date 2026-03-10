@@ -69,3 +69,29 @@ u16 ProcessingUnit::get_pc() const {
 void ProcessingUnit::setHalt(const bool newValue) {
     halt = newValue;
 }
+
+u8& ProcessingUnit::reg(const Register r)
+{
+    switch (r)
+    {
+        case Register::B: return B;
+        case Register::C: return C;
+        case Register::D: return D;
+        case Register::E: return E;
+        case Register::H: return H;
+        case Register::L: return L;
+        case Register::A: return A;
+        case Register::F: return F;
+    }
+
+    throw std::runtime_error("Invalid register");
+}
+
+const u8& ProcessingUnit::reg(const Register r) const
+{
+    return const_cast<ProcessingUnit*>(this)->reg(r);
+}
+
+u16 ProcessingUnit::inc_pc() {
+    return PC++;
+}
