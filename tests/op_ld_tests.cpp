@@ -16,12 +16,10 @@ TEST_F(OpcodesCPUTest, LD_BC_D16_LoadsImmediateIntoBC)
 
     // Write immediate value 0x1234 (little endian)
     std::vector<u8> rom(0x200); // small fake ROM
-    rom[0x100] = 0x01;  // opcode
-    rom[0x101] = 0x34;
-    rom[0x102] = 0x12;
+    rom[0x100] = 0x34;
+    rom[0x101] = 0x12;
 
     mmu.map_rom(rom);
-    cpu.inc_pc();
     const int cycles = op_ld_bc_d16(cpu, mmu);
 
     // Check returned cycle count
@@ -35,5 +33,5 @@ TEST_F(OpcodesCPUTest, LD_BC_D16_LoadsImmediateIntoBC)
     EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::C)), 0x34);
 
     // PC should advance by 2
-    EXPECT_EQ(cpu.get_pc(), 0x103);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
 }
