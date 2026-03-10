@@ -92,7 +92,7 @@ DUMMY(op_ld_c_e) // 0x4B
 DUMMY(op_ld_c_h) // 0x4C
 DUMMY(op_ld_c_l) // 0x4D
 DUMMY(op_ld_c_hl) // 0x4E
-DUMMY(op_ld_c_a) // 0x4F
+DUMMY(op_ld_c_a_4f) // 0x4F
 DUMMY(op_ld_d_b) // 0x50
 DUMMY(op_ld_d_c) // 0x51
 DUMMY(op_ld_d_d) // 0x52
@@ -133,7 +133,7 @@ DUMMY(op_ld_hl_h) // 0x74
 DUMMY(op_ld_hl_l) // 0x75
 DUMMY(op_ld_hl_a) // 0x77
 DUMMY(op_ld_a_b) // 0x78
-DUMMY(op_ld_a_c) // 0x79
+DUMMY(op_ld_a_c_79) // 0x79
 DUMMY(op_ld_a_d) // 0x7A
 DUMMY(op_ld_a_e) // 0x7B
 DUMMY(op_ld_a_h) // 0x7C
@@ -223,7 +223,7 @@ DUMMY(op_rst_08) // 0xCF
 DUMMY(op_ret_nc) // 0xD0
 DUMMY(op_pop_de) // 0xD1
 DUMMY(op_jp_nc) // 0xD2
-DUMMY(op_illegal) // 0xD3
+DUMMY(op_illegal_d3) // 0xD3
 DUMMY(op_call_nc) // 0xD4
 DUMMY(op_push_de) // 0xD5
 DUMMY(op_sub_d8) // 0xD6
@@ -231,32 +231,32 @@ DUMMY(op_rst_10) // 0xD7
 DUMMY(op_ret_c) // 0xD8
 DUMMY(op_reti) // 0xD9
 DUMMY(op_jp_c) // 0xDA
-// DUMMY(op_illegal) // 0xDB
+DUMMY(op_illegal_db) // 0xDB
 DUMMY(op_call_c) // 0xDC
-// DUMMY(op_illegal) // 0xDD
+DUMMY(op_illegal_dd) // 0xDD
 DUMMY(op_sbc_a_d8) // 0xDE
 DUMMY(op_rst_18) // 0xDF
 DUMMY(op_ldh_a8_a) // 0xE0
 DUMMY(op_pop_hl) // 0xE1
-// DUMMY(op_ld_c_a) // 0xE2
-// DUMMY(op_illegal) // 0xE3
-// DUMMY(op_illegal) // 0xE4
+DUMMY(op_ld_c_a_e2) // 0xE2
+DUMMY(op_illegal_e3) // 0xE3
+DUMMY(op_illegal_e4) // 0xE4
 DUMMY(op_push_hl) // 0xE5
 DUMMY(op_and_d8) // 0xE6
 DUMMY(op_rst_20) // 0xE7
 DUMMY(op_add_sp_e8) // 0xE8
 DUMMY(op_jp_hl) // 0xE9
 DUMMY(op_ld_a16_a) // 0xEA
-// DUMMY(op_illegal) // 0xEB
-// DUMMY(op_illegal) // 0xEC
-// DUMMY(op_illegal) // 0xED
+DUMMY(op_illegal_eb) // 0xEB
+DUMMY(op_illegal_ec) // 0xEC
+DUMMY(op_illegal_ed) // 0xED
 DUMMY(op_xor_d8) // 0xEE
 DUMMY(op_rst_28) // 0xEF
 DUMMY(op_ldh_a_a8) // 0xF0
 DUMMY(op_pop_af) // 0xF1
-// DUMMY(op_ld_a_c) // 0xF2
+DUMMY(op_ld_a_c_f2) // 0xF2
 DUMMY(op_di) // 0xF3
-// DUMMY(op_illegal) // 0xF4
+DUMMY(op_illegal_f4) // 0xF4
 DUMMY(op_push_af) // 0xF5
 DUMMY(op_or_d8) // 0xF6
 DUMMY(op_rst_30) // 0xF7
@@ -264,7 +264,7 @@ DUMMY(op_ld_hl_sp_e8) // 0xF8
 DUMMY(op_ld_sp_hl) // 0xF9
 DUMMY(op_ld_a_a16) // 0xFA
 DUMMY(op_ei) // 0xFB
-// DUMMY(op_illegal) // 0xFC
-// DUMMY(op_illegal) // 0xFD
+DUMMY(op_illegal_fc) // 0xFC
+DUMMY(op_illegal_fd) // 0xFD
 DUMMY(op_cp_d8) // 0xFE
 DUMMY(op_rst_38) // 0xFF

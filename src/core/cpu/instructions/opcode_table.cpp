@@ -33,7 +33,7 @@ OpcodeFunc instructionTable[256] = {
     op_ld_b_b, op_ld_b_c, op_ld_b_d, op_ld_b_e,
     op_ld_b_h, op_ld_b_l, op_ld_b_hl, op_ld_b_a,
     op_ld_c_b, op_ld_c_c, op_ld_c_d, op_ld_c_e,
-    op_ld_c_h, op_ld_c_l, op_ld_c_hl, op_ld_c_a,
+    op_ld_c_h, op_ld_c_l, op_ld_c_hl, op_ld_c_a_4f,
 
     // 0x50
     op_ld_d_b, op_ld_d_c, op_ld_d_d, op_ld_d_e,
@@ -90,7 +90,7 @@ OpcodeFunc instructionTable[256] = {
     op_call_c, op_illegal_dd, op_sbc_a_d8, op_rst_18,
 
     // 0xE0
-    op_ldh_a8_a, op_pop_hl, op_ld_c_a, op_illegal_e3,
+    op_ldh_a8_a, op_pop_hl, op_ld_c_a_e2, op_illegal_e3,
     op_illegal_e4, op_push_hl, op_and_d8, op_rst_20,
     op_add_sp_e8, op_jp_hl, op_ld_a16_a, op_illegal_eb,
     op_illegal_ec, op_illegal_ed, op_xor_d8, op_rst_28,
