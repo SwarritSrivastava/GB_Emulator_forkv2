@@ -23,13 +23,22 @@ int op_ld_bc_d16(ProcessingUnit &cpu, MMU &mmu) // 0x01
     return totalMachineCycles(3);
 }
 
+int op_ld_bc_a(ProcessingUnit &cpu, MMU &mmu) // 0x02
+{
+    const u16 addr = cpu.get_bc();      // BC contains the target address
+    const u8 value = cpu.reg(ProcessingUnit::Register::A);
+
+    mmu.write(addr, value);
+
+    return totalMachineCycles(2);
+}
+
 int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
 {
     cpu.setHalt(true);
     return totalMachineCycles(1);
 }
 
-DUMMY(op_ld_bc_a) // 0x02
 DUMMY(op_inc_bc) // 0x03
 DUMMY(op_inc_b) // 0x04
 DUMMY(op_dec_b) // 0x05

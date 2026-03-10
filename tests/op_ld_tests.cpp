@@ -35,3 +35,20 @@ TEST_F(OpcodesCPUTest, LD_BC_D16_LoadsImmediateIntoBC)
     // PC should advance by 2
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
+
+TEST_F(OpcodesCPUTest, LD_BC_A_StoresAIntoMemory)
+{
+    cpu.reset();
+    // Set bc = C000 (WRAM region so write is allowed)
+    cpu.reg(ProcessingUnit::Register::B) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::C) = 0x00;
+    cpu.reg(ProcessingUnit::Register::A) = 0x42; // Set a register
+
+    const int cycles = op_ld_bc_a(cpu, mmu);
+    EXPECT_EQ(cycles, 8); // Verify cycle count
+
+    EXPECT_EQ(mmu.read(0xC000), 0x42); // Verify memory write
+
+    EXPECT_EQ(cpu.get_bc(), 0xC000); // Verify bc integrity
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x42); // Verify a integrity
+}
