@@ -93,3 +93,26 @@ TEST_F(OpcodesCPUTest, DEC_B_DecreasesRegisterPair)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x11);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x34);
 }
+
+TEST_F(OpcodesCPUTest, LD_B_D8_LoadsImmediateIntoB)
+{
+    const u16 pc = cpu.get_pc();
+    EXPECT_EQ(pc, 0x0100);
+
+    // Write immediate value 0x1234 (little endian)
+    std::vector<u8> rom(0x200); // small fake ROM
+    rom[0x100] = 0x00;
+    rom[0x101] = 0x12;
+
+    mmu.map_rom(rom);
+    const int cycles = op_ld_b_d8(cpu, mmu);
+
+    // Check returned cycle count
+    EXPECT_EQ(cycles, 8);
+
+    // Check B register value
+    EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::B)), 0x12);
+
+    // PC should advance by 2
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}

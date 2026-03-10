@@ -59,13 +59,22 @@ int op_dec_b(ProcessingUnit& cpu, MMU& mmu) // 0x05
     return totalMachineCycles(1);
 }
 
+int op_ld_b_d8(ProcessingUnit& cpu, MMU& mmu) // 0x06
+{
+    cpu.inc_pc();
+    const u8 newValue = mmu.read(cpu.inc_pc());
+
+    cpu.reg(ProcessingUnit::Register::B) = newValue;
+
+    return totalMachineCycles(2);
+}
+
 int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
 {
     cpu.setHalt(true);
     return totalMachineCycles(1);
 }
 
-DUMMY(op_ld_b_d8) // 0x06
 DUMMY(op_rlca) // 0x07
 DUMMY(op_ld_a16_sp) // 0x08
 DUMMY(op_add_hl_bc) // 0x09
