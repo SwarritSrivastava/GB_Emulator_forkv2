@@ -33,13 +33,22 @@ int op_ld_bc_a(ProcessingUnit &cpu, MMU &mmu) // 0x02
     return totalMachineCycles(2);
 }
 
+int op_inc_bc(ProcessingUnit& cpu, MMU& mmu) // 0x03
+{
+    const u16 newValue = cpu.get_bc() + 1;
+
+    cpu.reg(ProcessingUnit::Register::B) = (newValue >> 8) & 0xFF;
+    cpu.reg(ProcessingUnit::Register::C) = newValue & 0xFF;
+
+    return totalMachineCycles(2);
+}
+
 int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
 {
     cpu.setHalt(true);
     return totalMachineCycles(1);
 }
 
-DUMMY(op_inc_bc) // 0x03
 DUMMY(op_inc_b) // 0x04
 DUMMY(op_dec_b) // 0x05
 DUMMY(op_ld_b_d8) // 0x06

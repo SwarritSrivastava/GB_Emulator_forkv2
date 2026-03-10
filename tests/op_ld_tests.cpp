@@ -38,7 +38,6 @@ TEST_F(OpcodesCPUTest, LD_BC_D16_LoadsImmediateIntoBC)
 
 TEST_F(OpcodesCPUTest, LD_BC_A_StoresAIntoMemory)
 {
-    cpu.reset();
     // Set bc = C000 (WRAM region so write is allowed)
     cpu.reg(ProcessingUnit::Register::B) = 0xC0;
     cpu.reg(ProcessingUnit::Register::C) = 0x00;
@@ -51,4 +50,18 @@ TEST_F(OpcodesCPUTest, LD_BC_A_StoresAIntoMemory)
 
     EXPECT_EQ(cpu.get_bc(), 0xC000); // Verify bc integrity
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x42); // Verify a integrity
+}
+
+TEST_F(OpcodesCPUTest, INC_BC_IncrementsRegisterPair)
+{
+    cpu.reg(ProcessingUnit::Register::B) = 0x12;
+    cpu.reg(ProcessingUnit::Register::C) = 0x34;
+
+    const int cycles = op_inc_bc(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+
+    EXPECT_EQ(cpu.get_bc(), 0x1235); // BC should now be 0x1235
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x12);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x35);
 }
