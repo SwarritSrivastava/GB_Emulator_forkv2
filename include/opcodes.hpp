@@ -84,7 +84,7 @@ int op_ld_c_e(ProcessingUnit &cpu, MMU &mmu); // 0x4B
 int op_ld_c_h(ProcessingUnit &cpu, MMU &mmu); // 0x4C
 int op_ld_c_l(ProcessingUnit &cpu, MMU &mmu); // 0x4D
 int op_ld_c_hl(ProcessingUnit &cpu, MMU &mmu); // 0x4E
-int op_ld_c_a(ProcessingUnit &cpu, MMU &mmu); // 0x4F
+int op_ld_c_a_4f(ProcessingUnit &cpu, MMU &mmu); // 0x4F
 int op_ld_d_b(ProcessingUnit &cpu, MMU &mmu); // 0x50
 int op_ld_d_c(ProcessingUnit &cpu, MMU &mmu); // 0x51
 int op_ld_d_d(ProcessingUnit &cpu, MMU &mmu); // 0x52
@@ -126,7 +126,7 @@ int op_ld_hl_l(ProcessingUnit &cpu, MMU &mmu); // 0x75
 int op_halt(ProcessingUnit &cpu, MMU &mmu); // 0x76
 int op_ld_hl_a(ProcessingUnit &cpu, MMU &mmu); // 0x77
 int op_ld_a_b(ProcessingUnit &cpu, MMU &mmu); // 0x78
-int op_ld_a_c(ProcessingUnit &cpu, MMU &mmu); // 0x79
+int op_ld_a_c_79(ProcessingUnit &cpu, MMU &mmu); // 0x79
 int op_ld_a_d(ProcessingUnit &cpu, MMU &mmu); // 0x7A
 int op_ld_a_e(ProcessingUnit &cpu, MMU &mmu); // 0x7B
 int op_ld_a_h(ProcessingUnit &cpu, MMU &mmu); // 0x7C
@@ -216,7 +216,7 @@ int op_rst_08(ProcessingUnit &cpu, MMU &mmu); // 0xCF
 int op_ret_nc(ProcessingUnit &cpu, MMU &mmu); // 0xD0
 int op_pop_de(ProcessingUnit &cpu, MMU &mmu); // 0xD1
 int op_jp_nc(ProcessingUnit &cpu, MMU &mmu); // 0xD2
-int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xD3
+int op_illegal_d3(ProcessingUnit &cpu, MMU &mmu); // 0xD3
 int op_call_nc(ProcessingUnit &cpu, MMU &mmu); // 0xD4
 int op_push_de(ProcessingUnit &cpu, MMU &mmu); // 0xD5
 int op_sub_d8(ProcessingUnit &cpu, MMU &mmu); // 0xD6
@@ -224,32 +224,32 @@ int op_rst_10(ProcessingUnit &cpu, MMU &mmu); // 0xD7
 int op_ret_c(ProcessingUnit &cpu, MMU &mmu); // 0xD8
 int op_reti(ProcessingUnit &cpu, MMU &mmu); // 0xD9
 int op_jp_c(ProcessingUnit &cpu, MMU &mmu); // 0xDA
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xDB
+int op_illegal_db(ProcessingUnit &cpu, MMU &mmu); // 0xDB
 int op_call_c(ProcessingUnit &cpu, MMU &mmu); // 0xDC
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xDD
+int op_illegal_dd(ProcessingUnit &cpu, MMU &mmu); // 0xDD
 int op_sbc_a_d8(ProcessingUnit &cpu, MMU &mmu); // 0xDE
 int op_rst_18(ProcessingUnit &cpu, MMU &mmu); // 0xDF
 int op_ldh_a8_a(ProcessingUnit &cpu, MMU &mmu); // 0xE0
 int op_pop_hl(ProcessingUnit &cpu, MMU &mmu); // 0xE1
-int op_ld_c_a(ProcessingUnit &cpu, MMU &mmu); // 0xE2
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xE3
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xE4
+int op_ld_c_a_e2(ProcessingUnit &cpu, MMU &mmu); // 0xE2
+int op_illegal_e3(ProcessingUnit &cpu, MMU &mmu); // 0xE3
+int op_illegal_e4(ProcessingUnit &cpu, MMU &mmu); // 0xE4
 int op_push_hl(ProcessingUnit &cpu, MMU &mmu); // 0xE5
 int op_and_d8(ProcessingUnit &cpu, MMU &mmu); // 0xE6
 int op_rst_20(ProcessingUnit &cpu, MMU &mmu); // 0xE7
 int op_add_sp_e8(ProcessingUnit &cpu, MMU &mmu); // 0xE8
 int op_jp_hl(ProcessingUnit &cpu, MMU &mmu); // 0xE9
 int op_ld_a16_a(ProcessingUnit &cpu, MMU &mmu); // 0xEA
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xEB
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xEC
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xED
+int op_illegal_eb(ProcessingUnit &cpu, MMU &mmu); // 0xEB
+int op_illegal_ec(ProcessingUnit &cpu, MMU &mmu); // 0xEC
+int op_illegal_ed(ProcessingUnit &cpu, MMU &mmu); // 0xED
 int op_xor_d8(ProcessingUnit &cpu, MMU &mmu); // 0xEE
 int op_rst_28(ProcessingUnit &cpu, MMU &mmu); // 0xEF
 int op_ldh_a_a8(ProcessingUnit &cpu, MMU &mmu); // 0xF0
 int op_pop_af(ProcessingUnit &cpu, MMU &mmu); // 0xF1
-// int op_ld_a_c(ProcessingUnit &cpu, MMU &mmu); // 0xF2
+int op_ld_a_c_f2(ProcessingUnit &cpu, MMU &mmu); // 0xF2
 int op_di(ProcessingUnit &cpu, MMU &mmu); // 0xF3
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xF4
+int op_illegal_f4(ProcessingUnit &cpu, MMU &mmu); // 0xF4
 int op_push_af(ProcessingUnit &cpu, MMU &mmu); // 0xF5
 int op_or_d8(ProcessingUnit &cpu, MMU &mmu); // 0xF6
 int op_rst_30(ProcessingUnit &cpu, MMU &mmu); // 0xF7
@@ -257,7 +257,7 @@ int op_ld_hl_sp_e8(ProcessingUnit &cpu, MMU &mmu); // 0xF8
 int op_ld_sp_hl(ProcessingUnit &cpu, MMU &mmu); // 0xF9
 int op_ld_a_a16(ProcessingUnit &cpu, MMU &mmu); // 0xFA
 int op_ei(ProcessingUnit &cpu, MMU &mmu); // 0xFB
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xFC
-// int op_illegal(ProcessingUnit &cpu, MMU &mmu); // 0xFD
+int op_illegal_fc(ProcessingUnit &cpu, MMU &mmu); // 0xFC
+int op_illegal_fd(ProcessingUnit &cpu, MMU &mmu); // 0xFD
 int op_cp_d8(ProcessingUnit &cpu, MMU &mmu); // 0xFE
 int op_rst_38(ProcessingUnit &cpu, MMU &mmu); // 0xFF

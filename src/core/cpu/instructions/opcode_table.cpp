@@ -33,7 +33,7 @@ OpcodeFunc instructionTable[256] = {
     op_ld_b_b, op_ld_b_c, op_ld_b_d, op_ld_b_e,
     op_ld_b_h, op_ld_b_l, op_ld_b_hl, op_ld_b_a,
     op_ld_c_b, op_ld_c_c, op_ld_c_d, op_ld_c_e,
-    op_ld_c_h, op_ld_c_l, op_ld_c_hl, op_ld_c_a,
+    op_ld_c_h, op_ld_c_l, op_ld_c_hl, op_ld_c_a_4f,
 
     // 0x50
     op_ld_d_b, op_ld_d_c, op_ld_d_d, op_ld_d_e,
@@ -50,7 +50,7 @@ OpcodeFunc instructionTable[256] = {
     // 0x70
     op_ld_hl_b, op_ld_hl_c, op_ld_hl_d, op_ld_hl_e,
     op_ld_hl_h, op_ld_hl_l, op_halt, op_ld_hl_a,
-    op_ld_a_b, op_ld_a_c, op_ld_a_d, op_ld_a_e,
+    op_ld_a_b, op_ld_a_c_79, op_ld_a_d, op_ld_a_e,
     op_ld_a_h, op_ld_a_l, op_ld_a_hl, op_ld_a_a,
 
     // 0x80
@@ -84,20 +84,20 @@ OpcodeFunc instructionTable[256] = {
     op_call_z, op_call, op_adc_a_d8, op_rst_08,
 
     // 0xD0
-    op_ret_nc, op_pop_de, op_jp_nc, op_illegal,
+    op_ret_nc, op_pop_de, op_jp_nc, op_illegal_d3,
     op_call_nc, op_push_de, op_sub_d8, op_rst_10,
-    op_ret_c, op_reti, op_jp_c, op_illegal,
-    op_call_c, op_illegal, op_sbc_a_d8, op_rst_18,
+    op_ret_c, op_reti, op_jp_c, op_illegal_db,
+    op_call_c, op_illegal_dd, op_sbc_a_d8, op_rst_18,
 
     // 0xE0
-    op_ldh_a8_a, op_pop_hl, op_ld_c_a, op_illegal,
-    op_illegal, op_push_hl, op_and_d8, op_rst_20,
-    op_add_sp_e8, op_jp_hl, op_ld_a16_a, op_illegal,
-    op_illegal, op_illegal, op_xor_d8, op_rst_28,
+    op_ldh_a8_a, op_pop_hl, op_ld_c_a_e2, op_illegal_e3,
+    op_illegal_e4, op_push_hl, op_and_d8, op_rst_20,
+    op_add_sp_e8, op_jp_hl, op_ld_a16_a, op_illegal_eb,
+    op_illegal_ec, op_illegal_ed, op_xor_d8, op_rst_28,
 
     // 0xF0
-    op_ldh_a_a8, op_pop_af, op_ld_a_c, op_di,
-    op_illegal, op_push_af, op_or_d8, op_rst_30,
+    op_ldh_a_a8, op_pop_af, op_ld_a_c_f2, op_di,
+    op_illegal_f4, op_push_af, op_or_d8, op_rst_30,
     op_ld_hl_sp_e8, op_ld_sp_hl, op_ld_a_a16, op_ei,
-    op_illegal, op_illegal, op_cp_d8, op_rst_38
+    op_illegal_fc, op_illegal_fd, op_cp_d8, op_rst_38
 };
