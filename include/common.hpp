@@ -6,6 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>
+#include <stdexcept>
 
 typedef uint8_t u8;
 typedef uint16_t u16;

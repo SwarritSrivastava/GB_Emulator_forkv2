@@ -3,7 +3,7 @@
 #include "../../../../include/mmu.hpp"
 
 constexpr int machine_cycles = 4;
-#define totalMachineCycles(n) n*machine_cycles
+#define totalMachineCycles(n) ((n) * machine_cycles)
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
