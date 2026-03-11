@@ -71,7 +71,7 @@ int op_ld_b_d8(ProcessingUnit& cpu, MMU& mmu) // 0x06
 
 int op_rlca(ProcessingUnit& cpu, MMU& mmu) // 0x07
 {
-    u8 a = cpu.reg(ProcessingUnit::Register::A);
+    const u8 a = cpu.reg(ProcessingUnit::Register::A);
 
     const u8 carry = (a >> 7) & 1;
     const u8 result = (a << 1) | carry;
@@ -95,7 +95,18 @@ int op_ld_a16_sp(ProcessingUnit& cpu, MMU& mmu) // 0x08
 
     mmu.write(addr, cpu.get_sp() & 0xFF);
     mmu.write(addr + 1, cpu.get_sp() >> 8);
+
     return totalMachineCycles(5);
+}
+
+int op_add_hl_bc(ProcessingUnit& cpu, MMU& mmu) // 0x09
+{
+    // a = a + b
+    const u16 sum = cpu.get_hl() + cpu.get_bc();
+    cpu.reg(ProcessingUnit::Register::H) = (sum >> 8) & 0xFF;
+    cpu.reg(ProcessingUnit::Register::L) = sum & 0xFF;
+
+    return totalMachineCycles(2);
 }
 
 int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
@@ -104,7 +115,6 @@ int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
     return totalMachineCycles(1);
 }
 
-DUMMY(op_add_hl_bc) // 0x09
 DUMMY(op_ld_a_bc) // 0x0A
 DUMMY(op_dec_bc) // 0x0B
 DUMMY(op_inc_c) // 0x0C

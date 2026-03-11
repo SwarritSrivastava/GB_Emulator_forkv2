@@ -150,3 +150,28 @@ TEST_F(OpcodesCPUTest, LD_A16_SP_StoresStackPointerInMemory)
 
     EXPECT_EQ(cpu.get_pc(), 0x0102);
 }
+
+TEST_F(OpcodesCPUTest, ADD_HL_BC_AddsRegisterPair)
+{
+    const u16 pc = cpu.get_pc();
+    EXPECT_EQ(pc, 0x0100);
+    // BC = 0x1234
+    cpu.reg(ProcessingUnit::Register::B) = 0x12;
+    cpu.reg(ProcessingUnit::Register::C) = 0x34;
+    // HL = 0x0101
+    cpu.reg(ProcessingUnit::Register::H) = 0x01;
+    cpu.reg(ProcessingUnit::Register::L) = 0x01;
+
+    const int cycles = op_add_hl_bc(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+
+    EXPECT_EQ(cpu.get_bc(), 0x1234); // BC should remain same
+    EXPECT_EQ(cpu.get_hl(), 0x1335);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x12);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x34);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0x13);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x35);
+
+    EXPECT_EQ(pc, 0x0100);
+}
