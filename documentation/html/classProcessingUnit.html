@@ -92,12 +92,29 @@ $(function(){initNavTree('classProcessingUnit.html','','classProcessingUnit-memb
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-types" class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:af3210d732345cef08b6b81c7bed7256b" id="r_af3210d732345cef08b6b81c7bed7256b"><td class="memItemLeft"><a id="af3210d732345cef08b6b81c7bed7256b" name="af3210d732345cef08b6b81c7bed7256b"></a>enum class &#160;</td><td class="memItemRight"><b>Register</b> { <br />
+&#160;&#160;<b>B</b>
+, <b>C</b>
+, <b>D</b>
+, <b>E</b>
+, <br />
+&#160;&#160;<b>H</b>
+, <b>L</b>
+, <b>A</b>
+, <b>F</b>
+<br />
+ }</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab173ae78f65807f5677f403c9448d7ea" id="r_ab173ae78f65807f5677f403c9448d7ea"><td class="memItemLeft"><a id="ab173ae78f65807f5677f403c9448d7ea" name="ab173ae78f65807f5677f403c9448d7ea"></a>
 void&#160;</td><td class="memItemRight"><b>reset</b> ()</td></tr>
 <tr class="memitem:acf986523a07d7a8929e513465e240f4b" id="r_acf986523a07d7a8929e513465e240f4b"><td class="memItemLeft"><a id="acf986523a07d7a8929e513465e240f4b" name="acf986523a07d7a8929e513465e240f4b"></a>
 void&#160;</td><td class="memItemRight"><b>printStatus</b> () const</td></tr>
+<tr class="memitem:ae3293275dcaab0d90999cb986f5d4c68" id="r_ae3293275dcaab0d90999cb986f5d4c68"><td class="memItemLeft"><a id="ae3293275dcaab0d90999cb986f5d4c68" name="ae3293275dcaab0d90999cb986f5d4c68"></a>
+u16&#160;</td><td class="memItemRight"><b>get_pc</b> () const</td></tr>
 <tr class="memitem:a8c43e3545db61bd8ff3423fc50ba3eda" id="r_a8c43e3545db61bd8ff3423fc50ba3eda"><td class="memItemLeft"><a id="a8c43e3545db61bd8ff3423fc50ba3eda" name="a8c43e3545db61bd8ff3423fc50ba3eda"></a>
 u16&#160;</td><td class="memItemRight"><b>get_bc</b> () const</td></tr>
 <tr class="memitem:a99c410e0a89e8ccfee852b7531c18e0a" id="r_a99c410e0a89e8ccfee852b7531c18e0a"><td class="memItemLeft"><a id="a99c410e0a89e8ccfee852b7531c18e0a" name="a99c410e0a89e8ccfee852b7531c18e0a"></a>
@@ -114,12 +131,22 @@ bool&#160;</td><td class="memItemRight"><b>get_flag_n</b> () const</td></tr>
 bool&#160;</td><td class="memItemRight"><b>get_flag_h</b> () const</td></tr>
 <tr class="memitem:aec50a274190f3f07d1657cf63a167fb4" id="r_aec50a274190f3f07d1657cf63a167fb4"><td class="memItemLeft"><a id="aec50a274190f3f07d1657cf63a167fb4" name="aec50a274190f3f07d1657cf63a167fb4"></a>
 bool&#160;</td><td class="memItemRight"><b>get_flag_c</b> () const</td></tr>
+<tr class="memitem:ae48833c17468a7337a58a2e4b8ae617a" id="r_ae48833c17468a7337a58a2e4b8ae617a"><td class="memItemLeft"><a id="ae48833c17468a7337a58a2e4b8ae617a" name="ae48833c17468a7337a58a2e4b8ae617a"></a>
+int&#160;</td><td class="memItemRight"><b>step</b> (<a class="el" href="classMMU.html">MMU</a> &amp;mmu)</td></tr>
+<tr class="memitem:a16b8f78de239c4120945c7c6708cb737" id="r_a16b8f78de239c4120945c7c6708cb737"><td class="memItemLeft"><a id="a16b8f78de239c4120945c7c6708cb737" name="a16b8f78de239c4120945c7c6708cb737"></a>
+void&#160;</td><td class="memItemRight"><b>setHalt</b> (bool newValue)</td></tr>
 <tr class="memitem:a28c57f86b0a8adb41cfd2a967eedbfee" id="r_a28c57f86b0a8adb41cfd2a967eedbfee"><td class="memItemLeft"><a id="a28c57f86b0a8adb41cfd2a967eedbfee" name="a28c57f86b0a8adb41cfd2a967eedbfee"></a>
 bool&#160;</td><td class="memItemRight"><b>isHalt</b> () const</td></tr>
+<tr class="memitem:a098a374bf6e855389ad46a3da5d4dfed" id="r_a098a374bf6e855389ad46a3da5d4dfed"><td class="memItemLeft"><a id="a098a374bf6e855389ad46a3da5d4dfed" name="a098a374bf6e855389ad46a3da5d4dfed"></a>
+u8 &amp;&#160;</td><td class="memItemRight"><b>reg</b> (Register r)</td></tr>
+<tr class="memitem:a51874c42f96be2abc9ad0cd1296074ad" id="r_a51874c42f96be2abc9ad0cd1296074ad"><td class="memItemLeft"><a id="a51874c42f96be2abc9ad0cd1296074ad" name="a51874c42f96be2abc9ad0cd1296074ad"></a>
+const u8 &amp;&#160;</td><td class="memItemRight"><b>reg</b> (Register r) const</td></tr>
+<tr class="memitem:aac98159ed863ce2db0888167232b9693" id="r_aac98159ed863ce2db0888167232b9693"><td class="memItemLeft"><a id="aac98159ed863ce2db0888167232b9693" name="aac98159ed863ce2db0888167232b9693"></a>
+u16&#160;</td><td class="memItemRight"><b>inc_pc</b> ()</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>include/<a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a></li>
-<li>src/core/<b>ProcessingUnit.cpp</b></li>
+<li>src/core/cpu/<b>ProcessingUnit.cpp</b></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

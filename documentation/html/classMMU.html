@@ -94,14 +94,99 @@ $(function(){initNavTree('classMMU.html','','classMMU-members'); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a47a51c09f87a14a9c717cc11d0d95e7e" id="r_a47a51c09f87a14a9c717cc11d0d95e7e"><td class="memItemLeft"><a id="a47a51c09f87a14a9c717cc11d0d95e7e" name="a47a51c09f87a14a9c717cc11d0d95e7e"></a>
-u8&#160;</td><td class="memItemRight"><b>read</b> (u16 address)</td></tr>
-<tr class="memitem:a5df9ab9c4ac566decef576fc819ad4a1" id="r_a5df9ab9c4ac566decef576fc819ad4a1"><td class="memItemLeft"><a id="a5df9ab9c4ac566decef576fc819ad4a1" name="a5df9ab9c4ac566decef576fc819ad4a1"></a>
-void&#160;</td><td class="memItemRight"><b>write</b> (u16 address, u8 value)</td></tr>
+<tr class="memitem:a4a7b8a9bb3d11a612b7c9ec6e5bef7d9" id="r_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a4a7b8a9bb3d11a612b7c9ec6e5bef7d9">map_rom</a> (const std::vector&lt; u8 &gt; &amp;rom_data)</td></tr>
+<tr class="memdesc:a4a7b8a9bb3d11a612b7c9ec6e5bef7d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a loaded ROM vector into the Game Boy's physical ROM space.  <br /></td></tr>
+<tr class="memitem:ac3dbb6955cd9e630ab8c6b5f184d31b7" id="r_ac3dbb6955cd9e630ab8c6b5f184d31b7"><td class="memItemLeft">u8&#160;</td><td class="memItemRight"><a class="el" href="#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a> (u16 address) const</td></tr>
+<tr class="memdesc:ac3dbb6955cd9e630ab8c6b5f184d31b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a single byte from the emulated memory bus.  <br /></td></tr>
+<tr class="memitem:a5df9ab9c4ac566decef576fc819ad4a1" id="r_a5df9ab9c4ac566decef576fc819ad4a1"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a5df9ab9c4ac566decef576fc819ad4a1">write</a> (u16 address, u8 value)</td></tr>
+<tr class="memdesc:a5df9ab9c4ac566decef576fc819ad4a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the physical ROM.  <br /></td></tr>
 </table>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="a4a7b8a9bb3d11a612b7c9ec6e5bef7d9" name="a4a7b8a9bb3d11a612b7c9ec6e5bef7d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a7b8a9bb3d11a612b7c9ec6e5bef7d9">&#9670;&#160;</a></span>map_rom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool MMU::map_rom </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; u8 &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>rom_data</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Maps a loaded ROM vector into the Game Boy's physical ROM space. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rom_data</td><td>A vector containing the raw bytes of the .gb file. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if successfully mapped, false if the vector was empty. </dd></dl>
+
+</div>
+</div>
+<a id="ac3dbb6955cd9e630ab8c6b5f184d31b7" name="ac3dbb6955cd9e630ab8c6b5f184d31b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3dbb6955cd9e630ab8c6b5f184d31b7">&#9670;&#160;</a></span>read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">u8 MMU::read </td>
+          <td>(</td>
+          <td class="paramtype">u16</td>          <td class="paramname"><span class="paramname"><em>address</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads a single byte from the emulated memory bus. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">address</td><td>The 16-bit memory address to read from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The 8-bit value at the specified address. </dd></dl>
+
+</div>
+</div>
+<a id="a5df9ab9c4ac566decef576fc819ad4a1" name="a5df9ab9c4ac566decef576fc819ad4a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5df9ab9c4ac566decef576fc819ad4a1">&#9670;&#160;</a></span>write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MMU::write </td>
+          <td>(</td>
+          <td class="paramtype">u16</td>          <td class="paramname"><span class="paramname"><em>address</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">u8</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the physical ROM. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">address</td><td>The 16-bit memory address to write to. </td></tr>
+    <tr><td class="paramname">value</td><td>The 8-bit value to store. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>include/<a class="el" href="mmu_8hpp_source.html">mmu.hpp</a></li>
-<li>src/core/<b>mmu.cpp</b></li>
+<li>src/core/memory/<b>mmu.cpp</b></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

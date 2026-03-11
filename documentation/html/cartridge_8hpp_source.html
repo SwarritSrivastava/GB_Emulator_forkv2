@@ -92,38 +92,40 @@ $(function(){initNavTree('cartridge_8hpp_source.html','',''); });
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="foldopen" id="foldopen00004" data-start="{" data-end="};">
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno"><a class="line" href="structrom__header.html">    4</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{            <span class="comment">// Memory Map</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>  u8 entry[4];              <span class="comment">// 0x0100-0x0103</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>  u8 nintendo_logo[0x30];   <span class="comment">// 0x0104-0x0133</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">/*-----------------------------------------*/</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>  <span class="keywordtype">char</span> title[11];           <span class="comment">// 0x0134-0x013E</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>  u8 manufacturer_code[4];  <span class="comment">// 0x013F-0x0142 - part of title (in older versions)</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>  u8 cgb_flag;              <span class="comment">// 0x0143 - part of title</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">/*-------------------------------------------</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment"># 0134-0143 — Title</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">These bytes contain the title of the game in upper case ASCII. If the title is less than 16 characters long, the remaining bytes should be padded with $00s.</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">Parts of this area actually have a different meaning on later cartridges, reducing the actual title size to 15 ($0134–$0142) or 11 ($0134–$013E) characters; see below.</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"># 013F-0142 — Manufacturer code</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">In older cartridges these bytes were part of the Title (see above). In newer cartridges they contain a 4-character manufacturer code (in uppercase ASCII). The purpose of the manufacturer code is unknown.</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">-------------------------------------------*/</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  u16 new_lic_code;         <span class="comment">// 0x0144-0x0145</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  u8 sgb_flag;              <span class="comment">// 0x0146</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  u8 type;                  <span class="comment">// 0x0147</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  u8 rom_size;              <span class="comment">// 0x0148</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  u8 ram_size;              <span class="comment">// 0x0149</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  u8 dest_code;             <span class="comment">// 0x014A</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  u8 old_lic_code;          <span class="comment">// 0x014B</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  u8 version;               <span class="comment">// 0x014C</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  u8 checksum;              <span class="comment">// 0x014D</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  u16 global_checksum;      <span class="comment">// 0x014E-0x014F</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <a class="code hl_struct" href="structrom__header.html">rom_header</a>;</div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="structrom__header.html">    6</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{            <span class="comment">// Memory Map</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>  u8 entry[4];              <span class="comment">// 0x0100-0x0103</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>  u8 nintendo_logo[0x30];   <span class="comment">// 0x0104-0x0133</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/*-----------------------------------------*/</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>  <span class="keywordtype">char</span> title[11];           <span class="comment">// 0x0134-0x013E</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>  u8 manufacturer_code[4];  <span class="comment">// 0x013F-0x0142 - part of title (in older versions)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  u8 cgb_flag;              <span class="comment">// 0x0143 - part of title</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/*-------------------------------------------</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"># 0134-0143 — Title</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">These bytes contain the title of the game in upper case ASCII. If the title is less than 16 characters long, the remaining bytes should be padded with $00s.</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">Parts of this area actually have a different meaning on later cartridges, reducing the actual title size to 15 ($0134–$0142) or 11 ($0134–$013E) characters; see below.</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"># 013F-0142 — Manufacturer code</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">In older cartridges these bytes were part of the Title (see above). In newer cartridges they contain a 4-character manufacturer code (in uppercase ASCII). The purpose of the manufacturer code is unknown.</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">-------------------------------------------*/</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  u16 new_lic_code;         <span class="comment">// 0x0144-0x0145</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  u8 sgb_flag;              <span class="comment">// 0x0146</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  u8 type;                  <span class="comment">// 0x0147</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  u8 rom_size;              <span class="comment">// 0x0148</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  u8 ram_size;              <span class="comment">// 0x0149</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  u8 dest_code;             <span class="comment">// 0x014A</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  u8 old_lic_code;          <span class="comment">// 0x014B</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  u8 version;               <span class="comment">// 0x014C</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  u8 checksum;              <span class="comment">// 0x014D</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  u16 global_checksum;      <span class="comment">// 0x014E-0x014F</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>} <a class="code hl_struct" href="structrom__header.html">rom_header</a>;</div>
 </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keywordtype">bool</span> cart_load(<span class="keywordtype">char</span> *cart);</div>
-<div class="ttc" id="astructrom__header_html"><div class="ttname"><a href="structrom__header.html">rom_header</a></div><div class="ttdef"><b>Definition</b> cartridge.hpp:4</div></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>std::vector&lt;u8&gt; cart_load(<span class="keywordtype">char</span> *cart);</div>
+<div class="ttc" id="astructrom__header_html"><div class="ttname"><a href="structrom__header.html">rom_header</a></div><div class="ttdef"><b>Definition</b> cartridge.hpp:6</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

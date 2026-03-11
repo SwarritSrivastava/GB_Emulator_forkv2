@@ -5,7 +5,7 @@
 %%For: 
 %Magnification: 1.00
 %%Orientation: Portrait
-%%BoundingBox: 0 0 500 3536.585449
+%%BoundingBox: 0 0 500 3556.910645
 %%Pages: 0
 %%BeginSetup
 %%EndSetup
@@ -19,12 +19,12 @@
 /marginwidth 10 def
 /distx 20 def
 /disty 40 def
-/boundaspect 0.141379 def  % aspect ratio of the BoundingBox (width/height)
+/boundaspect 0.140571 def  % aspect ratio of the BoundingBox (width/height)
 /boundx 500 def
 /boundy boundx boundaspect div def
 /xspacing 0 def
 /yspacing 0 def
-/rows 174 def
+/rows 175 def
 /cols 2 def
 /scalefactor 0 def
 /boxfont /Times-Roman findfont fontheight scalefont def
@@ -229,6 +229,7 @@ boxfont setfont
 (NonFatalFailureInSetUpTest) cw
 (NonParameterizedBaseTest) cw
 (NonParameterizedBaseTest) cw
+(OpcodesCPUTest) cw
 (Predicate1Test) cw
 (Predicate1Test) cw
 (Predicate2Test) cw
@@ -358,80 +359,81 @@ boundx scalefactor div boundy scalefactor div scale
 
 % ----- classes -----
 
- (testing::Test) 0.000000 173.000000 box
- (testing::TestWithParam< int >) 1.000000 172.000000 box
-1.000000 172.000000 mark
- (testing::TestWithParam< Unstreamable >) 1.000000 171.000000 box
- (testing::TestWithParam< std::string >) 1.000000 170.000000 box
-1.000000 170.000000 mark
- (testing::TestWithParam< CustomStruct >) 1.000000 169.000000 box
- (testing::TestWithParam< MyEnums >) 1.000000 168.000000 box
+ (testing::Test) 0.000000 174.000000 box
+ (testing::TestWithParam< int >) 1.000000 173.000000 box
+1.000000 173.000000 mark
+ (testing::TestWithParam< Unstreamable >) 1.000000 172.000000 box
+ (testing::TestWithParam< std::string >) 1.000000 171.000000 box
+1.000000 171.000000 mark
+ (testing::TestWithParam< CustomStruct >) 1.000000 170.000000 box
+ (testing::TestWithParam< MyEnums >) 1.000000 169.000000 box
+1.000000 169.000000 mark
+ (testing::TestWithParam< MyType >) 1.000000 168.000000 box
 1.000000 168.000000 mark
- (testing::TestWithParam< MyType >) 1.000000 167.000000 box
+ (testing::TestWithParam< bool >) 1.000000 167.000000 box
 1.000000 167.000000 mark
- (testing::TestWithParam< bool >) 1.000000 166.000000 box
+ (testing::TestWithParam< int >) 1.000000 166.000000 box
 1.000000 166.000000 mark
- (testing::TestWithParam< int >) 1.000000 165.000000 box
-1.000000 165.000000 mark
- (testing::TestWithParam< Unstreamable >) 1.000000 164.000000 box
- (testing::TestWithParam< std::string >) 1.000000 163.000000 box
-1.000000 163.000000 mark
- (testing::TestWithParam< CustomStruct >) 1.000000 162.000000 box
- (testing::TestWithParam< MyEnums >) 1.000000 161.000000 box
+ (testing::TestWithParam< Unstreamable >) 1.000000 165.000000 box
+ (testing::TestWithParam< std::string >) 1.000000 164.000000 box
+1.000000 164.000000 mark
+ (testing::TestWithParam< CustomStruct >) 1.000000 163.000000 box
+ (testing::TestWithParam< MyEnums >) 1.000000 162.000000 box
+1.000000 162.000000 mark
+ (testing::TestWithParam< MyType >) 1.000000 161.000000 box
 1.000000 161.000000 mark
- (testing::TestWithParam< MyType >) 1.000000 160.000000 box
+ (testing::TestWithParam< bool >) 1.000000 160.000000 box
 1.000000 160.000000 mark
- (testing::TestWithParam< bool >) 1.000000 159.000000 box
-1.000000 159.000000 mark
- (FooTest) 1.000000 158.000000 box
- (TypedTest< T >) 1.000000 157.000000 box
- (FooTest) 1.000000 156.000000 box
- (TypedTest< T >) 1.000000 155.000000 box
- (CPUTest) 1.000000 154.000000 box
+ (FooTest) 1.000000 159.000000 box
+ (TypedTest< T >) 1.000000 158.000000 box
+ (FooTest) 1.000000 157.000000 box
+ (TypedTest< T >) 1.000000 156.000000 box
+ (CPUTest) 1.000000 155.000000 box
+ (CommonTest< T >) 1.000000 154.000000 box
+1.000000 154.000000 mark
  (CommonTest< T >) 1.000000 153.000000 box
 1.000000 153.000000 mark
- (CommonTest< T >) 1.000000 152.000000 box
-1.000000 152.000000 mark
+ (ContainerTest< T >) 1.000000 152.000000 box
  (ContainerTest< T >) 1.000000 151.000000 box
- (ContainerTest< T >) 1.000000 150.000000 box
+ (DetectNotInstantiatedTypesTest< T >) 1.000000 150.000000 box
  (DetectNotInstantiatedTypesTest< T >) 1.000000 149.000000 box
- (DetectNotInstantiatedTypesTest< T >) 1.000000 148.000000 box
+ (DisabledTest) 1.000000 148.000000 box
  (DisabledTest) 1.000000 147.000000 box
- (DisabledTest) 1.000000 146.000000 box
+ (DynamicFixture) 1.000000 146.000000 box
+1.000000 146.000000 mark
  (DynamicFixture) 1.000000 145.000000 box
 1.000000 145.000000 mark
- (DynamicFixture) 1.000000 144.000000 box
+ (DynamicUnitTestFixture) 1.000000 144.000000 box
 1.000000 144.000000 mark
  (DynamicUnitTestFixture) 1.000000 143.000000 box
 1.000000 143.000000 mark
- (DynamicUnitTestFixture) 1.000000 142.000000 box
-1.000000 142.000000 mark
+ (ExpectFailureTest) 1.000000 142.000000 box
  (ExpectFailureTest) 1.000000 141.000000 box
- (ExpectFailureTest) 1.000000 140.000000 box
+ (FailedTest) 1.000000 140.000000 box
  (FailedTest) 1.000000 139.000000 box
- (FailedTest) 1.000000 138.000000 box
+ (FatalFailureInFixtureConstructorTest) 1.000000 138.000000 box
  (FatalFailureInFixtureConstructorTest) 1.000000 137.000000 box
- (FatalFailureInFixtureConstructorTest) 1.000000 136.000000 box
+ (FatalFailureInSetUpTest) 1.000000 136.000000 box
  (FatalFailureInSetUpTest) 1.000000 135.000000 box
- (FatalFailureInSetUpTest) 1.000000 134.000000 box
+ (Fixture) 1.000000 134.000000 box
  (Fixture) 1.000000 133.000000 box
- (Fixture) 1.000000 132.000000 box
+ (FooTest) 1.000000 132.000000 box
  (FooTest) 1.000000 131.000000 box
- (FooTest) 1.000000 130.000000 box
+ (FooTestFixture) 1.000000 130.000000 box
  (FooTestFixture) 1.000000 129.000000 box
- (FooTestFixture) 1.000000 128.000000 box
+ (GMockOutputTest) 1.000000 128.000000 box
  (GMockOutputTest) 1.000000 127.000000 box
- (GMockOutputTest) 1.000000 126.000000 box
+ (MacroNamingTestNonParametrized) 1.000000 126.000000 box
  (MacroNamingTestNonParametrized) 1.000000 125.000000 box
- (MacroNamingTestNonParametrized) 1.000000 124.000000 box
+ (NonFatalFailureInFixtureConstructorTest) 1.000000 124.000000 box
  (NonFatalFailureInFixtureConstructorTest) 1.000000 123.000000 box
- (NonFatalFailureInFixtureConstructorTest) 1.000000 122.000000 box
+ (NonFatalFailureInSetUpTest) 1.000000 122.000000 box
  (NonFatalFailureInSetUpTest) 1.000000 121.000000 box
- (NonFatalFailureInSetUpTest) 1.000000 120.000000 box
+ (NonParameterizedBaseTest) 1.000000 120.000000 box
+1.000000 120.000000 mark
  (NonParameterizedBaseTest) 1.000000 119.000000 box
 1.000000 119.000000 mark
- (NonParameterizedBaseTest) 1.000000 118.000000 box
-1.000000 118.000000 mark
+ (OpcodesCPUTest) 1.000000 118.000000 box
  (Predicate1Test) 1.000000 117.000000 box
  (Predicate1Test) 1.000000 116.000000 box
  (Predicate2Test) 1.000000 115.000000 box
@@ -556,7 +558,9 @@ boundx scalefactor div boundy scalefactor div scale
 % ----- relations -----
 
 solid
-1 0.000000 172.250000 out
+1 0.000000 173.250000 out
+solid
+0 0.000000 173.500000 hedge
 solid
 0 0.000000 172.500000 hedge
 solid
@@ -904,4 +908,4 @@ solid
 solid
 0 0.000000 0.500000 hedge
 solid
-0.000000 173.000000 0.500000 vedge
+0.000000 174.000000 0.500000 vedge

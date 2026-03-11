@@ -889,7 +889,12 @@ var NAVTREE =
       [ "Functions", "md_cmake-build-debug_2__deps_2googletest-src_2docs_2reference_2testing.html#autotoc_md787", null ]
     ] ],
     [ "Googletest Samples", "md_cmake-build-debug_2__deps_2googletest-src_2docs_2samples.html", null ],
-    [ "GB_Emulator", "md_README.html", null ],
+    [ "GB_Emulator", "md_README.html", [
+      [ "Current Status (March 2026)", "md_README.html#autotoc_md831", null ],
+      [ "Project Structure", "md_README.html#autotoc_md832", null ],
+      [ "Build &amp; Run", "md_README.html#autotoc_md833", null ],
+      [ "Testing", "md_README.html#autotoc_md834", null ]
+    ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -902,8 +907,8 @@ var NAVTREE =
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
-        [ "Functions", "functions_func.html", null ]
+        [ "All", "functions.html", "functions_dup" ],
+        [ "Functions", "functions_func.html", "functions_func" ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -915,12 +920,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "ProcessingUnit_8hpp_source.html",
-"classgoogletest-failfast-unittest_1_1GTestFailFastUnitTest.html#a12a0beb72ce295934db5173a9617841e",
-"classtesting_1_1DefaultValue.html",
-"dir_2f3faa652fe60d38b25c53dacef2a534.html",
-"md_build_2__deps_2googletest-src_2docs_2gmock__cook__book.html#autotoc_md177",
-"md_build_2__deps_2googletest-src_2docs_2reference_2testing.html#autotoc_md334",
-"md_cmake-build-debug_2__deps_2googletest-src_2docs_2primer.html#autotoc_md644"
+"classgoogletest-failfast-unittest_1_1GTestFailFastUnitTest.html#a0515f7a0c39cfddc511b7829c13b375f",
+"classtesting_1_1CodeLocationForTESTP.html",
+"dir_1d775d305344cfd1bbc62e0179de2c96.html",
+"md_build_2__deps_2googletest-src_2docs_2gmock__cook__book.html#autotoc_md153",
+"md_build_2__deps_2googletest-src_2docs_2reference_2testing.html#autotoc_md310",
+"md_cmake-build-debug_2__deps_2googletest-src_2docs_2gmock__for__dummies.html#autotoc_md617",
+"structtesting_1_1internal_1_1WithArgsAction.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';
