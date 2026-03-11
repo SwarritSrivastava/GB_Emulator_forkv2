@@ -13,7 +13,17 @@ int op_stop(ProcessingUnit& cpu, MMU& mmu) // 0x10
     return totalMachineCycles(1);
 }
 
-DUMMY(op_ld_de_d16) // 0x11
+int op_ld_de_d16(ProcessingUnit &cpu, MMU &mmu) // 0x11
+{
+    const u8 lo = mmu.read(cpu.inc_pc());
+    const u8 hi = mmu.read(cpu.inc_pc());
+
+    cpu.reg(ProcessingUnit::Register::D) = hi;
+    cpu.reg(ProcessingUnit::Register::E) = lo;
+
+    return totalMachineCycles(3);
+}
+
 DUMMY(op_ld_de_a) // 0x12
 DUMMY(op_inc_de) // 0x13
 DUMMY(op_inc_d) // 0x14
