@@ -128,7 +128,7 @@ int op_dec_bc(ProcessingUnit& cpu, MMU& mmu) // 0x0B
     return totalMachineCycles(2);
 }
 
-int op_inc_c(ProcessingUnit& cpu, MMU& mmu) // 0x04
+int op_inc_c(ProcessingUnit& cpu, MMU& mmu) // 0x0C
 {
     const u8 newValue = cpu.reg(ProcessingUnit::Register::C) + 1;
     cpu.reg(ProcessingUnit::Register::C) = newValue;
@@ -136,10 +136,34 @@ int op_inc_c(ProcessingUnit& cpu, MMU& mmu) // 0x04
     return totalMachineCycles(1);
 }
 
-int op_dec_c(ProcessingUnit& cpu, MMU& mmu) // 0x05
+int op_dec_c(ProcessingUnit& cpu, MMU& mmu) // 0x0D
 {
     const u8 newValue = cpu.reg(ProcessingUnit::Register::C) - 1;
     cpu.reg(ProcessingUnit::Register::C) = newValue;
+
+    return totalMachineCycles(1);
+}
+int op_ld_c_d8(ProcessingUnit& cpu, MMU& mmu) // 0x0E
+{
+    const u8 newValue = mmu.read(cpu.inc_pc());
+    cpu.reg(ProcessingUnit::Register::C) = newValue;
+
+    return totalMachineCycles(2);
+}
+
+int op_rrca(ProcessingUnit& cpu, MMU& mmu) // 0x0F
+{
+    const u8 a = cpu.reg(ProcessingUnit::Register::A);
+
+    const u8 carry = a & 1;
+    const u8 result = (a >> 1) | (carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::A) = result;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, false);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, carry);
 
     return totalMachineCycles(1);
 }
@@ -149,9 +173,6 @@ int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
     cpu.setHalt(true);
     return totalMachineCycles(1);
 }
-
-DUMMY(op_ld_c_d8) // 0x0E
-DUMMY(op_rrca) // 0x0F
 
 DUMMY(op_stop) // 0x10
 DUMMY(op_ld_de_d16) // 0x11

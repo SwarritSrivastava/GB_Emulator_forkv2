@@ -117,7 +117,7 @@ TEST_F(OpcodesCPUTest, LD_B_D8_LoadsImmediateIntoB)
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
 
-TEST_F(OpcodesCPUTest, RLCA_BITShiftsRegister)
+TEST_F(OpcodesCPUTest, RLCA_RotatesARegisterRight)
 {
     cpu.reg(ProcessingUnit::Register::A) = 0x79;
 
@@ -126,7 +126,9 @@ TEST_F(OpcodesCPUTest, RLCA_BITShiftsRegister)
     EXPECT_EQ(cycles, 4);
     EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::A)), 0xF2);
     EXPECT_EQ(cpu.get_flag_c(), 0x00);
-
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
     EXPECT_EQ(cpu.get_pc(), 0x100);
 }
 
@@ -234,4 +236,35 @@ TEST_F(OpcodesCPUTest, DEC_C_DecreasesRegisterPair)
     EXPECT_EQ(cpu.get_bc(), 0x1233); // BC should now be 0x1233
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x12);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x33);
+}
+
+TEST_F(OpcodesCPUTest, LD_C_D8_LoadsImmediateIntoC)
+{
+    EXPECT_EQ(cpu.get_pc(), 0x0100);
+
+    std::vector<u8> rom(0x200);
+    rom[0x100] = 0x77;
+    mmu.map_rom(rom);
+
+    const int cycles = op_ld_c_d8(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x77);
+    EXPECT_EQ(cpu.get_pc(), 0x0101);
+}
+
+TEST_F(OpcodesCPUTest, RRCA_RotatesARegisterRight)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x79;
+    const int cycles = op_rrca(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xBC);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+
+    EXPECT_EQ(cpu.get_pc(), 0x100);
 }
