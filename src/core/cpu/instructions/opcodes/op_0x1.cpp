@@ -7,7 +7,12 @@ constexpr int machine_cycles = 4;
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
-DUMMY(op_stop) // 0x10
+int op_stop(ProcessingUnit& cpu, MMU& mmu) // 0x10
+{
+    cpu.setStop(true);
+    return totalMachineCycles(1);
+}
+
 DUMMY(op_ld_de_d16) // 0x11
 DUMMY(op_ld_de_a) // 0x12
 DUMMY(op_inc_de) // 0x13

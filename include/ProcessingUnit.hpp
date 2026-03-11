@@ -83,4 +83,9 @@ public:
         if (value) F |= mask;   // set bit
         else F &= ~mask;  // clear bit
     }
+
+    bool stop{};
+
+    void setStop(const bool value) { stop = value; }
+    [[nodiscard]] bool isStop() const { return stop; }
 };
