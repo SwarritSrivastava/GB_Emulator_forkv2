@@ -1,5 +1,21 @@
 \doxysection{Processing\+Unit Class Reference}
 \hypertarget{classProcessingUnit}{}\label{classProcessingUnit}\index{ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{classProcessingUnit_af3210d732345cef08b6b81c7bed7256b}\label{classProcessingUnit_af3210d732345cef08b6b81c7bed7256b} 
+enum class {\bfseries Register} \{ \newline
+{\bfseries B}
+, {\bfseries C}
+, {\bfseries D}
+, {\bfseries E}
+, \newline
+{\bfseries H}
+, {\bfseries L}
+, {\bfseries A}
+, {\bfseries F}
+ \}
+\end{DoxyCompactItemize}
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -8,6 +24,9 @@ void {\bfseries reset} ()
 \item 
 \Hypertarget{classProcessingUnit_acf986523a07d7a8929e513465e240f4b}\label{classProcessingUnit_acf986523a07d7a8929e513465e240f4b} 
 void {\bfseries print\+Status} () const
+\item 
+\Hypertarget{classProcessingUnit_ae3293275dcaab0d90999cb986f5d4c68}\label{classProcessingUnit_ae3293275dcaab0d90999cb986f5d4c68} 
+u16 {\bfseries get\+\_\+pc} () const
 \item 
 \Hypertarget{classProcessingUnit_a8c43e3545db61bd8ff3423fc50ba3eda}\label{classProcessingUnit_a8c43e3545db61bd8ff3423fc50ba3eda} 
 u16 {\bfseries get\+\_\+bc} () const
@@ -33,12 +52,27 @@ bool {\bfseries get\+\_\+flag\+\_\+h} () const
 \Hypertarget{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4}\label{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4} 
 bool {\bfseries get\+\_\+flag\+\_\+c} () const
 \item 
+\Hypertarget{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a}\label{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a} 
+int {\bfseries step} (\doxymbox{\hyperlink{classMMU}{MMU}} \&mmu)
+\item 
+\Hypertarget{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737}\label{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737} 
+void {\bfseries set\+Halt} (bool new\+Value)
+\item 
 \Hypertarget{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee}\label{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee} 
 bool {\bfseries is\+Halt} () const
+\item 
+\Hypertarget{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed}\label{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed} 
+u8 \& {\bfseries reg} (Register r)
+\item 
+\Hypertarget{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad}\label{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad} 
+const u8 \& {\bfseries reg} (Register r) const
+\item 
+\Hypertarget{classProcessingUnit_aac98159ed863ce2db0888167232b9693}\label{classProcessingUnit_aac98159ed863ce2db0888167232b9693} 
+u16 {\bfseries inc\+\_\+pc} ()
 \end{DoxyCompactItemize}
 
 
 The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
 \item 
 include/\+Processing\+Unit.\+hpp\item 
-src/\+core/\+Processing\+Unit.\+cpp\end{DoxyCompactItemize}
+src/\+core/\+cpu/\+Processing\+Unit.\+cpp\end{DoxyCompactItemize}

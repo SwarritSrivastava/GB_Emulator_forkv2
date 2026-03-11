@@ -3,15 +3,73 @@
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{classMMU_a47a51c09f87a14a9c717cc11d0d95e7e}\label{classMMU_a47a51c09f87a14a9c717cc11d0d95e7e} 
-u8 {\bfseries read} (u16 address)
-\item 
-\Hypertarget{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}\label{classMMU_a5df9ab9c4ac566decef576fc819ad4a1} 
-void {\bfseries write} (u16 address, u8 value)
-\end{DoxyCompactItemize}
+bool \doxymbox{\hyperlink{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9}{map\+\_\+rom}} (const std::\+vector$<$ u8 $>$ \&rom\+\_\+data)
+\begin{DoxyCompactList}\small\item\em Maps a loaded ROM vector into the Game Boy\textquotesingle{}s physical ROM space. \end{DoxyCompactList}\item 
+u8 \doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}} (u16 address) const
+\begin{DoxyCompactList}\small\item\em Reads a single byte from the emulated memory bus. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}} (u16 address, u8 value)
+\begin{DoxyCompactList}\small\item\em Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the physical ROM. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{classMMU_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9}\index{MMU@{MMU}!map\_rom@{map\_rom}}
+\index{map\_rom@{map\_rom}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{map\_rom()}{map\_rom()}}
+{\footnotesize\ttfamily \label{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9} 
+bool MMU::\+map\+\_\+rom (\begin{DoxyParamCaption}\item[{const std::\+vector$<$ u8 $>$ \&}]{rom\+\_\+data}{}\end{DoxyParamCaption})}
+
+
+
+Maps a loaded ROM vector into the Game Boy\textquotesingle{}s physical ROM space. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rom\+\_\+data} & A vector containing the raw bytes of the .gb file. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if successfully mapped, false if the vector was empty. 
+\end{DoxyReturn}
+\Hypertarget{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}\index{MMU@{MMU}!read@{read}}
+\index{read@{read}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7} 
+u8 MMU::\+read (\begin{DoxyParamCaption}\item[{u16}]{address}{}\end{DoxyParamCaption}) const}
+
+
+
+Reads a single byte from the emulated memory bus. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em address} & The 16-\/bit memory address to read from. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The 8-\/bit value at the specified address. 
+\end{DoxyReturn}
+\Hypertarget{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}\index{MMU@{MMU}!write@{write}}
+\index{write@{write}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily \label{classMMU_a5df9ab9c4ac566decef576fc819ad4a1} 
+void MMU::\+write (\begin{DoxyParamCaption}\item[{u16}]{address}{, }\item[{u8}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the physical ROM. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em address} & The 16-\/bit memory address to write to. \\
+\hline
+{\em value} & The 8-\/bit value to store. \\
+\hline
+\end{DoxyParams}
 
 
 The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
 \item 
 include/\+mmu.\+hpp\item 
-src/\+core/\+mmu.\+cpp\end{DoxyCompactItemize}
+src/\+core/\+memory/\+mmu.\+cpp\end{DoxyCompactItemize}

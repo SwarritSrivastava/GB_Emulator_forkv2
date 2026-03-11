@@ -10,18 +10,19 @@
 \DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <fstream>}}
 \DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <vector>}}
 \DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <iomanip>}}
-\DoxyCodeLine{00009\ }
-\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ uint8\_t\ u8;}
-\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ uint16\_t\ u16;}
-\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ uint32\_t\ u32;}
-\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ uint64\_t\ u64;}
-\DoxyCodeLine{00014\ }
-\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ BIT(a,\ n)\ ((a\ \&\ (1\ <<\ n))\ ?\ 1\ :\ 0)}}
-\DoxyCodeLine{00016\ }
-\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ BIT\_SET(a,\ n,\ on)\ (on\ ?\ (a)\ |=\ (1\ <<\ n)\ :\ (a)\ \&=\ \string~(1\ <<\ n))}}
-\DoxyCodeLine{00018\ }
-\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ BETWEEN(a,\ b,\ c)\ ((a\ >=\ b)\ \&\&\ (a\ <=\ c))}}
-\DoxyCodeLine{00020\ }
-\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ delay(u32\ ms);}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{typedef}\ uint8\_t\ u8;}
+\DoxyCodeLine{00012\ \textcolor{keyword}{typedef}\ uint16\_t\ u16;}
+\DoxyCodeLine{00013\ \textcolor{keyword}{typedef}\ uint32\_t\ u32;}
+\DoxyCodeLine{00014\ \textcolor{keyword}{typedef}\ uint64\_t\ u64;}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ BIT(a,\ n)\ ((a\ \&\ (1\ <<\ n))\ ?\ 1\ :\ 0)}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ BIT\_SET(a,\ n,\ on)\ (on\ ?\ (a)\ |=\ (1\ <<\ n)\ :\ (a)\ \&=\ \string~(1\ <<\ n))}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ BETWEEN(a,\ b,\ c)\ ((a\ >=\ b)\ \&\&\ (a\ <=\ c))}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ delay(u32\ ms);}
 
 \end{DoxyCode}

@@ -93,19 +93,30 @@ $(function(){initNavTree('mmu_8hpp_source.html','',''); });
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="foldopen" id="foldopen00004" data-start="{" data-end="};">
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno"><a class="line" href="classMMU.html">    4</a></span><span class="keyword">class </span>MMU {</div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>        u8 memory[0x10000];</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>        MMU();</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        u8 read(u16 address);</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>        <span class="keywordtype">void</span> write(u16 address, u8 value);</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>};</div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="classMMU.html">    6</a></span><span class="keyword">class </span>MMU {</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>        u8 memory[0x10000]; <span class="comment">// old flat memory array, will be phased out eventually</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>        <span class="comment">// 8KB wram chip init to 0</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        std::array&lt;u8, 0x2000&gt; wram{}; <span class="comment">// (0xC000 - 0xDFFF)</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">public</span>:</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        MMU();</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keywordtype">bool</span> <a class="code hl_function" href="classMMU.html#a4a7b8a9bb3d11a612b7c9ec6e5bef7d9">map_rom</a>(<span class="keyword">const</span> std::vector&lt;u8&gt;&amp; rom_data);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        u8 <a class="code hl_function" href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a>(u16 address) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="classMMU.html#a5df9ab9c4ac566decef576fc819ad4a1">write</a>(u16 address, u8 value);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>};</div>
 </div>
+<div class="ttc" id="aclassMMU_html_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9"><div class="ttname"><a href="classMMU.html#a4a7b8a9bb3d11a612b7c9ec6e5bef7d9">MMU::map_rom</a></div><div class="ttdeci">bool map_rom(const std::vector&lt; u8 &gt; &amp;rom_data)</div><div class="ttdoc">Maps a loaded ROM vector into the Game Boy&#39;s physical ROM space.</div><div class="ttdef"><b>Definition</b> mmu.cpp:35</div></div>
+<div class="ttc" id="aclassMMU_html_a5df9ab9c4ac566decef576fc819ad4a1"><div class="ttname"><a href="classMMU.html#a5df9ab9c4ac566decef576fc819ad4a1">MMU::write</a></div><div class="ttdeci">void write(u16 address, u8 value)</div><div class="ttdoc">Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the p...</div><div class="ttdef"><b>Definition</b> mmu.cpp:20</div></div>
+<div class="ttc" id="aclassMMU_html_ac3dbb6955cd9e630ab8c6b5f184d31b7"><div class="ttname"><a href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">MMU::read</a></div><div class="ttdeci">u8 read(u16 address) const</div><div class="ttdoc">Reads a single byte from the emulated memory bus.</div><div class="ttdef"><b>Definition</b> mmu.cpp:11</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

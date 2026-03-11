@@ -92,11 +92,134 @@ $(function(){initNavTree('md_README.html','',''); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="autotoc_md830"></a></p>
-<p>Game Boy Emulator - COPS 26 Project</p>
-<p>Model DMG-01 {dot-matrix-gmae} </p>
+<p><b>Game Boy (DMG-01) Emulator</b> – COPS 26 Project</p>
+<p>Early-stage emulator for the original Game Boy (Dot-Matrix Game – DMG-01).</p>
+<p>Currently focused on <b>accurate CPU core</b> and <b>basic <a class="el" href="classMMU.html">MMU</a> / cartridge handling</b>.</p>
+<p><img src="https://placehold.co/480x432/EEE/31343C?text=Game+Boy+DMG-01" alt="Game Boy DMG-01" class="inline"/> <br  />
+ <em>(classic gray brick – the real hardware this project aims to emulate)</em></p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md831"></a>
+Current Status (March 2026)</h1>
+<p><b>What works reasonably well:</b></p>
+<ul>
+<li>Z80-like CPU core (Sharp LR35902)<ul>
+<li>Most 8-bit &amp; 16-bit instructions implemented (via <span class="tt">opcodes.cpp</span> + <span class="tt">cb_opcodes.cpp</span>)</li>
+<li>CB-prefixed opcodes table</li>
+<li>Correct reset state (AF=01B0h, BC=0013h, DE=00D8h, HL=014Dh, SP=FFFEh, PC=0100h)</li>
+<li>Basic cycle-accurate stepping (PC increments, NOPs, HALT behavior)</li>
+<li>Unknown opcode handling (graceful fallback)</li>
+</ul>
+</li>
+<li><a class="el" href="classMMU.html">MMU</a> / Memory Map<ul>
+<li>ROM loading &amp; mapping (fixed bank 0 + switchable banks not yet)</li>
+<li>Cartridge header parsing (title, MBC type, ROM/RAM size, checksum)</li>
+<li>WRAM (C000–DFFF), basic echo RAM behavior</li>
+<li>Read-only ROM protection</li>
+<li>Zero-initialized memory on startup</li>
+</ul>
+</li>
+<li>Very basic execution loop<ul>
+<li>Loads &amp; runs ROM until stopped (currently limited instructions executed)</li>
+<li>Prints CPU state after reset</li>
+</ul>
+</li>
+</ul>
+<p><b>What is NOT implemented yet:</b></p>
+<ul>
+<li>PPU / rendering (no screen output)</li>
+<li>Timer, DMA, interrupts (IME, vblank, joypad, etc.)</li>
+<li>Sound</li>
+<li>Input (joypad)</li>
+<li>MBC1/MBC3/... bank switching (only basic ROM mapping)</li>
+<li>Proper frame timing &amp; synchronization</li>
+<li>Save RAM (external cartridge RAM)</li>
+<li>Display window / SDL / graphics backend</li>
+</ul>
+<p><b>Tested ROMs (so far):</b></p>
+<ul>
+<li>Pokémon Red (executes ~2400 instructions after reset)</li>
+<li>Tetris 2 (executes ~140 instructions after reset)</li>
+</ul>
+<p>Both ROMs pass header check &amp; basic mapping, but obviously stop very early (no graphics/input).</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md832"></a>
+Project Structure</h1>
+<div class="fragment"><div class="line">GB_Emulator/</div>
+<div class="line">├── include/              → public headers</div>
+<div class="line">│   ├── cartridge.hpp</div>
+<div class="line">│   ├── mmu.hpp</div>
+<div class="line">│   ├── ProcessingUnit.hpp   ← main CPU class</div>
+<div class="line">│   └── ...</div>
+<div class="line">├── src/</div>
+<div class="line">│   ├── core/</div>
+<div class="line">│   │   ├── cpu/          ← CPU emulation heart</div>
+<div class="line">│   │   └── memory/       ← MMU</div>
+<div class="line">│   ├── display/          ← future rendering stub (port.cpp)</div>
+<div class="line">│   └── main.cpp</div>
+<div class="line">├── tests/                → unit tests (GoogleTest)</div>
+<div class="line">│   ├── mmu_tests.cpp</div>
+<div class="line">│   └── ProcessingUnitTest.cpp</div>
+<div class="line">├── roms/                 → test ROMs</div>
+<div class="line">├── utility_scripts/      → quality-of-life scripts</div>
+<div class="line">│   ├── build_and_test.sh</div>
+<div class="line">│   ├── build_and_run.sh</div>
+<div class="line">│   ├── run_game.sh</div>
+<div class="line">│   └── valgrind_tests.sh   ← memory leak checking</div>
+<div class="line">├── documentation/        → Doxygen config</div>
+<div class="line">├── CMakeLists.txt</div>
+<div class="line">└── vcpkg.json            → dependency management</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md833"></a>
+Build &amp; Run</h1>
+<div class="fragment"><div class="line">Bash# Build + run unit tests</div>
+<div class="line">./utility_scripts/build_and_test.sh</div>
+<div class="line"> </div>
+<div class="line"># Build + run Pokémon Red (or edit script for other ROM)</div>
+<div class="line">./utility_scripts/build_and_run.sh</div>
+<div class="line"> </div>
+<div class="line"># Just run a ROM (after building)</div>
+<div class="line">./utility_scripts/run_game.sh</div>
+<div class="line"> </div>
+<div class="line"># Run valgrind leak check (requires sudo on some systems)</div>
+<div class="line">sudo ./utility_scripts/valgrind_tests.sh</div>
+</div><!-- fragment --><p> Typical output when launching a game: </p><div class="fragment"><div class="line">ROM Size: 1024K</div>
+<div class="line">Title:  POKEMON RED</div>
+<div class="line">Type:  0x13    ROM: 0x5    RAM: 0x3</div>
+<div class="line">Header OK</div>
+<div class="line"> </div>
+<div class="line">ROM successfully mapped to <a class="code hl_class" href="classMMU.html">MMU</a> memory ...</div>
+<div class="line"> </div>
+<div class="line">Initial State (Post-Reset):</div>
+<div class="line">AF: 01B0    BC: 0013    DE: 00D8    HL: 014D</div>
+<div class="line">SP: FFFE    PC: 0100</div>
+<div class="line">Flags: Z - H C    [IME:0  HALT:0]</div>
+<div class="line"> </div>
+<div class="line">Success!</div>
+<div class="line">2399 instructions executed</div>
+<div class="ttc" id="aclassMMU_html"><div class="ttname"><a href="classMMU.html">MMU</a></div><div class="ttdef"><b>Definition</b> mmu.hpp:6</div></div>
+</div><!-- fragment --><p> All 14 unit tests currently pass:</p>
+<p>CPU reset values, HALT, PC stepping, unknown opcodes, <a class="el" href="classMMU.html">MMU</a> zero-init, write protection, ROM mapping ...</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md834"></a>
+Testing</h1>
+<blockquote class="doxtable">
+<p>Unit tests → GoogleTest (CPU reset state, instruction stepping, <a class="el" href="classMMU.html">MMU</a> read/write/aliasing, ROM mapping edge cases) </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>100% pass rate on current suite (~14 tests) </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>Valgrind → no leaks detected on short runs </p>
+</blockquote>
+<blockquote class="doxtable">
+<p>Doxygen → documentation generation (run doxygen DoxygenConfig in documentation/) </p>
+</blockquote>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 </div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
 </div><!-- container -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

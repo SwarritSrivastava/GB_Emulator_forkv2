@@ -542,6 +542,7 @@ var hierarchy =
         [ "ParameterizedDerivedTest", "classParameterizedDerivedTest.html", null ]
       ] ],
       [ "NonParameterizedBaseTest", "classNonParameterizedBaseTest.html", null ],
+      [ "OpcodesCPUTest", "classOpcodesCPUTest.html", null ],
       [ "Predicate1Test", "classPredicate1Test.html", null ],
       [ "Predicate1Test", "classPredicate1Test.html", null ],
       [ "Predicate2Test", "classPredicate2Test.html", null ],

@@ -2,11 +2,11 @@
 \hypertarget{ProcessingUnit_8hpp_source}{}\label{ProcessingUnit_8hpp_source}\index{include/ProcessingUnit.hpp@{include/ProcessingUnit.hpp}}
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{00001\ \textcolor{comment}{//}}
-\DoxyCodeLine{00002\ \textcolor{comment}{//\ Created\ by\ wizard\ on\ 25/02/26.}}
-\DoxyCodeLine{00003\ \textcolor{comment}{//}}
-\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#pragma\ once}}
-\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{classMMU}{MMU}};}
 \DoxyCodeLine{00006\ }
 \DoxyCodeLine{00007\ \textcolor{keyword}{class\ }ProcessingUnit\{}
 \DoxyCodeLine{00008\ \textcolor{keyword}{private}:}
@@ -14,35 +14,54 @@
 \DoxyCodeLine{00010\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ 16-\/bit\ Registers\ \ \ \ \ \ \ \ \ */}}
 \DoxyCodeLine{00011\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
 \DoxyCodeLine{00012\ \ \ \ \ \textcolor{comment}{//\ Hi\ Lo\ \ \ \ \ \ \ Name/Function}}
-\DoxyCodeLine{00013\ \ \ \ \ u8\ A,\ F;\ \ \ \textcolor{comment}{//\ Accumulator\ \&\ Flags}}
-\DoxyCodeLine{00014\ \ \ \ \ u8\ B,\ C;\ \ \ \textcolor{comment}{//\ BC}}
-\DoxyCodeLine{00015\ \ \ \ \ u8\ D,\ E;\ \ \ \textcolor{comment}{//\ DE}}
-\DoxyCodeLine{00016\ \ \ \ \ u8\ H,\ L;\ \ \ \textcolor{comment}{//\ HL}}
+\DoxyCodeLine{00013\ \ \ \ \ u8\ A\{\},\ F\{\};\ \ \ \textcolor{comment}{//\ Accumulator\ \&\ Flags}}
+\DoxyCodeLine{00014\ \ \ \ \ u8\ B\{\},\ C\{\};\ \ \ \textcolor{comment}{//\ BC}}
+\DoxyCodeLine{00015\ \ \ \ \ u8\ D\{\},\ E\{\};\ \ \ \textcolor{comment}{//\ DE}}
+\DoxyCodeLine{00016\ \ \ \ \ u8\ H\{\},\ L\{\};\ \ \ \textcolor{comment}{//\ HL}}
 \DoxyCodeLine{00017\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{00018\ \ \ \ \ u16\ SP;\ \ \ \ \textcolor{comment}{//\ Stack\ Pointer}}
-\DoxyCodeLine{00019\ \ \ \ \ u16\ PC;\ \ \ \ \textcolor{comment}{//\ Program\ Counter}}
+\DoxyCodeLine{00018\ \ \ \ \ u16\ SP\{\};\ \ \ \ \textcolor{comment}{//\ Stack\ Pointer}}
+\DoxyCodeLine{00019\ \ \ \ \ u16\ PC\{\};\ \ \ \ \textcolor{comment}{//\ Program\ Counter}}
 \DoxyCodeLine{00020\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{bool}\ IME;\ \ \textcolor{comment}{//\ Interrupt\ Master\ Enable}}
-\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{bool}\ halt;\ \textcolor{comment}{//\ HALT\ State\ \{\ When\ CPU\ paused,\ waiting\ for\ interrupt\}}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{bool}\ IME\{\};\ \ \textcolor{comment}{//\ Interrupt\ Master\ Enable}}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{bool}\ halt\{\};\ \textcolor{comment}{//\ HALT\ State\ \{\ When\ CPU\ paused,\ waiting\ for\ interrupt\}}}
 \DoxyCodeLine{00023\ }
 \DoxyCodeLine{00024\ \textcolor{keyword}{public}:}
 \DoxyCodeLine{00025\ \ \ \ \ ProcessingUnit();}
 \DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
 \DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{void}\ printStatus()\ \textcolor{keyword}{const};\ \textcolor{comment}{//\ print\ task}}
-\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00028\ \ \ \ \ [[nodiscard]]\ u16\ get\_pc()\ \textcolor{keyword}{const};}
 \DoxyCodeLine{00029\ \ \ \ \ \textcolor{comment}{//\ Getting\ Full\ 16bit\ Register\ Values}}
-\DoxyCodeLine{00030\ \ \ \ \ u16\ get\_bc()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (B\ <<\ 8)\ |\ C;\ \}}
-\DoxyCodeLine{00031\ \ \ \ \ u16\ get\_de()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (D\ <<\ 8)\ |\ E;\ \}}
-\DoxyCodeLine{00032\ \ \ \ \ u16\ get\_hl()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (H\ <<\ 8)\ |\ L;\ \}}
-\DoxyCodeLine{00033\ \ \ \ \ u16\ get\_af()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (A\ <<\ 8)\ |\ F;\ \}}
+\DoxyCodeLine{00030\ \ \ \ \ [[nodiscard]]\ u16\ get\_bc()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (B\ <<\ 8)\ |\ C;\ \}}
+\DoxyCodeLine{00031\ \ \ \ \ [[nodiscard]]\ u16\ get\_de()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (D\ <<\ 8)\ |\ E;\ \}}
+\DoxyCodeLine{00032\ \ \ \ \ [[nodiscard]]\ u16\ get\_hl()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (H\ <<\ 8)\ |\ L;\ \}}
+\DoxyCodeLine{00033\ \ \ \ \ [[nodiscard]]\ u16\ get\_af()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (A\ <<\ 8)\ |\ F;\ \}}
 \DoxyCodeLine{00034\ }
 \DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{//\ Flag\ Helpers\ (Bit\ positions:\ Z=7,\ N=6,\ H=5,\ C=4)}}
-\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{bool}\ get\_flag\_z()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 7)\ \&\ 1;\ \}}
-\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{bool}\ get\_flag\_n()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 6)\ \&\ 1;\ \}}
-\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{bool}\ get\_flag\_h()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 5)\ \&\ 1;\ \}}
-\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{bool}\ get\_flag\_c()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 4)\ \&\ 1;\ \}}
+\DoxyCodeLine{00036\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ get\_flag\_z()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 7)\ \&\ 1;\ \}}
+\DoxyCodeLine{00037\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ get\_flag\_n()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 6)\ \&\ 1;\ \}}
+\DoxyCodeLine{00038\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ get\_flag\_h()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 5)\ \&\ 1;\ \}}
+\DoxyCodeLine{00039\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ get\_flag\_c()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ (F\ >>\ 4)\ \&\ 1;\ \}}
 \DoxyCodeLine{00040\ }
-\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{bool}\ isHalt()\ \textcolor{keyword}{const};}
-\DoxyCodeLine{00042\ \};}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{int}\ step(\doxymbox{\hyperlink{classMMU}{MMU}}\ \&mmu);}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ setHalt(\textcolor{keywordtype}{bool}\ newValue);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ isHalt()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00048\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ Register\ Identifiers\ \ \ \ \ \ */}}
+\DoxyCodeLine{00049\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Register\ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ B,\ C,\ D,\ E,\ H,\ L,\ A,\ F}
+\DoxyCodeLine{00052\ \ \ \ \ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00055\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ Register\ Access\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00056\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{00057\ \ \ \ \ u8\&\ reg(Register\ r);}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keyword}{const}\ u8\&\ reg(Register\ r)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ u16\ inc\_pc();}
+\DoxyCodeLine{00061\ \};}
 
 \end{DoxyCode}
