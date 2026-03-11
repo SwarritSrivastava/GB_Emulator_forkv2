@@ -109,18 +109,50 @@ int op_add_hl_bc(ProcessingUnit& cpu, MMU& mmu) // 0x09
     return totalMachineCycles(2);
 }
 
+int op_ld_a_bc(ProcessingUnit& cpu, MMU& mmu) // 0x0A
+{
+    const u16 addr = cpu.get_bc();
+    cpu.reg(ProcessingUnit::Register::A) = mmu.read(addr);
+
+    return totalMachineCycles(2);
+}
+
+int op_dec_bc(ProcessingUnit& cpu, MMU& mmu) // 0x0B
+{
+    u16 bc = cpu.get_bc();
+    bc--;
+
+    cpu.reg(ProcessingUnit::Register::B) = bc >> 8;
+    cpu.reg(ProcessingUnit::Register::C) = bc & 0xFF;
+
+    return totalMachineCycles(2);
+}
+
+int op_inc_c(ProcessingUnit& cpu, MMU& mmu) // 0x04
+{
+    const u8 newValue = cpu.reg(ProcessingUnit::Register::C) + 1;
+    cpu.reg(ProcessingUnit::Register::C) = newValue;
+
+    return totalMachineCycles(1);
+}
+
+int op_dec_c(ProcessingUnit& cpu, MMU& mmu) // 0x05
+{
+    const u8 newValue = cpu.reg(ProcessingUnit::Register::C) - 1;
+    cpu.reg(ProcessingUnit::Register::C) = newValue;
+
+    return totalMachineCycles(1);
+}
+
 int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
 {
     cpu.setHalt(true);
     return totalMachineCycles(1);
 }
 
-DUMMY(op_ld_a_bc) // 0x0A
-DUMMY(op_dec_bc) // 0x0B
-DUMMY(op_inc_c) // 0x0C
-DUMMY(op_dec_c) // 0x0D
 DUMMY(op_ld_c_d8) // 0x0E
 DUMMY(op_rrca) // 0x0F
+
 DUMMY(op_stop) // 0x10
 DUMMY(op_ld_de_d16) // 0x11
 DUMMY(op_ld_de_a) // 0x12

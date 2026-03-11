@@ -173,5 +173,65 @@ TEST_F(OpcodesCPUTest, ADD_HL_BC_AddsRegisterPair)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0x13);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x35);
 
-    EXPECT_EQ(pc, 0x0100);
+    EXPECT_EQ(cpu.get_pc(), 0x0100);
+}
+
+TEST_F(OpcodesCPUTest, LD_A_BC_LoadsMemoryIntoA)
+{
+    cpu.reg(ProcessingUnit::Register::B) = 0xA0;
+    cpu.reg(ProcessingUnit::Register::C) = 0x00;
+
+    // Write value to memory
+    mmu.write(0xA000, 0x77);
+
+    const int cycles = op_ld_a_bc(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x77);
+
+    EXPECT_EQ(cpu.get_bc(), 0xA000);
+    EXPECT_EQ(cpu.get_pc(), 0x100);
+}
+
+TEST_F(OpcodesCPUTest, DEC_BC_DecreasesRegisterPair)
+{
+    // BC = 0x0000
+    cpu.reg(ProcessingUnit::Register::B) = 0x00;
+    cpu.reg(ProcessingUnit::Register::C) = 0x00;
+
+    const int cycles = op_dec_bc(cpu, mmu);
+    // BC = 0xFFFF
+    EXPECT_EQ(cycles, 8);
+
+    EXPECT_EQ(cpu.get_bc(), 0xFFFF); // BC should now be 0x1235
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0xFF);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0xFF);
+}
+
+TEST_F(OpcodesCPUTest, INC_C_IncrementsRegisterPair)
+{
+    cpu.reg(ProcessingUnit::Register::B) = 0x12;
+    cpu.reg(ProcessingUnit::Register::C) = 0x34;
+
+    const int cycles = op_inc_c(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+
+    EXPECT_EQ(cpu.get_bc(), 0x1235); // BC should now be 0x1235
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x12);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x35);
+}
+
+TEST_F(OpcodesCPUTest, DEC_C_DecreasesRegisterPair)
+{
+    cpu.reg(ProcessingUnit::Register::B) = 0x12;
+    cpu.reg(ProcessingUnit::Register::C) = 0x34;
+
+    const int cycles = op_dec_c(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+
+    EXPECT_EQ(cpu.get_bc(), 0x1233); // BC should now be 0x1233
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x12);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x33);
 }
