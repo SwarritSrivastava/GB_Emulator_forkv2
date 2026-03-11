@@ -116,3 +116,16 @@ TEST_F(OpcodesCPUTest, LD_B_D8_LoadsImmediateIntoB)
     // PC should advance by 2
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
+
+TEST_F(OpcodesCPUTest, RLCA_BITShiftsRegister)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x79;
+
+    const int cycles = op_rlca(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::A)), 0xF2);
+    EXPECT_EQ(cpu.get_flag_c(), 0x00);
+
+    EXPECT_EQ(cpu.get_pc(), 0x100);
+}

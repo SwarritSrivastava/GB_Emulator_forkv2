@@ -1,5 +1,5 @@
 # GB_Emulator
-**Game Boy (DMG-01) Emulator** – COPS 26 Project
+**Game Boy (DMG-01) Emulator**
 
 Early-stage emulator for the original Game Boy (Dot-Matrix Game – DMG-01).
 

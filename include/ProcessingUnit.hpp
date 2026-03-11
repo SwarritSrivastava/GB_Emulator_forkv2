@@ -50,12 +50,36 @@ public:
     enum class Register {
         B, C, D, E, H, L, A, F
     };
-
+/* -------------------------------- */
+/*              Flags               */
+/* -------------------------------- */
+    enum class Flag {
+        Z = 7,
+        N = 6,
+        H = 5,
+        C = 4
+    };
 /* -------------------------------- */
 /*         Register Access          */
 /* -------------------------------- */
     u8& reg(Register r);
-    const u8& reg(Register r) const;
+    [[nodiscard]] const u8& reg(Register r) const;
 
     u16 inc_pc();
+/* -------------------------------- */
+/*           FLAGS Access           */
+/* -------------------------------- */
+    void clearFlags() {
+        F = 0;
+    }
+    void normalizeFlags()
+    {
+        F &= 0xF0;
+    }
+    void setFlag(Flag flag, bool value)
+    {
+        const u8 mask = 1 << static_cast<int>(flag);
+        if (value) F |= mask;   // set bit
+        else F &= ~mask;  // clear bit
+    }
 };
