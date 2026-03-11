@@ -58,12 +58,19 @@ int ProcessingUnit::step(MMU &mmu)
     return instructionTable[opcode](*this, mmu);
 }
 
-bool ProcessingUnit::isHalt() const{
+bool ProcessingUnit::isHalt() const
+{
     return halt;
 }
 
-u16 ProcessingUnit::get_pc() const {
+u16 ProcessingUnit::get_pc() const
+{
     return PC;
+}
+
+u16 ProcessingUnit::get_sp() const
+{
+    return SP;
 }
 
 void ProcessingUnit::setHalt(const bool newValue) {

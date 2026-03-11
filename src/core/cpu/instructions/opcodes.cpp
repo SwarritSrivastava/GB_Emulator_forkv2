@@ -86,13 +86,24 @@ int op_rlca(ProcessingUnit& cpu, MMU& mmu) // 0x07
     return totalMachineCycles(1);
 }
 
+int op_ld_a16_sp(ProcessingUnit& cpu, MMU& mmu) // 0x08
+{
+    const u8 lo = mmu.read(cpu.inc_pc());
+    const u8 hi = mmu.read(cpu.inc_pc());
+
+    const u16 addr = (hi << 8) | lo;
+
+    mmu.write(addr, cpu.get_sp() & 0xFF);
+    mmu.write(addr + 1, cpu.get_sp() >> 8);
+    return totalMachineCycles(5);
+}
+
 int op_halt(ProcessingUnit &cpu, MMU &mmu) // 0x76
 {
     cpu.setHalt(true);
     return totalMachineCycles(1);
 }
 
-DUMMY(op_ld_a16_sp) // 0x08
 DUMMY(op_add_hl_bc) // 0x09
 DUMMY(op_ld_a_bc) // 0x0A
 DUMMY(op_dec_bc) // 0x0B

@@ -129,3 +129,24 @@ TEST_F(OpcodesCPUTest, RLCA_BITShiftsRegister)
 
     EXPECT_EQ(cpu.get_pc(), 0x100);
 }
+
+TEST_F(OpcodesCPUTest, LD_A16_SP_StoresStackPointerInMemory)
+{
+    const u16 pc = cpu.get_pc();
+    EXPECT_EQ(pc, 0x0100);
+
+    std::vector<u8> rom(0x200);
+    rom[0x100] = 0x00; // low byte
+    rom[0x101] = 0xC1; // high byte
+    mmu.map_rom(rom);
+
+    const int cycles = op_ld_a16_sp(cpu, mmu);
+
+    EXPECT_EQ(cycles, 20);
+    EXPECT_EQ(mmu.read(0xC100), 0xFE); // SP low
+    EXPECT_EQ(mmu.read(0xC101), 0xFF); // SP high
+
+    EXPECT_EQ(cpu.get_sp(), 0xFFFE);
+
+    EXPECT_EQ(cpu.get_pc(), 0x0102);
+}
