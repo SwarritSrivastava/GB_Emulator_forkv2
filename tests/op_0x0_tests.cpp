@@ -9,30 +9,35 @@ protected:
     MMU mmu;
 };
 
+TEST_F(OpcodesCPUTest, NO_OPERATION)
+{
+    EXPECT_EQ(cpu.get_pc(), 0x0100);
+
+    const int cycles = op_nop(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.get_bc(), 0x0013);
+    EXPECT_EQ(cpu.get_de(), 0x00D8);
+    EXPECT_EQ(cpu.get_hl(), 0x014D);
+}
+
 TEST_F(OpcodesCPUTest, LD_BC_D16_LoadsImmediateIntoBC)
 {
-    const u16 pc = cpu.get_pc();
-    EXPECT_EQ(pc, 0x0100);
+    EXPECT_EQ(cpu.get_pc(), 0x0100);
 
     // Write immediate value 0x1234 (little endian)
-    std::vector<u8> rom(0x200); // small fake ROM
+    std::vector<u8> rom(0x200);
     rom[0x100] = 0x34;
     rom[0x101] = 0x12;
-
     mmu.map_rom(rom);
+
     const int cycles = op_ld_bc_d16(cpu, mmu);
 
-    // Check returned cycle count
+    // PC should advance by 2
     EXPECT_EQ(cycles, 12);
-
-    // Check BC register value
     EXPECT_EQ(cpu.get_bc(), 0x1234);
-
-    // Check individual registers
     EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::B)), 0x12);
     EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::C)), 0x34);
-
-    // PC should advance by 2
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
 
@@ -46,7 +51,7 @@ TEST_F(OpcodesCPUTest, LD_BC_A_StoresAIntoMemory)
     const int cycles = op_ld_bc_a(cpu, mmu);
     EXPECT_EQ(cycles, 8); // Verify cycle count
 
-    EXPECT_EQ(mmu.read(0xC000), 0x42); // Verify memory write
+    EXPECT_EQ(mmu.read(0xC000), 0x42);
 
     EXPECT_EQ(cpu.get_bc(), 0xC000); // Verify bc integrity
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x42); // Verify a integrity
