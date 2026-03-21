@@ -28,6 +28,7 @@ public:
     [[nodiscard]] u16 get_pc() const;
     void set_pc(u16 value) { PC = value; }
     [[nodiscard]] u16 get_sp() const;
+    void set_sp(u16 value) { SP = value; }
     // Getting Full 16bit Register Values
     [[nodiscard]] u16 get_bc() const { return (B << 8) | C; }
     [[nodiscard]] u16 get_de() const { return (D << 8) | E; }

@@ -34,3 +34,17 @@ TEST_F(OpcodesCPUTest, JR_NC_DoesNotJumpWhenCarryFlagIsSet)
     EXPECT_EQ(cycles, 8);
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
+
+TEST_F(OpcodesCPUTest, LD_SP_D16_LoadsImmediateIntoSP)
+{
+    std::vector<u8> rom(0x200);
+    rom[0x100] = 0x34;
+    rom[0x101] = 0x12;
+    mmu.map_rom(rom);
+
+    const int cycles = op_ld_sp_d16(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_sp(), 0x1234);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}

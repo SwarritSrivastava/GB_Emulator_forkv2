@@ -19,7 +19,14 @@ int op_jr_nc(ProcessingUnit& cpu, MMU& mmu) // 0x30
 
     return totalMachineCycles(2);
 }
-DUMMY(op_ld_sp_d16) // 0x31
+int op_ld_sp_d16(ProcessingUnit& cpu, MMU& mmu) // 0x31
+{
+    const u8 lo = mmu.read(cpu.inc_pc());
+    const u8 hi = mmu.read(cpu.inc_pc());
+    cpu.set_sp(static_cast<u16>((hi << 8) | lo));
+
+    return totalMachineCycles(3);
+}
 DUMMY(op_ld_hld_a) // 0x32
 DUMMY(op_inc_sp) // 0x33
 DUMMY(op_inc_hl_ptr) // 0x34
