@@ -88,6 +88,21 @@ TEST_F(OpcodesCPUTest, INC_D_IncrementsRegister)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x34);
 }
 
+TEST_F(OpcodesCPUTest, INC_D_UpdatesFlagsAndPreservesCarry)
+{
+    cpu.reg(ProcessingUnit::Register::D) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_inc_d(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x00);
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
+
 TEST_F(OpcodesCPUTest, DEC_D_DecreasesRegisterPair)
 {
     cpu.reg(ProcessingUnit::Register::D) = 0x12;
@@ -100,6 +115,43 @@ TEST_F(OpcodesCPUTest, DEC_D_DecreasesRegisterPair)
     EXPECT_EQ(cpu.get_de(), 0x1134); // DE should now be 0x1235
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x11);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x34);
+}
+
+TEST_F(OpcodesCPUTest, DEC_D_UpdatesFlagsAndPreservesCarry)
+{
+    cpu.reg(ProcessingUnit::Register::D) = 0x01;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_dec_d(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x00);
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+    EXPECT_EQ(cpu.get_flag_n(), 1);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
+
+TEST_F(OpcodesCPUTest, INC_DEC_D_ConsecutiveOpcodesUpdateFlags)
+{
+    cpu.reg(ProcessingUnit::Register::D) = 0x0F;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int incCycles = op_inc_d(cpu, mmu);
+    EXPECT_EQ(incCycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x10);
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+
+    const int decCycles = op_dec_d(cpu, mmu);
+    EXPECT_EQ(decCycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x0F);
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 1);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
 }
 
 TEST_F(OpcodesCPUTest, LD_D_D8_LoadsImmediateIntoD)
