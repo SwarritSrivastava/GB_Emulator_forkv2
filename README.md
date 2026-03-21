@@ -5,6 +5,8 @@ Early-stage emulator for the original Game Boy (Dot-Matrix Game – DMG-01).
 
 Currently focused on **accurate CPU core** and **basic MMU / cartridge handling**.
 
+Repository CI now includes a structured Discord webhook notification flow for push summaries and test status updates.
+
 ![Game Boy DMG-01](https://placehold.co/480x432/EEE/31343C?text=Game+Boy+DMG-01)  
 *(classic gray brick – the real hardware this project aims to emulate)*
 
