@@ -61,7 +61,12 @@ int op_ld_c_b(ProcessingUnit& cpu, MMU& mmu) // 0x48
 
     return totalMachineCycles(1);
 }
-DUMMY(op_ld_c_c) // 0x49
+int op_ld_c_c(ProcessingUnit& cpu, MMU& mmu) // 0x49
+{
+    cpu.reg(ProcessingUnit::Register::C) = cpu.reg(ProcessingUnit::Register::C);
+
+    return totalMachineCycles(1);
+}
 DUMMY(op_ld_c_d) // 0x4A
 DUMMY(op_ld_c_e) // 0x4B
 DUMMY(op_ld_c_h) // 0x4C
