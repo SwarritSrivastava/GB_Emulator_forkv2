@@ -38,7 +38,12 @@ int op_ld_hld_a(ProcessingUnit& cpu, MMU& mmu) // 0x32
 
     return totalMachineCycles(2);
 }
-DUMMY(op_inc_sp) // 0x33
+int op_inc_sp(ProcessingUnit& cpu, MMU& mmu) // 0x33
+{
+    cpu.set_sp(cpu.get_sp() + 1);
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_inc_hl_ptr) // 0x34
 DUMMY(op_dec_hl_ptr) // 0x35
 DUMMY(op_ld_hl_d8) // 0x36

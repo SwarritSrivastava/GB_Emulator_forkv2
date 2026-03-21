@@ -61,3 +61,13 @@ TEST_F(OpcodesCPUTest, LD_HLD_A_StoresAndDecrementsHL)
     EXPECT_EQ(mmu.read(0xC000), 0x44);
     EXPECT_EQ(cpu.get_hl(), 0xBFFF);
 }
+
+TEST_F(OpcodesCPUTest, INC_SP_IncrementsStackPointer)
+{
+    cpu.set_sp(0x1234);
+
+    const int cycles = op_inc_sp(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_sp(), 0x1235);
+}
