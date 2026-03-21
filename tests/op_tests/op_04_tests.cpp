@@ -218,3 +218,17 @@ TEST_F(OpcodesCPUTest, LD_C_HL_LoadsMemoryIntoC)
     EXPECT_EQ(cpu.get_hl(), 0xC050);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0x70);
 }
+
+TEST_F(OpcodesCPUTest, LD_C_A_LoadsAIntoC)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x77;
+    cpu.reg(ProcessingUnit::Register::C) = 0x11;
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+
+    const int cycles = op_ld_c_a_4f(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x77);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x77);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
+}
