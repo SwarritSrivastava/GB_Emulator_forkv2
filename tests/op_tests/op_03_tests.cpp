@@ -190,3 +190,13 @@ TEST_F(OpcodesCPUTest, LD_A_HLD_LoadsAndDecrementsHL)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xBE);
     EXPECT_EQ(cpu.get_hl(), 0xC03F);
 }
+
+TEST_F(OpcodesCPUTest, DEC_SP_DecrementsStackPointer)
+{
+    cpu.set_sp(0x1234);
+
+    const int cycles = op_dec_sp(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_sp(), 0x1233);
+}
