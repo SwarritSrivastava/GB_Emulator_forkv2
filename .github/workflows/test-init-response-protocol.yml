@@ -490,6 +490,8 @@ jobs:
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
         run: |
+          rm -f .discord_webhook_blocked
+
           if [ -z "$WEBHOOK" ]; then
             echo "WEBHOOK secret is not set; skipping Discord notification."
             echo "should_send=false" >> "$GITHUB_OUTPUT"
@@ -511,6 +513,7 @@ jobs:
         if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
+          DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
           python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_summary_messages.json --label summary
 
@@ -518,6 +521,7 @@ jobs:
         if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
+          DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
           python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_diagnostics_messages.json --label diagnostics
 
@@ -525,6 +529,7 @@ jobs:
         if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
+          DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
           python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_build_log_messages.json --label build-log
 
@@ -532,6 +537,7 @@ jobs:
         if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
+          DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
           python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_valgrind_log_messages.json --label valgrind-log
 

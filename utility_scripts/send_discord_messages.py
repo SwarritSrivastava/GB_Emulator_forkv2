@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import sys
 import time
 import urllib.error
@@ -49,6 +50,11 @@ def main():
     parser.add_argument("--label", default="messages")
     args = parser.parse_args()
 
+    block_file = os.environ.get("DISCORD_BLOCK_FILE", ".discord_webhook_blocked")
+    if os.path.exists(block_file):
+        print(f"[discord] webhook is marked blocked ({block_file}); skipping {args.label}")
+        return 0
+
     messages = load_messages(args.messages_file)
     if not messages:
         print(f"[discord] no {args.label} messages to send")
@@ -62,6 +68,10 @@ def main():
                 return 0
         except urllib.error.HTTPError as exc:
             details = exc.read().decode("utf-8", errors="replace")
+            if exc.code in (401, 403, 404):
+                with open(block_file, "w", encoding="utf-8") as fh:
+                    fh.write(f"http={exc.code}\n")
+                    fh.write(details)
             print(
                 f"[discord] {args.label} message {idx} HTTP error {exc.code}: {details}; skipping remainder",
             )
