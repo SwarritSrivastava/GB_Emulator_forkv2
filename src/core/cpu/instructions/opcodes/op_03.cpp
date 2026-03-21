@@ -77,7 +77,14 @@ int op_ld_hl_d8(ProcessingUnit& cpu, MMU& mmu) // 0x36
 
     return totalMachineCycles(3);
 }
-DUMMY(op_scf) // 0x37
+int op_scf(ProcessingUnit& cpu, MMU& mmu) // 0x37
+{
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    return totalMachineCycles(1);
+}
 DUMMY(op_jr_c) // 0x38
 DUMMY(op_add_hl_sp) // 0x39
 DUMMY(op_ld_a_hld) // 0x3A
