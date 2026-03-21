@@ -7,7 +7,18 @@ constexpr int machine_cycles = 4;
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
-DUMMY(op_jr_nc) // 0x30
+int op_jr_nc(ProcessingUnit& cpu, MMU& mmu) // 0x30
+{
+    cpu.inc_pc();
+    const int8_t offset = static_cast<int8_t>(mmu.read(cpu.inc_pc()));
+
+    if (!cpu.get_flag_c()) {
+        cpu.set_pc(static_cast<u16>(cpu.get_pc() + offset));
+        return totalMachineCycles(3);
+    }
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_ld_sp_d16) // 0x31
 DUMMY(op_ld_hld_a) // 0x32
 DUMMY(op_inc_sp) // 0x33
