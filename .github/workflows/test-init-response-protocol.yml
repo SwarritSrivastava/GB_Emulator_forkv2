@@ -55,6 +55,147 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install openai
 
+      - name: Restore cached AI overview context
+        id: ai_overview_cache
+        if: always() && github.event_name == 'push'
+        uses: actions/cache@v4
+        with:
+          path: ai_context_overview.txt
+          key: ai-overview-${{ runner.os }}-${{ hashFiles('README.md', '**/*description*', '**/*DESCRIPTION*') }}
+
+      - name: Build AI context - project overview
+        if: always() && github.event_name == 'push' && steps.ai_overview_cache.outputs.cache-hit != 'true'
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          parts = []
+
+          readme = Path("README.md")
+          if readme.exists():
+              parts.append("# README.md")
+              parts.append(readme.read_text(encoding="utf-8", errors="replace"))
+
+          for path in sorted(Path(".").rglob("*")):
+              if not path.is_file():
+                  continue
+              if "description" not in path.name.lower():
+                  continue
+              if ".git" in path.parts:
+                  continue
+              if path.name == "ai_context_overview.txt":
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8", errors="replace")
+              except Exception:
+                  continue
+              parts.append("")
+              parts.append(f"# {path.as_posix()}")
+              parts.append(text)
+
+          Path("ai_context_overview.txt").write_text("\n".join(parts), encoding="utf-8")
+          PY
+
+      - name: Build AI context - project overview fallback
+        if: always() && github.event_name == 'push'
+        run: |
+          [ -f ai_context_overview.txt ] || touch ai_context_overview.txt
+
+      - name: Build AI context - commit messages
+        if: always() && github.event_name == 'push'
+        env:
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          max_commits = 12
+          event_path = os.environ["EVENT_PATH"]
+          with open(event_path, "r", encoding="utf-8") as fh:
+              event = json.load(fh)
+
+          commits = event.get("commits", [])
+          lines = []
+          for c in commits[:max_commits]:
+              cid = (c.get("id") or "")[:7]
+              msg = (c.get("message") or "").splitlines()[0].strip()
+              author = (c.get("author") or {}).get("name", "unknown")
+              lines.append(f"- {cid} {msg} ({author})")
+
+          if len(commits) > max_commits:
+              lines.append(f"- ... and {len(commits) - max_commits} more commit(s)")
+
+          Path("ai_context_commits.txt").write_text("\n".join(lines), encoding="utf-8")
+          PY
+
+      - name: Build AI context - changed files
+        if: always() && github.event_name == 'push'
+        env:
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          event_path = os.environ["EVENT_PATH"]
+          with open(event_path, "r", encoding="utf-8") as fh:
+              event = json.load(fh)
+
+          before = event.get("before", "")
+          after = event.get("after", "")
+
+          def run_git(args):
+              proc = subprocess.run(["git", *args], check=False, capture_output=True, text=True)
+              return proc.stdout.strip() if proc.returncode == 0 else ""
+
+          changed_files = ""
+          if before and after and before != "0" * 40:
+              changed_files = run_git(["diff", "--name-status", before, after])
+          if not changed_files:
+              changed_files = run_git(["show", "--name-status", "--pretty=format:", "HEAD"])
+
+          Path("ai_context_changed_files.txt").write_text(changed_files, encoding="utf-8")
+          PY
+
+      - name: Build AI context - compact diff
+        if: always() && github.event_name == 'push'
+        env:
+          EVENT_PATH: ${{ github.event_path }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          event_path = os.environ["EVENT_PATH"]
+          with open(event_path, "r", encoding="utf-8") as fh:
+              event = json.load(fh)
+
+          before = event.get("before", "")
+          after = event.get("after", "")
+
+          def run_git(args):
+              proc = subprocess.run(["git", *args], check=False, capture_output=True, text=True)
+              return proc.stdout.strip() if proc.returncode == 0 else ""
+
+          diff_text = ""
+          if before and after and before != "0" * 40:
+              diff_text = run_git(["diff", "--unified=1", "--no-color", before, after])
+          if not diff_text:
+              diff_text = run_git(["show", "--unified=1", "--no-color", "--pretty=format:", "HEAD"])
+
+          max_chars = 6000
+          if len(diff_text) > max_chars:
+              diff_text = diff_text[: max_chars - 20] + "\n...[truncated]"
+
+          Path("ai_context_diff.txt").write_text(diff_text, encoding="utf-8")
+          PY
+
       - name: Generate AI push summary
         if: always() && github.event_name == 'push'
         env:
@@ -72,6 +213,14 @@ jobs:
         run: |
           [ -f ai_push_summary.txt ] || echo "AI summary was not generated" > ai_push_summary.txt
           [ -f ai_push_summary.json ] || printf '{"summary":"AI summary was not generated"}\n' > ai_push_summary.json
+
+      - name: Ensure AI context files exist
+        if: always() && github.event_name == 'push'
+        run: |
+          [ -f ai_context_overview.txt ] || touch ai_context_overview.txt
+          [ -f ai_context_commits.txt ] || touch ai_context_commits.txt
+          [ -f ai_context_changed_files.txt ] || touch ai_context_changed_files.txt
+          [ -f ai_context_diff.txt ] || touch ai_context_diff.txt
 
       - name: Prepare Discord payload
         if: always()
@@ -276,9 +425,11 @@ jobs:
           summary_lines.append("AI Push Summary:")
           summary_lines.append(ai_summary)
 
-          messages = []
+          summary_messages = []
           for chunk in split_plain_text("\n".join(summary_lines), limit=1800):
-              messages.append({"content": chunk})
+              summary_messages.append({"content": chunk})
+
+          diagnostics_messages = []
 
           if build_failed or valgrind_failed:
               failing_stages = []
@@ -318,68 +469,71 @@ jobs:
                   diag_lines.append("- Are leaks from expected test fixtures or from production code paths?")
 
               for chunk in split_plain_text("\n".join(diag_lines), limit=1800):
-                  messages.append({"content": chunk})
+                  diagnostics_messages.append({"content": chunk})
 
-          messages.extend(build_log_messages("build_and_test.log", build_log))
-          messages.extend(build_log_messages("valgrind_tests.log", valgrind_log))
+          build_log_messages_list = build_log_messages("build_and_test.log", build_log)
+          valgrind_log_messages_list = build_log_messages("valgrind_tests.log", valgrind_log)
 
-          with open("discord_messages.json", "w", encoding="utf-8") as out:
-              json.dump(messages, out)
+          with open("discord_summary_messages.json", "w", encoding="utf-8") as out:
+              json.dump(summary_messages, out)
+          with open("discord_diagnostics_messages.json", "w", encoding="utf-8") as out:
+              json.dump(diagnostics_messages, out)
+          with open("discord_build_log_messages.json", "w", encoding="utf-8") as out:
+              json.dump(build_log_messages_list, out)
+          with open("discord_valgrind_log_messages.json", "w", encoding="utf-8") as out:
+              json.dump(valgrind_log_messages_list, out)
           PY
 
-      - name: Send Discord notification
+      - name: Validate Discord webhook
+        id: webhook_check
         if: always() && github.event_name == 'push'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
         run: |
           if [ -z "$WEBHOOK" ]; then
             echo "WEBHOOK secret is not set; skipping Discord notification."
+            echo "should_send=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
           case "$WEBHOOK" in
             https://discord.com/api/webhooks/*|https://ptb.discord.com/api/webhooks/*)
+              echo "should_send=true" >> "$GITHUB_OUTPUT"
               ;;
             *)
-              echo "WEBHOOK does not look like a Discord webhook URL; refusing to send."
-              exit 1
+              echo "WEBHOOK does not look like a Discord webhook URL; skipping Discord notification."
+              echo "should_send=false" >> "$GITHUB_OUTPUT"
+              exit 0
               ;;
           esac
 
-          python3 - <<'PY'
-          import json
-          import os
-          import time
-          import urllib.error
-          import urllib.request
+      - name: Send Discord summary messages
+        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        env:
+          WEBHOOK: ${{ secrets.WEBHOOK }}
+        run: |
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_summary_messages.json --label summary
 
-          webhook = os.environ["WEBHOOK"]
-          with open("discord_messages.json", "r", encoding="utf-8") as fh:
-              messages = json.load(fh)
+      - name: Send Discord diagnostics messages
+        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        env:
+          WEBHOOK: ${{ secrets.WEBHOOK }}
+        run: |
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_diagnostics_messages.json --label diagnostics
 
-          for idx, payload in enumerate(messages, start=1):
-              body = json.dumps(payload).encode("utf-8")
-              request = urllib.request.Request(
-                  webhook,
-                  data=body,
-                  headers={"Content-Type": "application/json"},
-                  method="POST",
-              )
+      - name: Send Discord build log messages
+        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        env:
+          WEBHOOK: ${{ secrets.WEBHOOK }}
+        run: |
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_build_log_messages.json --label build-log
 
-              try:
-                  with urllib.request.urlopen(request) as response:
-                      if response.status >= 300:
-                          raise RuntimeError(
-                              f"Discord webhook failed on message {idx} with status {response.status}"
-                          )
-              except urllib.error.HTTPError as exc:
-                  details = exc.read().decode("utf-8", errors="replace")
-                  raise RuntimeError(
-                      f"Discord webhook HTTP error on message {idx}: {exc.code} {details}"
-                  ) from exc
-
-              time.sleep(0.25)
-          PY
+      - name: Send Discord valgrind log messages
+        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        env:
+          WEBHOOK: ${{ secrets.WEBHOOK }}
+        run: |
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_valgrind_log_messages.json --label valgrind-log
 
       - name: Mark workflow failed if checks failed
         if: always()

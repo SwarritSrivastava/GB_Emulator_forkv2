@@ -8,10 +8,10 @@ import urllib.request
 from pathlib import Path
 
 
-MAX_OVERVIEW_CHARS = 2800
-MAX_DIFF_FILES_CHARS = 2000
-MAX_DIFF_PATCH_CHARS = 12000
-MAX_COMMITS = 20
+MAX_OVERVIEW_CHARS = 1800
+MAX_DIFF_FILES_CHARS = 1200
+MAX_DIFF_PATCH_CHARS = 6000
+MAX_COMMITS = 12
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 MODEL_PRIORITY = [
     "openai/gpt-oss-120b",
@@ -115,31 +115,40 @@ def main():
     before = event.get("before", "")
     after = event.get("after", "")
 
-    commit_lines = []
-    for commit in commits[:MAX_COMMITS]:
-        cid = (commit.get("id") or "")[:7]
-        message = (commit.get("message") or "").splitlines()[0].strip()
-        author = (commit.get("author") or {}).get("name", "unknown")
-        commit_lines.append(f"- {cid} {message} ({author})")
+    project_overview = read_text(Path("ai_context_overview.txt"), "")
+    commits_text = read_text(Path("ai_context_commits.txt"), "")
+    changed_files = read_text(Path("ai_context_changed_files.txt"), "")
+    diff_patch = read_text(Path("ai_context_diff.txt"), "")
 
-    if len(commits) > MAX_COMMITS:
-        commit_lines.append(f"- ... and {len(commits) - MAX_COMMITS} more commit(s)")
+    if not commits_text:
+        commit_lines = []
+        for commit in commits[:MAX_COMMITS]:
+            cid = (commit.get("id") or "")[:7]
+            message = (commit.get("message") or "").splitlines()[0].strip()
+            author = (commit.get("author") or {}).get("name", "unknown")
+            commit_lines.append(f"- {cid} {message} ({author})")
 
-    commits_text = "\n".join(commit_lines)
+        if len(commits) > MAX_COMMITS:
+            commit_lines.append(f"- ... and {len(commits) - MAX_COMMITS} more commit(s)")
+        commits_text = "\n".join(commit_lines)
 
-    changed_files = ""
-    diff_patch = ""
-    if before and after and before != "0" * 40:
-        changed_files = run_git(["diff", "--name-status", before, after])
-        diff_patch = run_git(["diff", "--unified=1", "--no-color", before, after])
+    if not changed_files or not diff_patch:
+        if before and after and before != "0" * 40:
+            if not changed_files:
+                changed_files = run_git(["diff", "--name-status", before, after])
+            if not diff_patch:
+                diff_patch = run_git(["diff", "--unified=1", "--no-color", before, after])
 
-    if not changed_files:
-        changed_files = run_git(["show", "--name-status", "--pretty=format:", "HEAD"])
-    if not diff_patch:
-        diff_patch = run_git(["show", "--unified=1", "--no-color", "--pretty=format:", "HEAD"])
+        if not changed_files:
+            changed_files = run_git(["show", "--name-status", "--pretty=format:", "HEAD"])
+        if not diff_patch:
+            diff_patch = run_git(["show", "--unified=1", "--no-color", "--pretty=format:", "HEAD"])
 
-    readme_text = read_text(Path("README.md"), "")
-    project_overview = trim(readme_text, MAX_OVERVIEW_CHARS)
+    if not project_overview:
+        project_overview = read_text(Path("README.md"), "")
+
+    project_overview = trim(project_overview, MAX_OVERVIEW_CHARS)
+    commits_text = trim(commits_text, 1600)
     changed_files = trim(changed_files, MAX_DIFF_FILES_CHARS)
     diff_patch = trim(diff_patch, MAX_DIFF_PATCH_CHARS)
 
