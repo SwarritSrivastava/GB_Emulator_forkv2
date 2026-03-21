@@ -49,6 +49,30 @@ jobs:
           [ -f build_and_test.log ] || echo "build_and_test.log was not generated" > build_and_test.log
           [ -f valgrind_tests.log ] || echo "valgrind_tests.log was not generated" > valgrind_tests.log
 
+      - name: Install AI summary dependencies
+        if: always()
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install openai
+
+      - name: Generate AI push summary
+        if: always() && github.event_name == 'push'
+        env:
+          GROQ_API_KEY: ${{ secrets.API }}
+          GROQ_MODEL: openai/gpt-oss-120b
+          EVENT_PATH: ${{ github.event_path }}
+          REPO: ${{ github.repository }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          chmod +x ./utility_scripts/groq_push_summary.py
+          python3 ./utility_scripts/groq_push_summary.py
+
+      - name: Ensure AI summary files exist
+        if: always()
+        run: |
+          [ -f ai_push_summary.txt ] || echo "AI summary was not generated" > ai_push_summary.txt
+          [ -f ai_push_summary.json ] || printf '{"summary":"AI summary was not generated"}\n' > ai_push_summary.json
+
       - name: Prepare Discord payload
         if: always()
         env:
@@ -67,24 +91,135 @@ jobs:
           python3 - <<'PY'
           import json
           import os
+          import re
 
-          def read_tail(path, max_lines=40):
+          def read_text(path):
               try:
                   with open(path, "r", encoding="utf-8", errors="replace") as fh:
-                      lines = fh.read().splitlines()
-                  return "\n".join(lines[-max_lines:])
+                      return fh.read()
               except FileNotFoundError:
                   return f"{path} not found"
+
+          def split_plain_text(text, limit=1800):
+              if len(text) <= limit:
+                  return [text]
+
+              chunks = []
+              current = ""
+              for line in text.splitlines():
+                  candidate = f"{current}\n{line}" if current else line
+                  if len(candidate) > limit:
+                      if current:
+                          chunks.append(current)
+                          current = line
+                      else:
+                          for i in range(0, len(line), limit):
+                              chunks.append(line[i : i + limit])
+                          current = ""
+                  else:
+                      current = candidate
+
+              if current:
+                  chunks.append(current)
+
+              return chunks
+
+          def split_for_code_blocks(text, body_limit=1500):
+              if not text:
+                  return [""]
+
+              chunks = []
+              current = []
+              current_len = 0
+
+              def flush():
+                  nonlocal current, current_len
+                  chunks.append("\n".join(current))
+                  current = []
+                  current_len = 0
+
+              for raw_line in text.splitlines():
+                  line = raw_line
+
+                  while len(line) > body_limit:
+                      part = line[:body_limit]
+                      line = line[body_limit:]
+                      if current:
+                          flush()
+                      chunks.append(part)
+
+                  additional = len(line) + (1 if current else 0)
+                  if current and current_len + additional > body_limit:
+                      flush()
+
+                  current.append(line)
+                  current_len += len(line) + (1 if len(current) > 1 else 0)
+
+              if current:
+                  flush()
+
+              return chunks if chunks else [""]
+
+          def build_log_messages(log_name, log_text):
+              parts = split_for_code_blocks(log_text)
+              total = len(parts)
+              messages = []
+
+              for idx, part in enumerate(parts, start=1):
+                  messages.append(
+                      {
+                          "content": (
+                              f"**Full Log - {log_name} (part {idx}/{total})**\n"
+                              f"```text\n{part}\n```"
+                          )
+                      }
+                  )
+
+              return messages
+
+          def extract_failure_hints(text, max_hints=8):
+              pattern = re.compile(
+                  r"(error|failed|fail|assert|segmentation fault|invalid read|definitely lost|leak)",
+                  re.IGNORECASE,
+              )
+              hints = []
+              seen = set()
+
+              for line in text.splitlines():
+                  if not pattern.search(line):
+                      continue
+
+                  cleaned = " ".join(line.strip().split())
+                  if not cleaned:
+                      continue
+
+                  key = cleaned.lower()
+                  if key in seen:
+                      continue
+
+                  seen.add(key)
+                  hints.append(cleaned)
+                  if len(hints) >= max_hints:
+                      break
+
+              return hints
 
           event_path = os.environ["EVENT_PATH"]
           with open(event_path, "r", encoding="utf-8") as fh:
               event = json.load(fh)
 
+          ai_summary = "AI summary unavailable"
+          try:
+              with open("ai_push_summary.txt", "r", encoding="utf-8", errors="replace") as fh:
+                  ai_summary = fh.read().strip() or "AI summary unavailable"
+          except FileNotFoundError:
+              pass
+
           commits = event.get("commits", [])
           commit_lines = []
           for c in commits[:10]:
               cid = c.get("id", "")[:7]
-              msg = (c.get("message", "") or "").splitlines()[0]
+              msg = (c.get("message", "") or "").splitlines()[0][:120]
               author = c.get("author", {}).get("name", "unknown")
               commit_lines.append(f"- {cid} {msg} ({author})")
 
@@ -108,50 +243,88 @@ jobs:
           run_url = f"{server_url}/{repo}/actions/runs/{run_id}"
           commit_url = f"{server_url}/{repo}/commit/{sha_full}"
           compare_url = event.get("compare", "")
-          build_tail = read_tail("build_and_test.log")
-          valgrind_tail = read_tail("valgrind_tests.log")
+          build_log = read_text("build_and_test.log")
+          valgrind_log = read_text("valgrind_tests.log")
 
-          lines = [
-              f"{emoji} **TEST INIT RESPONSE PROTOCOL** `{status}`",
+          build_failed = build_test_exit != "0"
+          valgrind_failed = valgrind_exit != "0"
+          overall_label = "SUCCESS" if status == "SUCCESS" else "FAILED"
+
+          summary_lines = [
+              f"{emoji} **CI Report - TEST INIT RESPONSE PROTOCOL** `{overall_label}`",
               "",
-              f"Repository: `{repo}`",
-              f"Branch: `{ref_name}`",
-              f"Actor: `{actor}`",
-              f"Head Commit: [`{sha_short}`]({commit_url})",
-              f"Run: [#{run_number}]({run_url})",
+              "Execution Summary:",
+              f"- Repository: `{repo}`",
+              f"- Branch: `{ref_name}`",
+              f"- Triggered by: `{actor}`",
+              f"- Run: [#{run_number}]({run_url})",
+              f"- Head commit: [`{sha_short}`]({commit_url})",
+              f"- Commits in push: `{len(commits)}`",
+              f"- build_and_test.sh exit code: `{build_test_exit}`",
+              f"- valgrind_tests.sh exit code: `{valgrind_exit}`",
           ]
 
           if compare_url:
-              lines.append(f"Compare: {compare_url}")
-
-          lines.append(f"Commit Count In Push: `{len(commits)}`")
-          lines.append(f"build_and_test.sh exit: `{build_test_exit}`")
-          lines.append(f"valgrind_tests.sh exit: `{valgrind_exit}`")
+              summary_lines.append(f"- Compare: {compare_url}")
 
           if commit_lines:
-              lines.append("")
-              lines.append("Commits:")
-              lines.extend(commit_lines)
+              summary_lines.append("")
+              summary_lines.append("Recent Commits:")
+              summary_lines.extend(commit_lines)
 
-          lines.append("")
-          lines.append("build_and_test.sh tail:")
-          lines.append("```")
-          lines.append(build_tail)
-          lines.append("```")
+          summary_lines.append("")
+          summary_lines.append("AI Push Summary:")
+          summary_lines.append(ai_summary)
 
-          lines.append("")
-          lines.append("valgrind_tests.sh tail:")
-          lines.append("```")
-          lines.append(valgrind_tail)
-          lines.append("```")
+          messages = []
+          for chunk in split_plain_text("\n".join(summary_lines), limit=1800):
+              messages.append({"content": chunk})
 
-          content = "\n".join(lines)
-          if len(content) > 1800:
-              content = content[:1750] + "\n\n...(truncated, see attached logs)"
-          payload = {"content": content}
+          if build_failed or valgrind_failed:
+              failing_stages = []
+              if build_failed:
+                  failing_stages.append("build_and_test.sh")
+              if valgrind_failed:
+                  failing_stages.append("valgrind_tests.sh")
 
-          with open("discord_payload.json", "w", encoding="utf-8") as out:
-              json.dump(payload, out)
+              diag_lines = [
+                  ":warning: **Failure Diagnostics**",
+                  "",
+                  f"Failing stage(s): {', '.join(failing_stages)}",
+                  f"Run: {run_url}",
+                  f"Commit: {commit_url}",
+              ]
+
+              build_hints = extract_failure_hints(build_log) if build_failed else []
+              valgrind_hints = extract_failure_hints(valgrind_log) if valgrind_failed else []
+
+              if build_hints:
+                  diag_lines.append("")
+                  diag_lines.append("build_and_test.sh quick hints:")
+                  diag_lines.extend([f"- {hint}" for hint in build_hints])
+
+              if valgrind_hints:
+                  diag_lines.append("")
+                  diag_lines.append("valgrind_tests.sh quick hints:")
+                  diag_lines.extend([f"- {hint}" for hint in valgrind_hints])
+
+              diag_lines.append("")
+              diag_lines.append("Follow-up questions:")
+              if build_failed:
+                  diag_lines.append("- Did any recent dependency/toolchain changes alter the build environment?")
+                  diag_lines.append("- Which commit in this push most likely introduced the build/test regression?")
+              if valgrind_failed:
+                  diag_lines.append("- Is the failure reproducible locally with the same valgrind command and inputs?")
+                  diag_lines.append("- Are leaks from expected test fixtures or from production code paths?")
+
+              for chunk in split_plain_text("\n".join(diag_lines), limit=1800):
+                  messages.append({"content": chunk})
+
+          messages.extend(build_log_messages("build_and_test.log", build_log))
+          messages.extend(build_log_messages("valgrind_tests.log", valgrind_log))
+
+          with open("discord_messages.json", "w", encoding="utf-8") as out:
+              json.dump(messages, out)
           PY
 
       - name: Send Discord notification
@@ -173,14 +346,40 @@ jobs:
               ;;
           esac
 
-          payload_json=$(cat discord_payload.json)
+          python3 - <<'PY'
+          import json
+          import os
+          import time
+          import urllib.error
+          import urllib.request
 
-          curl --fail --silent --show-error \
-            -X POST \
-            -F "payload_json=$payload_json" \
-            -F "files[0]=@build_and_test.log;type=text/plain" \
-            -F "files[1]=@valgrind_tests.log;type=text/plain" \
-            "$WEBHOOK"
+          webhook = os.environ["WEBHOOK"]
+          with open("discord_messages.json", "r", encoding="utf-8") as fh:
+              messages = json.load(fh)
+
+          for idx, payload in enumerate(messages, start=1):
+              body = json.dumps(payload).encode("utf-8")
+              request = urllib.request.Request(
+                  webhook,
+                  data=body,
+                  headers={"Content-Type": "application/json"},
+                  method="POST",
+              )
+
+              try:
+                  with urllib.request.urlopen(request) as response:
+                      if response.status >= 300:
+                          raise RuntimeError(
+                              f"Discord webhook failed on message {idx} with status {response.status}"
+                          )
+              except urllib.error.HTTPError as exc:
+                  details = exc.read().decode("utf-8", errors="replace")
+                  raise RuntimeError(
+                      f"Discord webhook HTTP error on message {idx}: {exc.code} {details}"
+                  ) from exc
+
+              time.sleep(0.25)
+          PY
 
       - name: Mark workflow failed if checks failed
         if: always()
