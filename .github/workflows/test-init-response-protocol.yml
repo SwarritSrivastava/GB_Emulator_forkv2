@@ -471,8 +471,13 @@ jobs:
               for chunk in split_plain_text("\n".join(diag_lines), limit=1800):
                   diagnostics_messages.append({"content": chunk})
 
-          build_log_messages_list = build_log_messages("build_and_test.log", build_log)
-          valgrind_log_messages_list = build_log_messages("valgrind_tests.log", valgrind_log)
+          build_log_messages_list = []
+          if build_failed:
+              build_log_messages_list = build_log_messages("build_and_test.log", build_log)
+
+          valgrind_log_messages_list = []
+          if valgrind_failed:
+              valgrind_log_messages_list = build_log_messages("valgrind_tests.log", valgrind_log)
 
           with open("discord_summary_messages.json", "w", encoding="utf-8") as out:
               json.dump(summary_messages, out)
@@ -515,31 +520,31 @@ jobs:
           WEBHOOK: ${{ secrets.WEBHOOK }}
           DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
-          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_summary_messages.json --label summary
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_summary_messages.json --label summary --max-messages 2 --delay-seconds 1.5 --max-retries 2
 
       - name: Send Discord diagnostics messages
-        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true' && (steps.run_build_test.outputs.exit_code != '0' || steps.run_valgrind.outputs.exit_code != '0')
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
           DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
-          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_diagnostics_messages.json --label diagnostics
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_diagnostics_messages.json --label diagnostics --max-messages 2 --delay-seconds 1.5 --max-retries 2
 
       - name: Send Discord build log messages
-        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true' && steps.run_build_test.outputs.exit_code != '0'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
           DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
-          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_build_log_messages.json --label build-log
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_build_log_messages.json --label build-log --max-messages 3 --delay-seconds 2.0 --max-retries 2
 
       - name: Send Discord valgrind log messages
-        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true' && steps.run_valgrind.outputs.exit_code != '0'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
           DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
-          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_valgrind_log_messages.json --label valgrind-log
+          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_valgrind_log_messages.json --label valgrind-log --max-messages 3 --delay-seconds 2.0 --max-retries 2
 
       - name: Mark workflow failed if checks failed
         if: always()
