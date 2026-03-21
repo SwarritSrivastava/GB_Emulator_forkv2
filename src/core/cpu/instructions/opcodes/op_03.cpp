@@ -97,7 +97,21 @@ int op_jr_c(ProcessingUnit& cpu, MMU& mmu) // 0x38
 
     return totalMachineCycles(2);
 }
-DUMMY(op_add_hl_sp) // 0x39
+int op_add_hl_sp(ProcessingUnit& cpu, MMU& mmu) // 0x39
+{
+    const u16 hl = cpu.get_hl();
+    const u16 sp = cpu.get_sp();
+    const u32 sum = static_cast<u32>(hl) + sp;
+
+    cpu.reg(ProcessingUnit::Register::H) = static_cast<u8>((sum >> 8) & 0xFF);
+    cpu.reg(ProcessingUnit::Register::L) = static_cast<u8>(sum & 0xFF);
+
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, ((hl & 0x0FFF) + (sp & 0x0FFF)) > 0x0FFF);
+    cpu.setFlag(ProcessingUnit::Flag::C, sum > 0xFFFF);
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_ld_a_hld) // 0x3A
 DUMMY(op_dec_sp) // 0x3B
 DUMMY(op_inc_a) // 0x3C

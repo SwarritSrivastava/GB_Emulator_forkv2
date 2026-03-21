@@ -160,3 +160,20 @@ TEST_F(OpcodesCPUTest, JR_C_DoesNotJumpWhenCarryFlagIsClear)
     EXPECT_EQ(cycles, 8);
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
+
+TEST_F(OpcodesCPUTest, ADD_HL_SP_AddsAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::H) = 0x8A;
+    cpu.reg(ProcessingUnit::Register::L) = 0x23;
+    cpu.set_sp(0x8A23);
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    const int cycles = op_add_hl_sp(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_hl(), 0x1446);
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
