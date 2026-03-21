@@ -160,4 +160,11 @@ int op_ld_a_d8(ProcessingUnit& cpu, MMU& mmu) // 0x3E
 
     return totalMachineCycles(2);
 }
-DUMMY(op_ccf) // 0x3F
+int op_ccf(ProcessingUnit& cpu, MMU& mmu) // 0x3F
+{
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, !cpu.get_flag_c());
+
+    return totalMachineCycles(1);
+}

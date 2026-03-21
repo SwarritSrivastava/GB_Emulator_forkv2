@@ -244,3 +244,16 @@ TEST_F(OpcodesCPUTest, LD_A_D8_LoadsImmediateIntoA)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x7E);
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
+
+TEST_F(OpcodesCPUTest, CCF_ComplementsCarryAndClearsNH)
+{
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+
+    const int cycles = op_ccf(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
