@@ -105,3 +105,19 @@ TEST_F(OpcodesCPUTest, DEC_HL_PTR_DecrementsMemoryAndFlags)
     EXPECT_EQ(cpu.get_flag_h(), 1);
     EXPECT_EQ(cpu.get_flag_c(), 1);
 }
+
+TEST_F(OpcodesCPUTest, LD_HL_D8_StoresImmediateToMemory)
+{
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x30;
+    std::vector<u8> rom(0x200);
+    rom[0x100] = 0x00;
+    rom[0x101] = 0xAB;
+    mmu.map_rom(rom);
+
+    const int cycles = op_ld_hl_d8(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(mmu.read(0xC030), 0xAB);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}

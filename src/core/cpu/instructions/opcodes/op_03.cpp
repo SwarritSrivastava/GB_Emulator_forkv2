@@ -70,7 +70,13 @@ int op_dec_hl_ptr(ProcessingUnit& cpu, MMU& mmu) // 0x35
 
     return totalMachineCycles(3);
 }
-DUMMY(op_ld_hl_d8) // 0x36
+int op_ld_hl_d8(ProcessingUnit& cpu, MMU& mmu) // 0x36
+{
+    cpu.inc_pc();
+    mmu.write(cpu.get_hl(), mmu.read(cpu.inc_pc()));
+
+    return totalMachineCycles(3);
+}
 DUMMY(op_scf) // 0x37
 DUMMY(op_jr_c) // 0x38
 DUMMY(op_add_hl_sp) // 0x39
