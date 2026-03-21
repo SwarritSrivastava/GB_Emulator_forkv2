@@ -27,7 +27,17 @@ int op_ld_sp_d16(ProcessingUnit& cpu, MMU& mmu) // 0x31
 
     return totalMachineCycles(3);
 }
-DUMMY(op_ld_hld_a) // 0x32
+int op_ld_hld_a(ProcessingUnit& cpu, MMU& mmu) // 0x32
+{
+    const u16 hl = cpu.get_hl();
+    mmu.write(hl, cpu.reg(ProcessingUnit::Register::A));
+
+    const u16 newValue = hl - 1;
+    cpu.reg(ProcessingUnit::Register::H) = static_cast<u8>((newValue >> 8) & 0xFF);
+    cpu.reg(ProcessingUnit::Register::L) = static_cast<u8>(newValue & 0xFF);
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_inc_sp) // 0x33
 DUMMY(op_inc_hl_ptr) // 0x34
 DUMMY(op_dec_hl_ptr) // 0x35
