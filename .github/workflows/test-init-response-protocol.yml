@@ -1,0 +1,133 @@
+name: TEST INIT RESPONSE PROTOCOL
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-init-response-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-init-response:
+    name: Build, Test, Valgrind, Discord Notify
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build and run tests
+        run: |
+          chmod +x ./utility_scripts/build_and_test.sh
+          ./utility_scripts/build_and_test.sh
+
+      - name: Run valgrind test protocol
+        run: |
+          chmod +x ./utility_scripts/valgrind_tests.sh
+          sudo ./utility_scripts/valgrind_tests.sh
+
+      - name: Prepare Discord payload
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          REPO: ${{ github.repository }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          ACTOR: ${{ github.actor }}
+          EVENT_PATH: ${{ github.event_path }}
+          SERVER_URL: ${{ github.server_url }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          event_path = os.environ["EVENT_PATH"]
+          with open(event_path, "r", encoding="utf-8") as fh:
+              event = json.load(fh)
+
+          commits = event.get("commits", [])
+          commit_lines = []
+          for c in commits[:10]:
+              cid = c.get("id", "")[:7]
+              msg = (c.get("message", "") or "").splitlines()[0]
+              author = c.get("author", {}).get("name", "unknown")
+              commit_lines.append(f"- {cid} {msg} ({author})")
+
+          if len(commits) > 10:
+              commit_lines.append(f"- ... and {len(commits) - 10} more commits")
+
+          status = os.environ["JOB_STATUS"].upper()
+          emoji = ":white_check_mark:" if status == "SUCCESS" else ":x:"
+          sha_full = os.environ["SHA"]
+          sha_short = sha_full[:7]
+
+          repo = os.environ["REPO"]
+          ref_name = os.environ["REF_NAME"]
+          actor = os.environ["ACTOR"]
+          run_id = os.environ["RUN_ID"]
+          run_number = os.environ["RUN_NUMBER"]
+          server_url = os.environ["SERVER_URL"]
+
+          run_url = f"{server_url}/{repo}/actions/runs/{run_id}"
+          commit_url = f"{server_url}/{repo}/commit/{sha_full}"
+          compare_url = event.get("compare", "")
+
+          lines = [
+              f"{emoji} **TEST INIT RESPONSE PROTOCOL** `{status}`",
+              "",
+              f"Repository: `{repo}`",
+              f"Branch: `{ref_name}`",
+              f"Actor: `{actor}`",
+              f"Head Commit: [`{sha_short}`]({commit_url})",
+              f"Run: [#{run_number}]({run_url})",
+          ]
+
+          if compare_url:
+              lines.append(f"Compare: {compare_url}")
+
+          lines.append(f"Commit Count In Push: `{len(commits)}`")
+
+          if commit_lines:
+              lines.append("")
+              lines.append("Commits:")
+              lines.extend(commit_lines)
+
+          content = "\n".join(lines)
+          payload = {"content": content}
+
+          with open("discord_payload.json", "w", encoding="utf-8") as out:
+              json.dump(payload, out)
+          PY
+
+      - name: Send Discord notification
+        if: always() && github.event_name == 'push'
+        env:
+          WEBHOOK: ${{ secrets.WEBHOOK }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "WEBHOOK secret is not set; skipping Discord notification."
+            exit 0
+          fi
+
+          case "$WEBHOOK" in
+            https://discord.com/api/webhooks/*|https://ptb.discord.com/api/webhooks/*)
+              ;;
+            *)
+              echo "WEBHOOK does not look like a Discord webhook URL; refusing to send."
+              exit 1
+              ;;
+          esac
+
+          curl --fail --silent --show-error \
+            -H "Content-Type: application/json" \
+            -X POST \
+            --data @discord_payload.json \
+            "$WEBHOOK"
