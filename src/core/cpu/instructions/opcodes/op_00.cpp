@@ -45,17 +45,23 @@ int op_inc_bc(ProcessingUnit& cpu, MMU& mmu) // 0x03
 
 int op_inc_b(ProcessingUnit& cpu, MMU& mmu) // 0x04
 {
-    const u8 newValue = cpu.reg(ProcessingUnit::Register::B) + 1;
+    const u8 oldValue = cpu.reg(ProcessingUnit::Register::B);
+    const u8 newValue = oldValue + 1;
     cpu.reg(ProcessingUnit::Register::B) = newValue;
-
+    cpu.setFlag(ProcessingUnit::Flag::Z, newValue == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, (oldValue & 0x0F) == 0x0F);
     return totalMachineCycles(1);
 }
 
 int op_dec_b(ProcessingUnit& cpu, MMU& mmu) // 0x05
 {
-    const u8 newValue = cpu.reg(ProcessingUnit::Register::B) - 1;
+    const u8 oldValue = cpu.reg(ProcessingUnit::Register::B);
+    const u8 newValue = oldValue - 1;
     cpu.reg(ProcessingUnit::Register::B) = newValue;
-
+    cpu.setFlag(ProcessingUnit::Flag::Z, newValue == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, true);
+    cpu.setFlag(ProcessingUnit::Flag::H, (oldValue & 0x0F) == 0x00);
     return totalMachineCycles(1);
 }
 
@@ -130,17 +136,23 @@ int op_dec_bc(ProcessingUnit& cpu, MMU& mmu) // 0x0B
 
 int op_inc_c(ProcessingUnit& cpu, MMU& mmu) // 0x0C
 {
-    const u8 newValue = cpu.reg(ProcessingUnit::Register::C) + 1;
+    const u8 oldValue = cpu.reg(ProcessingUnit::Register::C);
+    const u8 newValue = oldValue + 1;
     cpu.reg(ProcessingUnit::Register::C) = newValue;
-
+    cpu.setFlag(ProcessingUnit::Flag::Z, newValue == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, (oldValue & 0x0F) == 0x0F);
     return totalMachineCycles(1);
 }
 
 int op_dec_c(ProcessingUnit& cpu, MMU& mmu) // 0x0D
 {
-    const u8 newValue = cpu.reg(ProcessingUnit::Register::C) - 1;
+    const u8 oldValue = cpu.reg(ProcessingUnit::Register::C);
+    const u8 newValue = oldValue - 1;
     cpu.reg(ProcessingUnit::Register::C) = newValue;
-
+    cpu.setFlag(ProcessingUnit::Flag::Z, newValue == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, true);
+    cpu.setFlag(ProcessingUnit::Flag::H, (oldValue & 0x0F) == 0x00);
     return totalMachineCycles(1);
 }
 int op_ld_c_d8(ProcessingUnit& cpu, MMU& mmu) // 0x0E
@@ -167,7 +179,6 @@ int op_rrca(ProcessingUnit& cpu, MMU& mmu) // 0x0F
 
     return totalMachineCycles(1);
 }
-
 
 
 

@@ -46,17 +46,23 @@ int op_inc_de(ProcessingUnit& cpu, MMU& mmu) // 0x13
 
 int op_inc_d(ProcessingUnit& cpu, MMU& mmu) // 0x14
 {
-    const u8 newValue = cpu.reg(ProcessingUnit::Register::D) + 1;
+    const u8 oldValue = cpu.reg(ProcessingUnit::Register::D);
+    const u8 newValue = oldValue + 1;
     cpu.reg(ProcessingUnit::Register::D) = newValue;
-
+    cpu.setFlag(ProcessingUnit::Flag::Z, newValue == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, (oldValue & 0x0F) == 0x0F);
     return totalMachineCycles(1);
 }
 
 int op_dec_d(ProcessingUnit& cpu, MMU& mmu) // 0x15
 {
-    const u8 newValue = cpu.reg(ProcessingUnit::Register::D) - 1;
+    const u8 oldValue = cpu.reg(ProcessingUnit::Register::D);
+    const u8 newValue = oldValue - 1;
     cpu.reg(ProcessingUnit::Register::D) = newValue;
-
+    cpu.setFlag(ProcessingUnit::Flag::Z, newValue == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, true);
+    cpu.setFlag(ProcessingUnit::Flag::H, (oldValue & 0x0F) == 0x00);
     return totalMachineCycles(1);
 }
 
