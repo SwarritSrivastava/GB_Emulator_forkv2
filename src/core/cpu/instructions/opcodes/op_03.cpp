@@ -44,7 +44,19 @@ int op_inc_sp(ProcessingUnit& cpu, MMU& mmu) // 0x33
 
     return totalMachineCycles(2);
 }
-DUMMY(op_inc_hl_ptr) // 0x34
+int op_inc_hl_ptr(ProcessingUnit& cpu, MMU& mmu) // 0x34
+{
+    const u16 addr = cpu.get_hl();
+    const u8 oldValue = mmu.read(addr);
+    const u8 newValue = oldValue + 1;
+    mmu.write(addr, newValue);
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, newValue == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, (oldValue & 0x0F) == 0x0F);
+
+    return totalMachineCycles(3);
+}
 DUMMY(op_dec_hl_ptr) // 0x35
 DUMMY(op_ld_hl_d8) // 0x36
 DUMMY(op_scf) // 0x37

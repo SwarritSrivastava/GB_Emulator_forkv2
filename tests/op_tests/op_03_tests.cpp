@@ -71,3 +71,20 @@ TEST_F(OpcodesCPUTest, INC_SP_IncrementsStackPointer)
     EXPECT_EQ(cycles, 8);
     EXPECT_EQ(cpu.get_sp(), 0x1235);
 }
+
+TEST_F(OpcodesCPUTest, INC_HL_PTR_IncrementsMemoryAndFlags)
+{
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x10;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+    mmu.write(0xC010, 0x0F);
+
+    const int cycles = op_inc_hl_ptr(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(mmu.read(0xC010), 0x10);
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
