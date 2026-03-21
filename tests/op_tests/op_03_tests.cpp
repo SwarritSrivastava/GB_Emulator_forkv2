@@ -200,3 +200,18 @@ TEST_F(OpcodesCPUTest, DEC_SP_DecrementsStackPointer)
     EXPECT_EQ(cycles, 8);
     EXPECT_EQ(cpu.get_sp(), 0x1233);
 }
+
+TEST_F(OpcodesCPUTest, INC_A_UpdatesFlagsAndPreservesCarry)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_inc_a(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x00);
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
