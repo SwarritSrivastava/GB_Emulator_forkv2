@@ -134,3 +134,29 @@ TEST_F(OpcodesCPUTest, SCF_SetsCarryAndClearsNH)
     EXPECT_EQ(cpu.get_flag_h(), 0);
     EXPECT_EQ(cpu.get_flag_c(), 1);
 }
+
+TEST_F(OpcodesCPUTest, JR_C_JumpsWhenCarryFlagIsSet)
+{
+    std::vector<u8> rom(0x200);
+    rom[0x101] = 0xFB;
+    mmu.map_rom(rom);
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_jr_c(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_pc(), 0x0FD);
+}
+
+TEST_F(OpcodesCPUTest, JR_C_DoesNotJumpWhenCarryFlagIsClear)
+{
+    std::vector<u8> rom(0x200);
+    rom[0x101] = 0x05;
+    mmu.map_rom(rom);
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = op_jr_c(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}

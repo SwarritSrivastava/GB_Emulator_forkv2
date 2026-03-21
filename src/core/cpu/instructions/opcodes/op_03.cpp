@@ -85,7 +85,18 @@ int op_scf(ProcessingUnit& cpu, MMU& mmu) // 0x37
 
     return totalMachineCycles(1);
 }
-DUMMY(op_jr_c) // 0x38
+int op_jr_c(ProcessingUnit& cpu, MMU& mmu) // 0x38
+{
+    cpu.inc_pc();
+    const int8_t offset = static_cast<int8_t>(mmu.read(cpu.inc_pc()));
+
+    if (cpu.get_flag_c()) {
+        cpu.set_pc(static_cast<u16>(cpu.get_pc() + offset));
+        return totalMachineCycles(3);
+    }
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_add_hl_sp) // 0x39
 DUMMY(op_ld_a_hld) // 0x3A
 DUMMY(op_dec_sp) // 0x3B
