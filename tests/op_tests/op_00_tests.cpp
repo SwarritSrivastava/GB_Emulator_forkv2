@@ -71,7 +71,7 @@ TEST_F(OpcodesCPUTest, INC_BC_IncrementsRegisterPair)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x35);
 }
 
-TEST_F(OpcodesCPUTest, INC_B_IncrementsRegisterPair)
+TEST_F(OpcodesCPUTest, INC_B_IncrementsRegister)
 {
     cpu.reg(ProcessingUnit::Register::B) = 0x12;
     cpu.reg(ProcessingUnit::Register::C) = 0x34;
@@ -80,12 +80,12 @@ TEST_F(OpcodesCPUTest, INC_B_IncrementsRegisterPair)
 
     EXPECT_EQ(cycles, 4);
 
-    EXPECT_EQ(cpu.get_bc(), 0x1334); // BC should now be 0x1235
+    EXPECT_EQ(cpu.get_bc(), 0x1334); // BC should now be 0x1334
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x13);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x34);
 }
 
-TEST_F(OpcodesCPUTest, DEC_B_DecreasesRegisterPair)
+TEST_F(OpcodesCPUTest, DEC_B_DecreasesRegister)
 {
     cpu.reg(ProcessingUnit::Register::B) = 0x12;
     cpu.reg(ProcessingUnit::Register::C) = 0x34;
@@ -94,7 +94,7 @@ TEST_F(OpcodesCPUTest, DEC_B_DecreasesRegisterPair)
 
     EXPECT_EQ(cycles, 4);
 
-    EXPECT_EQ(cpu.get_bc(), 0x1134); // BC should now be 0x1235
+    EXPECT_EQ(cpu.get_bc(), 0x1134); // BC should now be 0x1134
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x11);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x34);
 }
