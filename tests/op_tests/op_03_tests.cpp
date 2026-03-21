@@ -177,3 +177,16 @@ TEST_F(OpcodesCPUTest, ADD_HL_SP_AddsAndUpdatesFlags)
     EXPECT_EQ(cpu.get_flag_h(), 1);
     EXPECT_EQ(cpu.get_flag_c(), 1);
 }
+
+TEST_F(OpcodesCPUTest, LD_A_HLD_LoadsAndDecrementsHL)
+{
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x40;
+    mmu.write(0xC040, 0xBE);
+
+    const int cycles = op_ld_a_hld(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xBE);
+    EXPECT_EQ(cpu.get_hl(), 0xC03F);
+}
