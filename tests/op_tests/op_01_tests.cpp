@@ -56,7 +56,7 @@ TEST_F(OpcodesCPUTest, LD_DE_A_StoresAIntoMemory)
 
     EXPECT_EQ(mmu.read(0xC000), 0x42);
 
-    EXPECT_EQ(cpu.get_de(), 0xC000); // Verify bc integrity
+    EXPECT_EQ(cpu.get_de(), 0xC000); // Verify de integrity
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x42); // Verify a integrity
 }
 
@@ -74,7 +74,7 @@ TEST_F(OpcodesCPUTest, INC_DE_IncrementsRegisterPair)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x35);
 }
 
-TEST_F(OpcodesCPUTest, INC_D_IncrementsRegisterPair)
+TEST_F(OpcodesCPUTest, INC_D_IncrementsRegister)
 {
     cpu.reg(ProcessingUnit::Register::D) = 0x12;
     cpu.reg(ProcessingUnit::Register::E) = 0x34;
@@ -83,7 +83,7 @@ TEST_F(OpcodesCPUTest, INC_D_IncrementsRegisterPair)
 
     EXPECT_EQ(cycles, 4);
 
-    EXPECT_EQ(cpu.get_de(), 0x1334); // DE should now be 0x1235
+    EXPECT_EQ(cpu.get_de(), 0x1334); // DE should now be 0x1334
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x13);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x34);
 }
@@ -102,7 +102,7 @@ TEST_F(OpcodesCPUTest, DEC_D_DecreasesRegisterPair)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x34);
 }
 
-TEST_F(OpcodesCPUTest, LD_D_D8_LoadsImmediateIntoB)
+TEST_F(OpcodesCPUTest, LD_D_D8_LoadsImmediateIntoD)
 {
     const u16 pc = cpu.get_pc();
     EXPECT_EQ(pc, 0x0100);
