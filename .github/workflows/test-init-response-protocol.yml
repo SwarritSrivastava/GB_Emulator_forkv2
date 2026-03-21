@@ -23,14 +23,31 @@ jobs:
           persist-credentials: false
 
       - name: Build and run tests
+        id: run_build_test
         run: |
+          set +e
           chmod +x ./utility_scripts/build_and_test.sh
-          ./utility_scripts/build_and_test.sh
+          ./utility_scripts/build_and_test.sh 2>&1 | tee build_and_test.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Run valgrind test protocol
+        id: run_valgrind
+        if: always()
         run: |
+          set +e
           chmod +x ./utility_scripts/valgrind_tests.sh
-          sudo ./utility_scripts/valgrind_tests.sh
+          sudo ./utility_scripts/valgrind_tests.sh 2>&1 | tee valgrind_tests.log
+          code=${PIPESTATUS[0]}
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Ensure log files exist
+        if: always()
+        run: |
+          [ -f build_and_test.log ] || echo "build_and_test.log was not generated" > build_and_test.log
+          [ -f valgrind_tests.log ] || echo "valgrind_tests.log was not generated" > valgrind_tests.log
 
       - name: Prepare Discord payload
         if: always()
@@ -42,12 +59,22 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           SHA: ${{ github.sha }}
           ACTOR: ${{ github.actor }}
+          BUILD_TEST_EXIT: ${{ steps.run_build_test.outputs.exit_code }}
+          VALGRIND_EXIT: ${{ steps.run_valgrind.outputs.exit_code }}
           EVENT_PATH: ${{ github.event_path }}
           SERVER_URL: ${{ github.server_url }}
         run: |
           python3 - <<'PY'
           import json
           import os
+
+          def read_tail(path, max_lines=40):
+              try:
+                  with open(path, "r", encoding="utf-8", errors="replace") as fh:
+                      lines = fh.read().splitlines()
+                  return "\n".join(lines[-max_lines:])
+              except FileNotFoundError:
+                  return f"{path} not found"
 
           event_path = os.environ["EVENT_PATH"]
           with open(event_path, "r", encoding="utf-8") as fh:
@@ -75,10 +102,14 @@ jobs:
           run_id = os.environ["RUN_ID"]
           run_number = os.environ["RUN_NUMBER"]
           server_url = os.environ["SERVER_URL"]
+          build_test_exit = os.environ.get("BUILD_TEST_EXIT", "1")
+          valgrind_exit = os.environ.get("VALGRIND_EXIT", "1")
 
           run_url = f"{server_url}/{repo}/actions/runs/{run_id}"
           commit_url = f"{server_url}/{repo}/commit/{sha_full}"
           compare_url = event.get("compare", "")
+          build_tail = read_tail("build_and_test.log")
+          valgrind_tail = read_tail("valgrind_tests.log")
 
           lines = [
               f"{emoji} **TEST INIT RESPONSE PROTOCOL** `{status}`",
@@ -94,13 +125,29 @@ jobs:
               lines.append(f"Compare: {compare_url}")
 
           lines.append(f"Commit Count In Push: `{len(commits)}`")
+          lines.append(f"build_and_test.sh exit: `{build_test_exit}`")
+          lines.append(f"valgrind_tests.sh exit: `{valgrind_exit}`")
 
           if commit_lines:
               lines.append("")
               lines.append("Commits:")
               lines.extend(commit_lines)
 
+          lines.append("")
+          lines.append("build_and_test.sh tail:")
+          lines.append("```")
+          lines.append(build_tail)
+          lines.append("```")
+
+          lines.append("")
+          lines.append("valgrind_tests.sh tail:")
+          lines.append("```")
+          lines.append(valgrind_tail)
+          lines.append("```")
+
           content = "\n".join(lines)
+          if len(content) > 1800:
+              content = content[:1750] + "\n\n...(truncated, see attached logs)"
           payload = {"content": content}
 
           with open("discord_payload.json", "w", encoding="utf-8") as out:
@@ -126,8 +173,19 @@ jobs:
               ;;
           esac
 
+          payload_json=$(cat discord_payload.json)
+
           curl --fail --silent --show-error \
-            -H "Content-Type: application/json" \
             -X POST \
-            --data @discord_payload.json \
+            -F "payload_json=$payload_json" \
+            -F "files[0]=@build_and_test.log;type=text/plain" \
+            -F "files[1]=@valgrind_tests.log;type=text/plain" \
             "$WEBHOOK"
+
+      - name: Mark workflow failed if checks failed
+        if: always()
+        run: |
+          if [ "${{ steps.run_build_test.outputs.exit_code }}" != "0" ] || [ "${{ steps.run_valgrind.outputs.exit_code }}" != "0" ]; then
+            echo "One or more test protocols failed"
+            exit 1
+          fi
