@@ -153,5 +153,11 @@ int op_dec_a(ProcessingUnit& cpu, MMU& mmu) // 0x3D
 
     return totalMachineCycles(1);
 }
-DUMMY(op_ld_a_d8) // 0x3E
+int op_ld_a_d8(ProcessingUnit& cpu, MMU& mmu) // 0x3E
+{
+    cpu.inc_pc();
+    cpu.reg(ProcessingUnit::Register::A) = mmu.read(cpu.inc_pc());
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_ccf) // 0x3F

@@ -230,3 +230,17 @@ TEST_F(OpcodesCPUTest, DEC_A_UpdatesFlagsAndPreservesCarry)
     EXPECT_EQ(cpu.get_flag_h(), 1);
     EXPECT_EQ(cpu.get_flag_c(), 1);
 }
+
+TEST_F(OpcodesCPUTest, LD_A_D8_LoadsImmediateIntoA)
+{
+    std::vector<u8> rom(0x200);
+    rom[0x100] = 0x00;
+    rom[0x101] = 0x7E;
+    mmu.map_rom(rom);
+
+    const int cycles = op_ld_a_d8(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x7E);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}
