@@ -7,7 +7,12 @@ constexpr int machine_cycles = 4;
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
-DUMMY(op_ld_b_b) // 0x40
+int op_ld_b_b(ProcessingUnit& cpu, MMU& mmu) // 0x40
+{
+    cpu.reg(ProcessingUnit::Register::B) = cpu.reg(ProcessingUnit::Register::B);
+
+    return totalMachineCycles(1);
+}
 DUMMY(op_ld_b_c) // 0x41
 DUMMY(op_ld_b_d) // 0x42
 DUMMY(op_ld_b_e) // 0x43
