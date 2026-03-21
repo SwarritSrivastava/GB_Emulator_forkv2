@@ -176,3 +176,179 @@ TEST_F(OpcodesCPUTest, LD_D_D8_LoadsImmediateIntoD)
     // PC should advance by 2
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
+
+TEST_F(OpcodesCPUTest, RLA_RotatesAThroughCarry)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x85;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_rla(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x0B);
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+    EXPECT_EQ(cpu.get_pc(), 0x100);
+}
+
+TEST_F(OpcodesCPUTest, RLA_UsesCarryIn)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x42;
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = op_rla(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x84);
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, JR_R8_JumpsForwardFromNextInstruction)
+{
+    std::vector<u8> rom(0x200);
+    rom[0x101] = 0x05;
+    mmu.map_rom(rom);
+
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+
+    const int cycles = op_jr_r8(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_pc(), 0x107);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
+}
+
+TEST_F(OpcodesCPUTest, JR_R8_JumpsBackwardFromNextInstruction)
+{
+    std::vector<u8> rom(0x200);
+    rom[0x101] = 0xFB;
+    mmu.map_rom(rom);
+
+    const int cycles = op_jr_r8(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_pc(), 0x0FD);
+}
+
+TEST_F(OpcodesCPUTest, ADD_HL_DE_AddsRegisterPairAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::H) = 0x12;
+    cpu.reg(ProcessingUnit::Register::L) = 0x34;
+    cpu.reg(ProcessingUnit::Register::D) = 0x11;
+    cpu.reg(ProcessingUnit::Register::E) = 0x11;
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+
+    const int cycles = op_add_hl_de(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_hl(), 0x2345);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+}
+
+TEST_F(OpcodesCPUTest, ADD_HL_DE_SetsHalfCarryAndCarry)
+{
+    cpu.reg(ProcessingUnit::Register::H) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::L) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::D) = 0x00;
+    cpu.reg(ProcessingUnit::Register::E) = 0x01;
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = op_add_hl_de(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_hl(), 0x0000);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
+
+TEST_F(OpcodesCPUTest, LD_A_DE_LoadsMemoryIntoA)
+{
+    cpu.reg(ProcessingUnit::Register::D) = 0xA0;
+    cpu.reg(ProcessingUnit::Register::E) = 0x02;
+    mmu.write(0xA002, 0x66);
+
+    const int cycles = op_ld_a_de(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x66);
+    EXPECT_EQ(cpu.get_de(), 0xA002);
+}
+
+TEST_F(OpcodesCPUTest, DEC_DE_DecrementsRegisterPair)
+{
+    cpu.reg(ProcessingUnit::Register::D) = 0x12;
+    cpu.reg(ProcessingUnit::Register::E) = 0x00;
+
+    const int cycles = op_dec_de(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_de(), 0x11FF);
+}
+
+TEST_F(OpcodesCPUTest, INC_E_UpdatesFlagsAndPreservesCarry)
+{
+    cpu.reg(ProcessingUnit::Register::E) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_inc_e(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x00);
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
+
+TEST_F(OpcodesCPUTest, DEC_E_UpdatesFlagsAndPreservesCarry)
+{
+    cpu.reg(ProcessingUnit::Register::E) = 0x10;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_dec_e(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x0F);
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 1);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}
+
+TEST_F(OpcodesCPUTest, LD_E_D8_LoadsImmediateIntoE)
+{
+    std::vector<u8> rom(0x200);
+    rom[0x100] = 0x00;
+    rom[0x101] = 0x34;
+    mmu.map_rom(rom);
+
+    const int cycles = op_ld_e_d8(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x34);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}
+
+TEST_F(OpcodesCPUTest, RRA_RotatesAThroughCarry)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x01;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_rra(cpu, mmu);
+
+    EXPECT_EQ(cycles, 4);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x80);
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}

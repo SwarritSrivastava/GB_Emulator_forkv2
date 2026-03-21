@@ -26,6 +26,7 @@ public:
     void reset();
     void printStatus() const; // print task
     [[nodiscard]] u16 get_pc() const;
+    void set_pc(u16 value) { PC = value; }
     [[nodiscard]] u16 get_sp() const;
     // Getting Full 16bit Register Values
     [[nodiscard]] u16 get_bc() const { return (B << 8) | C; }
