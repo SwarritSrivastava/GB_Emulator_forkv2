@@ -90,3 +90,19 @@ TEST_F(OpcodesCPUTest, LD_B_L_LoadsLIntoB)
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x55);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xD0);
 }
+
+TEST_F(OpcodesCPUTest, LD_B_HL_LoadsMemoryIntoB)
+{
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x88;
+    cpu.reg(ProcessingUnit::Register::B) = 0x11;
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    mmu.write(0xC088, 0x9B);
+
+    const int cycles = op_ld_b_hl(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x9B);
+    EXPECT_EQ(cpu.get_hl(), 0xC088);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
+}
