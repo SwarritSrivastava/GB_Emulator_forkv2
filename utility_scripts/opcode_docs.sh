@@ -2,6 +2,15 @@
 
 set -euo pipefail
 
+NO_FAIL_ON_OPEN=0
+
+for arg in "$@"; do
+    case "$arg" in
+        --no-fail-on-open) NO_FAIL_ON_OPEN=1 ;;
+        *) echo "Unknown argument: $arg" >&2; exit 1 ;;
+    esac
+done
+
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="$PROJECT_ROOT/dist"
 DIST_HTML="$DIST_DIR/index.html"
@@ -25,4 +34,8 @@ open_locally() {
 }
 
 echo "Opening opcode reference: $DIST_HTML"
-open_locally "$DIST_HTML" || true
+if [[ "$NO_FAIL_ON_OPEN" -eq 1 ]]; then
+    open_locally "$DIST_HTML" || true
+else
+    open_locally "$DIST_HTML"
+fi
