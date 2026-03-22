@@ -8,3 +8,4 @@ class MMU;
 using OpcodeFunc = int (*)(ProcessingUnit&, MMU&);
 
 extern OpcodeFunc instructionTable[256];
+extern OpcodeFunc cbInstructionTable[256];
