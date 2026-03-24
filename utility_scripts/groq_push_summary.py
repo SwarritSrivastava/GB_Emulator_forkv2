@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import subprocess
 import urllib.error
 import urllib.request
@@ -10,15 +11,14 @@ from pathlib import Path
 
 MAX_OVERVIEW_CHARS = 1800
 MAX_DIFF_FILES_CHARS = 1200
-MAX_DIFF_PATCH_CHARS = 6000
+MAX_DIFF_PATCH_CHARS = 2500
+MAX_LOG_DIGEST_CHARS = 2200
 MAX_COMMITS = 12
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 MODEL_PRIORITY = [
-    "openai/gpt-oss-120b",
     "openai/gpt-oss-20b",
+    "openai/gpt-oss-120b",
     "groq/compound",
-    "moonshotai/kimi-k2-instruct-0905",
-    "moonshotai/kimi-k2-instruct",
     "llama-3.3-70b-versatile",
     "qwen/qwen3-32b",
     "meta-llama/llama-4-scout-17b-16e-instruct",
@@ -66,6 +66,44 @@ def build_fallback_summary(commits_text: str, changed_files: str) -> str:
         changed_files or "- No changed files were detected.",
     ]
     return "\n".join(lines)
+
+
+def build_log_digest(build_log: str, valgrind_log: str) -> str:
+    pattern = re.compile(
+        r"(error|failed|fail|assert|warning|segmentation fault|invalid read|definitely lost|leak)",
+        re.IGNORECASE,
+    )
+
+    def collect(log_name: str, text: str):
+        if not text.strip():
+            return [f"[{log_name}] log unavailable"]
+
+        hits = []
+        seen = set()
+        for line in text.splitlines():
+            clean = " ".join(line.strip().split())
+            if not clean:
+                continue
+            if not pattern.search(clean):
+                continue
+            key = clean.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            hits.append(clean)
+            if len(hits) >= 18:
+                break
+
+        if not hits:
+            raw = [" ".join(line.strip().split()) for line in text.splitlines() if line.strip()]
+            hits = raw[:6]
+
+        lines = [f"[{log_name}]"]
+        lines.extend(f"- {line}" for line in hits)
+        return lines
+
+    digest = "\n".join(collect("build_and_test", build_log) + [""] + collect("valgrind", valgrind_log))
+    return trim(digest, MAX_LOG_DIGEST_CHARS)
 
 
 def fetch_available_models(api_key: str):
@@ -119,6 +157,7 @@ def main():
     commits_text = read_text(Path("ai_context_commits.txt"), "")
     changed_files = read_text(Path("ai_context_changed_files.txt"), "")
     diff_patch = read_text(Path("ai_context_diff.txt"), "")
+    logs_digest = read_text(Path("ai_context_logs.txt"), "")
 
     if not commits_text:
         commit_lines = []
@@ -152,6 +191,12 @@ def main():
     changed_files = trim(changed_files, MAX_DIFF_FILES_CHARS)
     diff_patch = trim(diff_patch, MAX_DIFF_PATCH_CHARS)
 
+    if not logs_digest:
+        logs_digest = build_log_digest(
+            read_text(Path("build_and_test.log"), ""),
+            read_text(Path("valgrind_tests.log"), ""),
+        )
+
     prompt = f"""
 You are an engineering release assistant for repository `{repo}` on branch `{ref_name}`.
 
@@ -160,11 +205,11 @@ Use only the provided repository overview, commit messages, and git diff context
 
 Output rules:
 1. Use Markdown.
-2. Keep it concise (around 140-220 words).
+2. Keep it concise (80-140 words).
 3. Sections required:
-   - Push Summary
-   - Key Code Changes
-   - Potential Risks/Follow-ups
+    - Push Summary
+    - Key Code Changes
+    - Potential Risks/Follow-ups
 4. Be specific and factual; do not invent behavior not shown in the input.
 5. Mention probable intent behind this push in one sentence.
 
@@ -179,6 +224,9 @@ Changed files summary:
 
 Diff excerpt:
 {diff_patch}
+
+Truncated and compressed CI log digest:
+{logs_digest}
 """.strip()
 
     summary_text = ""
