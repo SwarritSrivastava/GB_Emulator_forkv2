@@ -81,6 +81,7 @@ jobs:
           import json
           import os
           import re
+          from pathlib import Path
 
           def read_text(path, default=""):
               try:
@@ -151,6 +152,34 @@ jobs:
               if re.search(r"ERROR SUMMARY:\s*[1-9]\d*\s+errors", log_text):
                   return "FAIL"
               return "UNKNOWN"
+
+          def trim_text(text, max_len=1800):
+              if len(text) <= max_len:
+                  return text
+              return text[: max_len - 18] + "\n...[truncated]"
+
+          def split_text(text, max_len=1800):
+              if not text:
+                  return []
+              lines = text.splitlines()
+              chunks = []
+              current = []
+              current_len = 0
+
+              for line in lines:
+                  add = len(line) + 1
+                  if current and current_len + add > max_len:
+                      chunks.append("\n".join(current))
+                      current = [line]
+                      current_len = add
+                  else:
+                      current.append(line)
+                      current_len += add
+
+              if current:
+                  chunks.append("\n".join(current))
+
+              return chunks
 
           event_path = os.environ["EVENT_PATH"]
           with open(event_path, "r", encoding="utf-8") as fh:
@@ -238,24 +267,29 @@ jobs:
               summary_lines.extend(extract_failure_block(valgrind_log, max_lines=30))
               summary_lines.append("```")
 
-          primary_content = "\n".join(summary_lines)
+          primary_content = trim_text("\n".join(summary_lines), 1800)
 
-          ai_lines = [
-              "**AI Commit Summary**",
-              "```md",
-              ai_summary if ai_summary else "AI summary unavailable",
-              "```",
-          ]
-          ai_content = "\n".join(ai_lines)
+          Path("discord_ai_payloads").mkdir(exist_ok=True)
 
-          with open("discord_messages.json", "w", encoding="utf-8") as out:
-              json.dump(
-                  [
-                      {"content": primary_content},
-                      {"content": ai_content},
-                  ],
-                  out,
-              )
+          with open("discord_payload_main.json", "w", encoding="utf-8") as out:
+              json.dump({"content": primary_content}, out)
+
+          ai_text = ai_summary if ai_summary else "AI summary unavailable"
+          ai_chunks = split_text(ai_text, 1600)
+          if not ai_chunks:
+              ai_chunks = ["AI summary unavailable"]
+
+          payload_files = []
+          total = len(ai_chunks)
+          for i, chunk in enumerate(ai_chunks, start=1):
+              header = f"**AI Commit Summary ({i}/{total})**"
+              content = "\n".join([header, "```md", chunk, "```"])
+              payload = {"content": trim_text(content, 1800)}
+              path = Path("discord_ai_payloads") / f"ai_{i:02d}.json"
+              path.write_text(json.dumps(payload), encoding="utf-8")
+              payload_files.append(path.as_posix())
+
+          Path("discord_ai_payloads.txt").write_text("\n".join(payload_files) + "\n", encoding="utf-8")
           PY
 
       - name: Validate Discord webhook
@@ -289,7 +323,23 @@ jobs:
           WEBHOOK: ${{ secrets.WEBHOOK }}
           DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
-          python3 ./utility_scripts/send_discord_messages.py --webhook "$WEBHOOK" --messages-file discord_messages.json --label push --max-messages 2 --delay-seconds 5 --max-retries 2
+          curl --fail --silent --show-error \
+            -H "Content-Type: application/json" \
+            -X POST \
+            --data @discord_payload_main.json \
+            "$WEBHOOK"
+
+          if [ -f discord_ai_payloads.txt ]; then
+            while IFS= read -r payload_file; do
+              [ -n "$payload_file" ] || continue
+              sleep 5
+              curl --fail --silent --show-error \
+                -H "Content-Type: application/json" \
+                -X POST \
+                --data @"$payload_file" \
+                "$WEBHOOK"
+            done < discord_ai_payloads.txt
+          fi
 
       - name: Mark workflow failed if checks failed
         if: always()
