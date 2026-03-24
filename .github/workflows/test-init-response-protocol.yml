@@ -181,6 +181,123 @@ jobs:
 
               return chunks
 
+          def clean_markdown_line(line):
+              s = line.strip()
+              if not s:
+                  return ""
+              s = re.sub(r"^\*\*(.+)\*\*$", r"\1", s)
+              s = re.sub(r"^_(.+)_$", r"\1", s)
+              s = s.replace("\u2011", "-")
+              s = re.sub(r"\s+", " ", s).strip()
+              if s.startswith("* "):
+                  s = "- " + s[2:]
+              return s
+
+          def classify_heading(line):
+              raw = line.strip()
+              if not raw:
+                  return ""
+              heading = re.sub(r"^[#\s]+", "", raw)
+              heading = re.sub(r"^\*\*(.+?)\*\*$", r"\1", heading)
+              heading = heading.replace("*", "").replace("`", "")
+              lower = heading.lower().strip(" :")
+
+              if "push summary" in lower:
+                  return "Push Summary"
+              if "key code changes" in lower or "key changes" in lower:
+                  return "Key Changes"
+              if "potential risks" in lower or "follow-up" in lower or "follow ups" in lower:
+                  return "Risks / Follow-ups"
+              if "probable intent" in lower or lower == "intent":
+                  return "Intent"
+              return ""
+
+          def normalize_ai_summary(raw_text):
+              text = (raw_text or "").replace("\r\n", "\n").replace("\r", "\n")
+              lines = []
+              in_fence = False
+              for line in text.splitlines():
+                  stripped = line.strip()
+                  if stripped.startswith("```"):
+                      in_fence = not in_fence
+                      continue
+                  if in_fence:
+                      lines.append(line)
+                      continue
+                  lines.append(line)
+
+              sections = {
+                  "Push Summary": [],
+                  "Key Changes": [],
+                  "Risks / Follow-ups": [],
+                  "Intent": [],
+              }
+
+              current = "Push Summary"
+              for raw in lines:
+                  line = clean_markdown_line(raw)
+                  if not line:
+                      if sections[current] and sections[current][-1] != "":
+                          sections[current].append("")
+                      continue
+
+                  if line.lower().startswith("model used:"):
+                      continue
+
+                  mapped = classify_heading(line)
+                  if mapped:
+                      current = mapped
+                      inline = re.split(r":", line, maxsplit=1)
+                      if len(inline) == 2 and inline[1].strip():
+                          sections[current].append(clean_markdown_line(inline[1]))
+                      continue
+
+                  probable_intent = re.match(r"^\*?probable intent\*?\s*:\s*(.+)$", line, re.IGNORECASE)
+                  if probable_intent:
+                      current = "Intent"
+                      sections[current].append(clean_markdown_line(probable_intent.group(1)))
+                      continue
+
+                  sections[current].append(line)
+
+              def compact(lines_in):
+                  out = []
+                  for item in lines_in:
+                      if item == "":
+                          if out and out[-1] != "":
+                              out.append("")
+                          continue
+                      out.append(item)
+                  while out and out[-1] == "":
+                      out.pop()
+                  return out
+
+              sections = {k: compact(v) for k, v in sections.items()}
+
+              for key in ("Key Changes", "Risks / Follow-ups"):
+                  normalized = []
+                  for item in sections[key]:
+                      if not item:
+                          continue
+                      if item.startswith("- "):
+                          normalized.append(item)
+                      else:
+                          normalized.append(f"- {item}")
+                  sections[key] = normalized
+
+              output = []
+              order = ["Push Summary", "Key Changes", "Risks / Follow-ups", "Intent"]
+              for title in order:
+                  content = sections[title]
+                  if not content:
+                      continue
+                  if output:
+                      output.append("")
+                  output.append(f"**{title}**")
+                  output.extend(content)
+
+              return "\n".join(output).strip()
+
           event_path = os.environ["EVENT_PATH"]
           with open(event_path, "r", encoding="utf-8") as fh:
               event = json.load(fh)
@@ -274,16 +391,18 @@ jobs:
           with open("discord_payload_main.json", "w", encoding="utf-8") as out:
               json.dump({"content": primary_content}, out)
 
-          ai_text = ai_summary if ai_summary else "AI summary unavailable"
+          ai_text = normalize_ai_summary(ai_summary)
+          if not ai_text:
+              ai_text = "**Push Summary**\nAI summary unavailable"
           ai_chunks = split_text(ai_text, 1600)
           if not ai_chunks:
-              ai_chunks = ["AI summary unavailable"]
+              ai_chunks = ["**Push Summary**\nAI summary unavailable"]
 
           payload_files = []
           total = len(ai_chunks)
           for i, chunk in enumerate(ai_chunks, start=1):
               header = f"**AI Commit Summary ({i}/{total})**"
-              content = "\n".join([header, "```md", chunk, "```"])
+              content = "\n\n".join([header, chunk])
               payload = {"content": trim_text(content, 1800)}
               path = Path("discord_ai_payloads") / f"ai_{i:02d}.json"
               path.write_text(json.dumps(payload), encoding="utf-8")
