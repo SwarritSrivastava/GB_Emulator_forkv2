@@ -1,6 +1,7 @@
 #include "../../../../../include/ProcessingUnit.hpp"
 #include "../../../../../include/opcodes.hpp"
 #include "../../../../../include/mmu.hpp"
+#include "../../../../../include/opcode_table.hpp"
 
 constexpr int machine_cycles = 4;
 #define totalMachineCycles(n) ((n) * machine_cycles)
@@ -18,7 +19,12 @@ DUMMY(op_rst_00) // 0xC7
 DUMMY(op_ret_z) // 0xC8
 DUMMY(op_ret) // 0xC9
 DUMMY(op_jp_z) // 0xCA
-DUMMY(op_cb_prefix) // 0xCB
+int op_cb_prefix(ProcessingUnit& cpu , MMU& mmu) // 0xCB
+{
+    const u8 cb_opcode = mmu.read(cpu.inc_pc());
+
+    return cbInstructionTable[cb_opcode](cpu, mmu);
+}
 DUMMY(op_call_z) // 0xCC
 DUMMY(op_call) // 0xCD
 DUMMY(op_adc_a_d8) // 0xCE
