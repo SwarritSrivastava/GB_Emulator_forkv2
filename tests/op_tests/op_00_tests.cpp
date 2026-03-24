@@ -152,7 +152,7 @@ TEST_F(OpcodesCPUTest, LD_B_D8_LoadsImmediateIntoB)
     EXPECT_EQ(cpu.get_pc(), 0x102);
 }
 
-TEST_F(OpcodesCPUTest, RLCA_RotatesARegisterRight)
+TEST_F(OpcodesCPUTest, RLCA_RotatesARegisterLeft)
 {
     cpu.reg(ProcessingUnit::Register::A) = 0x79;
 
