@@ -32,3 +32,26 @@ TEST_F(CB_OpcodesCPUTest, RLCB_RotatesBRegisterLeft)
     EXPECT_FALSE(cpu.get_flag_c());
     EXPECT_TRUE(cpu.get_flag_z());
 }
+
+TEST_F(CB_OpcodesCPUTest, RLCC_RotatesCRegisterLeft) 
+{
+    cpu.reg(ProcessingUnit::Register::C) = 0x80;
+    cpu.setFlag(ProcessingUnit::Flag::C , false);
+
+    const int c0 = op_rlc_c(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C) , 0x01);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+
+    //Test for Z flag
+
+    cpu.reg(ProcessingUnit::Register::C) = 0x00;
+    cpu.setFlag(ProcessingUnit::Flag::C , false);
+
+    const int c1 = op_rlc_c(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x00);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_TRUE(cpu.get_flag_z());
+}
