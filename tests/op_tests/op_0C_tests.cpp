@@ -10,7 +10,7 @@ protected:
     MMU mmu;
 };
 
-TEST_F(OpcodesCPUTest, CB_Prefix) 
+TEST_F(OpcodesCPUTest, CB_Prefix_ChecksForCorrectCBOpcodeCall) 
 {
     const u8 test_opcode = 0x00;
     const u16 start_pc = 0x100;
