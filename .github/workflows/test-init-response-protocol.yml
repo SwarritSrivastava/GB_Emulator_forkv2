@@ -2,6 +2,8 @@ name: TEST INIT RESPONSE PROTOCOL
 
 on:
   push:
+    pull_request: # Adds support for when someone opens a PR
+      branches: [ "main", "master" ] # Optional: specify branches
 
 permissions:
   contents: read
