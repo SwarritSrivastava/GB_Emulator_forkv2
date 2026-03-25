@@ -108,7 +108,7 @@ AF: 01B0    BC: 0013    DE: 00D8    HL: 014D
 SP: FFFE    PC: 0100
 Flags: Z - H C    [IME:0  HALT:0]
 
-Success!
+Success!!
 2399 instructions executed
 ```
 All 14 unit tests currently pass:
