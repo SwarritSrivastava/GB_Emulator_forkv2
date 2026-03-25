@@ -16,7 +16,7 @@ Repository CI now includes a structured Discord webhook notification flow for pu
 
 - Z80-like CPU core (Sharp LR35902)
     - Most 8-bit & 16-bit instructions implemented (via `opcodes.cpp` + `cb_opcodes.cpp`)
-    - CB-prefixed opcodes table
+    - CB-prefixed opcodes table.
     - Correct reset state (AF=01B0h, BC=0013h, DE=00D8h, HL=014Dh, SP=FFFEh, PC=0100h)
     - Basic cycle-accurate stepping (PC increments, NOPs, HALT behavior)
     - Unknown opcode handling (graceful fallback)
