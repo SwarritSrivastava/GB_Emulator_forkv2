@@ -120,6 +120,6 @@ CPU reset values, HALT, PC stepping, unknown opcodes, MMU zero-init, write prote
  
  > 100% pass rate on current suite (~14 tests)
  
- > Valgrind → no leaks detected on short runs
+ > Valgrind → no leaks detected on short runs.
 
  > Doxygen → documentation generation (run doxygen DoxygenConfig in documentation/)
