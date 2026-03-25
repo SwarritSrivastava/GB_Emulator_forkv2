@@ -329,9 +329,54 @@ def wrap_lines(text: str, width: int) -> list[str]:
     return out
 
 
+def init_tui_colors() -> dict[str, int]:
+    palette = {
+        "title": 0,
+        "label": 0,
+        "muted": 0,
+        "selected": curses.A_REVERSE,
+        "divider": 0,
+        "value": 0,
+        "good": 0,
+        "warn": 0,
+    }
+
+    if not curses.has_colors():
+        return palette
+
+    curses.start_color()
+    try:
+        curses.use_default_colors()
+        bg = -1
+    except curses.error:
+        bg = curses.COLOR_BLACK
+
+    curses.init_pair(1, curses.COLOR_CYAN, bg)
+    curses.init_pair(2, curses.COLOR_WHITE, bg)
+    curses.init_pair(3, curses.COLOR_BLUE, bg)
+    curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_CYAN)
+    curses.init_pair(5, curses.COLOR_GREEN, bg)
+    curses.init_pair(6, curses.COLOR_YELLOW, bg)
+
+    palette.update(
+        {
+            "title": curses.color_pair(1) | curses.A_BOLD,
+            "label": curses.color_pair(2) | curses.A_BOLD,
+            "muted": curses.color_pair(3),
+            "selected": curses.color_pair(4) | curses.A_BOLD,
+            "divider": curses.color_pair(3),
+            "value": curses.color_pair(2),
+            "good": curses.color_pair(5) | curses.A_BOLD,
+            "warn": curses.color_pair(6) | curses.A_BOLD,
+        }
+    )
+    return palette
+
+
 def draw_tui(stdscr, entries: list[dict]) -> int:
     curses.curs_set(0)
     stdscr.keypad(True)
+    palette = init_tui_colors()
 
     query = ""
     selected = 0
@@ -341,8 +386,8 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
         height, width = stdscr.getmaxyx()
         if width < 70 or height < 16:
             stdscr.erase()
-            stdscr.addstr(0, 0, "Terminal too small. Resize to at least 70x16.")
-            stdscr.addstr(1, 0, "Press q to quit.")
+            stdscr.addstr(0, 0, "Terminal too small. Resize to at least 70x16.", palette["warn"])
+            stdscr.addstr(1, 0, "Press q to quit.", palette["muted"])
             stdscr.refresh()
             ch = stdscr.getch()
             if ch in (ord("q"), ord("Q")):
@@ -368,13 +413,15 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
             scroll = 0
 
         stdscr.erase()
-        stdscr.addstr(0, 0, "GB Opcode Lookup Interface")
-        stdscr.addstr(1, 0, f"Search: {query}")
-        stdscr.addstr(2, 0, f"Matches: {len(filtered)}/{len(entries)}")
-        stdscr.addstr(2, detail_x, "Keys: Up/Down PgUp/PgDn Enter q")
+        stdscr.addstr(0, 0, "GB Opcode Lookup Interface", palette["title"])
+        stdscr.addstr(1, 0, "Search:", palette["label"])
+        stdscr.addstr(1, 8, f"{query}", palette["value"])
+        stdscr.addstr(2, 0, "Matches:", palette["label"])
+        stdscr.addstr(2, 9, f"{len(filtered)}/{len(entries)}", palette["good"])
+        stdscr.addstr(2, detail_x, "Keys: Up/Down PgUp/PgDn Backspace q", palette["muted"])
 
         for row in range(3, height - 2):
-            stdscr.addch(row, list_width + 1, "|")
+            stdscr.addch(row, list_width + 1, "|", palette["divider"])
 
         visible = filtered[scroll : scroll + list_rows]
         for idx, entry in enumerate(visible):
@@ -383,38 +430,51 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
             label = f"{entry.get('opcode', ''):<8} {entry.get('mnemonic', '')}"
             label = label[: list_width - 1]
             if absolute_idx == selected:
-                stdscr.addstr(y, 0, label.ljust(list_width - 1), curses.A_REVERSE)
+                stdscr.addstr(y, 0, label.ljust(list_width - 1), palette["selected"])
             else:
-                stdscr.addstr(y, 0, label.ljust(list_width - 1))
+                stdscr.addstr(y, 0, label.ljust(list_width - 1), palette["value"])
 
         if filtered:
             current = filtered[selected]
             flags = current.get("flags", {})
-            details = [
-                f"Opcode   : {current.get('opcode', '')}",
-                f"Mnemonic : {current.get('mnemonic', '')}",
-                f"Prefix   : {current.get('prefix', '')}",
-                f"Bytes    : {current.get('bytes', '')}",
-                f"Cycles   : {current.get('cycles', '')}",
-                (
-                    "Flags    : "
-                    f"Z={flags.get('Z', '-')} "
-                    f"N={flags.get('N', '-')} "
-                    f"H={flags.get('H', '-')} "
-                    f"CY={flags.get('CY', '-')}"
-                ),
-                "",
-                "Description:",
+            flag_line = (
+                f"Z={flags.get('Z', '-')} "
+                f"N={flags.get('N', '-')} "
+                f"H={flags.get('H', '-')} "
+                f"CY={flags.get('CY', '-')}"
+            )
+            detail_rows: list[tuple[str, str]] = [
+                ("Opcode", str(current.get("opcode", ""))),
+                ("Mnemonic", str(current.get("mnemonic", ""))),
+                ("Prefix", str(current.get("prefix", ""))),
+                ("Bytes", str(current.get("bytes", ""))),
+                ("Cycles", str(current.get("cycles", ""))),
+                ("Flags", flag_line),
             ]
-            details.extend(wrap_lines(str(current.get("description", "")), detail_width - 1))
-        else:
-            details = ["No matches."]
 
-        for i, line in enumerate(details):
-            y = 3 + i
-            if y >= height - 1:
-                break
-            stdscr.addstr(y, detail_x, line[: detail_width - 1])
+            y = 3
+            for label, value in detail_rows:
+                if y >= height - 1:
+                    break
+                stdscr.addstr(y, detail_x, f"{label:<9}", palette["label"])
+                value_attr = palette["good"] if label in ("Opcode", "Cycles", "Bytes") else palette["value"]
+                stdscr.addstr(y, detail_x + 10, value[: max(1, detail_width - 11)], value_attr)
+                y += 1
+
+            if y < height - 1:
+                y += 1
+            if y < height - 1:
+                stdscr.addstr(y, detail_x, "Description", palette["label"])
+                y += 1
+
+            desc_lines = wrap_lines(str(current.get("description", "")), detail_width - 1)
+            for line in desc_lines:
+                if y >= height - 1:
+                    break
+                stdscr.addstr(y, detail_x, line[: detail_width - 1], palette["value"])
+                y += 1
+        else:
+            stdscr.addstr(3, detail_x, "No matches.", palette["warn"])
 
         stdscr.refresh()
         ch = stdscr.getch()
