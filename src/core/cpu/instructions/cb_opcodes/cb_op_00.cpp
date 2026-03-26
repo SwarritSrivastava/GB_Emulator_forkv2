@@ -70,7 +70,21 @@ int  op_rlc_e(ProcessingUnit& cpu, MMU& mmu) // 0xCB03
 
     return totalMachineCycles(2);
 }
-DUMMY(op_rlc_h) // 0xCB04
+int op_rlc_h(ProcessingUnit& cpu, MMU& mmu) // 0xCB04
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::H);
+
+    u8 carry = (value >> 7) & 1;
+    u8 result = (value << 1) | carry;
+
+    cpu.reg(ProcessingUnit::Register::H) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, carry == 1);
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_rlc_l) // 0xCB05
 DUMMY(op_rlc_hl) // 0xCB06
 DUMMY(op_rlc_a) // 0xCB07
