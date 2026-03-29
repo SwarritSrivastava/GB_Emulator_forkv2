@@ -7,7 +7,22 @@ constexpr int machine_cycles = 4;
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
-DUMMY(op_rl_b) // 0xCB10
+int op_rl_b(ProcessingUnit& cpu, MMU& mmu) // 0xCB10 
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::B);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+
+    cpu.reg(ProcessingUnit::Register::B) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
 DUMMY(op_rl_c) // 0xCB11
 DUMMY(op_rl_d) // 0xCB12
 DUMMY(op_rl_e) // 0xCB13
