@@ -83,3 +83,41 @@ TEST_F(OpcodesCPUTest, ADD_A_E_AddsAndUpdatesFlags)
     EXPECT_EQ(cpu.get_flag_h(), 0);
     EXPECT_EQ(cpu.get_flag_c(), 0);
 }
+
+TEST_F(OpcodesCPUTest, ADD_A_H_AddsAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x8A;
+    cpu.reg(ProcessingUnit::Register::H) = 0x23;
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    const int cycles = op_add_a_h(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x8A + 0x23 = 0xAD
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xAD);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0x23);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADD_A_LAddsAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x8A;
+    cpu.reg(ProcessingUnit::Register::L) = 0x23;
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    const int cycles = op_add_a_l(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x8A + 0x23 = 0xAD
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xAD);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x23);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}

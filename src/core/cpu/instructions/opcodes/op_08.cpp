@@ -74,8 +74,40 @@ int op_add_a_e(ProcessingUnit& cpu, MMU& mmu) // 0x83
     return totalMachineCycles(1);
 }
 
-DUMMY(op_add_a_h) // 0x84
-DUMMY(op_add_a_l) // 0x85
+int op_add_a_h(ProcessingUnit& cpu, MMU& mmu) // 0x82
+{
+    const u8 a = cpu.reg(ProcessingUnit::Register::A);
+    const u8 h = cpu.reg(ProcessingUnit::Register::H);
+    const u16 sum = a + h;
+
+    const u8 result = static_cast<u8>(sum & 0xFF);
+    cpu.reg(ProcessingUnit::Register::A) = result;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0x0F) + (h & 0x0F)) > 0x0F);
+    cpu.setFlag(ProcessingUnit::Flag::C, sum > 0xFF);
+
+    return totalMachineCycles(1);
+}
+
+int op_add_a_l(ProcessingUnit& cpu, MMU& mmu) // 0x85
+{
+    const u8 a = cpu.reg(ProcessingUnit::Register::A);
+    const u8 l = cpu.reg(ProcessingUnit::Register::L);
+    const u16 sum = a + l;
+
+    const u8 result = static_cast<u8>(sum & 0xFF);
+    cpu.reg(ProcessingUnit::Register::A) = result;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0x0F) + (l & 0x0F)) > 0x0F);
+    cpu.setFlag(ProcessingUnit::Flag::C, sum > 0xFF);
+
+    return totalMachineCycles(1);
+}
+
 DUMMY(op_add_a_hl) // 0x86
 DUMMY(op_add_a_a) // 0x87
 
