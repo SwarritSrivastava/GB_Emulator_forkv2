@@ -181,3 +181,20 @@ TEST_F(OpcodesCPUTest, ADD_A_HL_EdgeCase2) // Carry zero from memory
     EXPECT_EQ(cpu.get_flag_h(), 1);
     EXPECT_EQ(cpu.get_flag_c(), 1);
 }
+
+TEST_F(OpcodesCPUTest, ADD_A_A_AddsAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    const int cycles = op_add_a_a(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x43 = 0x94
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x94);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
