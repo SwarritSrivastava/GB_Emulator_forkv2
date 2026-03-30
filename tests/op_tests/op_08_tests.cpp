@@ -121,3 +121,63 @@ TEST_F(OpcodesCPUTest, ADD_A_LAddsAndUpdatesFlags)
     EXPECT_EQ(cpu.get_flag_h(), 0);
     EXPECT_EQ(cpu.get_flag_c(), 0);
 }
+
+TEST_F(OpcodesCPUTest, ADD_A_HL_AddsMemoryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x8A;
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+
+    mmu.write(0xC000, 0x23); // value at (HL)
+
+    const int cycles = op_add_a_hl(cpu, mmu);
+    EXPECT_EQ(cycles, 8);
+
+    // 0x8A + 0x23 = 0xAD
+    EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::A)), 0xAD);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 0);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADD_A_HL_EdgeCase1) // Half Carry from memory
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x0F;
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+
+    mmu.write(0xC000, 0x01); // value at (HL)
+
+    const int cycles = op_add_a_hl(cpu, mmu);
+    EXPECT_EQ(cycles, 8);
+
+    // 0x8A + 0x23 = 0xAD
+    EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::A)), 0x10);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADD_A_HL_EdgeCase2) // Carry zero from memory
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+
+    mmu.write(0xC000, 0x01); // value at (HL)
+
+    const int cycles = op_add_a_hl(cpu, mmu);
+    EXPECT_EQ(cycles, 8);
+
+    // 0x8A + 0x23 = 0xAD
+    EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::A)), 0x00);
+
+    EXPECT_EQ(cpu.get_flag_z(), 1);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 1);
+}

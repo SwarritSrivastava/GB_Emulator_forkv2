@@ -108,7 +108,24 @@ int op_add_a_l(ProcessingUnit& cpu, MMU& mmu) // 0x85
     return totalMachineCycles(1);
 }
 
-DUMMY(op_add_a_hl) // 0x86
+int op_add_a_hl(ProcessingUnit& cpu, MMU& mmu) // 0x86
+{
+    const u8 a = cpu.reg(ProcessingUnit::Register::A);
+    const u16 hl = cpu.get_hl();
+    const u8 value = mmu.read(hl);
+    const u16 sum = a + value;
+
+    const u8 result = static_cast<u8>(sum & 0xFF);
+    cpu.reg(ProcessingUnit::Register::A) = result;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0x0F) + (value & 0x0F)) > 0x0F);
+    cpu.setFlag(ProcessingUnit::Flag::C, sum > 0xFF);
+
+    return totalMachineCycles(2);
+}
+
 DUMMY(op_add_a_a) // 0x87
 
 DUMMY(op_adc_a_b) // 0x88
