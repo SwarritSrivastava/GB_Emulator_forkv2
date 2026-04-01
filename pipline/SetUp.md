@@ -530,7 +530,7 @@ export default {
     if (RESTRICTED.includes(command)) {
       if (!hasAllowedRole(json, env)) {
         return reply(
-          `🚫 **Access Denied**\n` +
+          `**Access Denied**\n` +
           `${userMention} you don't have permission to run \`/${command}\`.\n` +
           `Required roles: **Maintainer** or **Developer**.`
         );
@@ -541,23 +541,23 @@ export default {
       case "test":
         ctx.waitUntil(triggerGitHub(env, json, "run-test", user));
         return reply(
-          `🧪 **CI Test Triggered (TIRP)**\n` +
+          `**CI Test Triggered (TIRP)**\n` +
           `Triggered by ${userMention}\n` +
-          `⏳ Running TIRP on \`${env.GITHUB_REPO}\`... Results will be posted here shortly.`
+          `Running TIRP on \`${env.GITHUB_REPO}\`... Results will be posted here shortly.`
         );
 
       case "deploy":
         ctx.waitUntil(triggerGitHub(env, json, "deploy-pages", user));
         return reply(
-          `🚀 **Deploy Triggered**\n` +
+          `**Deploy Triggered**\n` +
           `Triggered by ${userMention}\n` +
-          `⏳ Deploying \`${env.GITHUB_REPO}\` to GitHub Pages...`
+          `Deploying \`${env.GITHUB_REPO}\` to GitHub Pages...`
         );
 
       case "rollback":
         ctx.waitUntil(triggerGitHub(env, json, "rollback", user));
         return reply(
-          `⏪ **Rollback Triggered**\n` +
+          `**Rollback Triggered**\n` +
           `Triggered by ${userMention}\n` +
           `⏳ Rolling back last deployment on \`${env.GITHUB_REPO}\`...`
         );
@@ -593,7 +593,7 @@ export default {
         return reply(helpMessage());
 
       default:
-        return reply(`❓ Unknown command: \`/${command}\`. Try \`/help\` for available commands.`);
+        return reply(`Unknown command: \`/${command}\`. Try \`/help\` for available commands.`);
     }
   }
 };
@@ -655,7 +655,7 @@ async function getWorkflowStatus(env) {
     { headers: ghHeaders(env) }
   );
 
-  if (!res.ok) return `❌ Failed to fetch workflow status: ${res.status}`;
+  if (!res.ok) return `Failed to fetch workflow status: ${res.status}`;
 
   const data = await res.json();
   const runs = data.workflow_runs;
@@ -681,17 +681,17 @@ async function getWorkflowLogs(env) {
     { headers: ghHeaders(env) }
   );
 
-  if (!res.ok) return `❌ Failed to fetch logs: ${res.status}`;
+  if (!res.ok) return `Failed to fetch logs: ${res.status}`;
 
   const data = await res.json();
   const runs = data.workflow_runs;
-  if (!runs?.length) return "✅ No failed workflow runs found.";
+  if (!runs?.length) return "No failed workflow runs found.";
 
-  let msg = `**❌ Recent Failed Runs — \`${env.GITHUB_REPO}\`**\n\n`;
+  let msg = `**Recent Failed Runs — \`${env.GITHUB_REPO}\`**\n\n`;
   runs.forEach(r => {
-    msg += `❌ \`${r.name}\` on \`${r.head_branch}\`\n`;
+    msg += `\`${r.name}\` on \`${r.head_branch}\`\n`;
     msg += `   Commit: \`${r.head_sha?.slice(0, 7)}\` by \`${r.head_commit?.author?.name ?? "unknown"}\`\n`;
-    msg += `   🔗 ${r.html_url}\n\n`;
+    msg += `   ${r.html_url}\n\n`;
   });
 
   if (env.MAINTAINER_ID) {
@@ -708,42 +708,42 @@ async function listIssues(env) {
     `https://api.github.com/repos/${env.GITHUB_REPO}/issues?state=open&per_page=10`,
     { headers: ghHeaders(env) }
   );
-  if (!res.ok) return `❌ Failed to fetch issues: ${res.status}`;
+  if (!res.ok) return `> Failed to fetch issues: ${res.status}`;
   const issues = await res.json();
   const filtered = issues.filter(i => !i.pull_request);
-  if (!filtered.length) return "✅ No open issues found.";
+  if (!filtered.length) return "No open issues found.";
 
-  let msg = `**📋 Open Issues — \`${env.GITHUB_REPO}\`**\n\n`;
+  let msg = `**Open Issues — \`${env.GITHUB_REPO}\`**\n\n`;
   filtered.forEach(i => {
     msg += `\`#${i.number}\` **${i.title}**\n`;
-    msg += `   👤 ${i.user?.login} | 🏷️ ${i.labels?.map(l => l.name).join(", ") || "none"}\n`;
-    msg += `   🔗 ${i.html_url}\n\n`;
+    msg += `   ${i.user?.login} | ${i.labels?.map(l => l.name).join(", ") || "none"}\n`;
+    msg += `   ${i.html_url}\n\n`;
   });
   return msg.slice(0, 1900);
 }
 
 async function getIssue(env, json) {
   const id = json.data.options?.[0]?.value;
-  if (!id) return "❌ No issue ID provided.";
+  if (!id) return "No issue ID provided.";
 
   const [issueRes, commentsRes] = await Promise.all([
     fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues/${id}`, { headers: ghHeaders(env) }),
     fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues/${id}/comments?per_page=5`, { headers: ghHeaders(env) })
   ]);
 
-  if (!issueRes.ok) return `❌ Issue #${id} not found (${issueRes.status}).`;
+  if (!issueRes.ok) return `Issue #${id} not found (${issueRes.status}).`;
   const issue = await issueRes.json();
   const comments = commentsRes.ok ? await commentsRes.json() : [];
   const labels = issue.labels?.map(l => l.name).join(", ") || "none";
   const body = (issue.body || "No description.").slice(0, 300);
 
-  let msg = `**📌 Issue #${issue.number} — ${issue.title}**\n`;
+  let msg = `**Issue #${issue.number} — ${issue.title}**\n`;
   msg += `State: \`${issue.state}\` | Author: \`${issue.user?.login}\` | Labels: \`${labels}\`\n`;
   msg += `🔗 ${issue.html_url}\n\n`;
   msg += body + (issue.body?.length > 300 ? "..." : "");
 
   if (comments.length) {
-    msg += `\n\n**💬 Comments (${comments.length} shown):**\n`;
+    msg += `\n\n**Comments (${comments.length} shown):**\n`;
     comments.slice(0, 3).forEach(c => {
       const excerpt = (c.body || "").slice(0, 100);
       msg += `\n\`${c.user.login}\`: ${excerpt}` + (c.body?.length > 100 ? "..." : "");
@@ -755,7 +755,7 @@ async function getIssue(env, json) {
 async function createIssue(env, json, user) {
   const title = json.data.options?.find(o => o.name === "title")?.value;
   const body  = json.data.options?.find(o => o.name === "body")?.value ?? "";
-  if (!title) return "❌ No title provided.";
+  if (!title) return "No title provided.";
 
   const res = await fetch(
     `https://api.github.com/repos/${env.GITHUB_REPO}/issues`,
@@ -769,14 +769,14 @@ async function createIssue(env, json, user) {
     }
   );
 
-  if (!res.ok) return `❌ Failed to create issue: ${res.status}`;
+  if (!res.ok) return `Failed to create issue: ${res.status}`;
   const issue = await res.json();
-  return `✅ **Issue Created!**\n\`#${issue.number}\` — ${issue.title}\n🔗 ${issue.html_url}`;
+  return `**Issue Created!**\n\`#${issue.number}\` — ${issue.title}\n${issue.html_url}`;
 }
 
 async function closeIssue(env, json, user) {
   const id = json.data.options?.[0]?.value;
-  if (!id) return "❌ No issue ID provided.";
+  if (!id) return "No issue ID provided.";
 
   const res = await fetch(
     `https://api.github.com/repos/${env.GITHUB_REPO}/issues/${id}`,
@@ -787,8 +787,8 @@ async function closeIssue(env, json, user) {
     }
   );
 
-  if (!res.ok) return `❌ Failed to close issue #${id}: ${res.status}`;
-  return `✅ Issue **#${id}** closed by <@${user.id}>.`;
+  if (!res.ok) return `Failed to close issue #${id}: ${res.status}`;
+  return `Issue **#${id}** closed by <@${user.id}>.`;
 }
 
 // ── Pull Requests ─────────────────────────────────────────────────────────────
@@ -798,44 +798,44 @@ async function listPRs(env) {
     `https://api.github.com/repos/${env.GITHUB_REPO}/pulls?state=open&per_page=10`,
     { headers: ghHeaders(env) }
   );
-  if (!res.ok) return `❌ Failed to fetch pull requests: ${res.status}`;
+  if (!res.ok) return `Failed to fetch pull requests: ${res.status}`;
   const prs = await res.json();
-  if (!prs.length) return "✅ No open pull requests found.";
+  if (!prs.length) return "No open pull requests found.";
 
-  let msg = `**🔀 Open Pull Requests — \`${env.GITHUB_REPO}\`**\n\n`;
+  let msg = `**Open Pull Requests — \`${env.GITHUB_REPO}\`**\n\n`;
   prs.forEach(pr => {
     msg += `\`#${pr.number}\` **${pr.title}**\n`;
-    msg += `   \`${pr.head.ref}\` → \`${pr.base.ref}\` | 👤 ${pr.user?.login}\n`;
-    msg += `   🔗 ${pr.html_url}\n\n`;
+    msg += `   \`${pr.head.ref}\` → \`${pr.base.ref}\` | ${pr.user?.login}\n`;
+    msg += `   ${pr.html_url}\n\n`;
   });
   return msg.slice(0, 1900);
 }
 
 async function getPR(env, json) {
   const id = json.data.options?.[0]?.value;
-  if (!id) return "❌ No PR ID provided.";
+  if (!id) return "No PR ID provided.";
 
   const [prRes, commentsRes] = await Promise.all([
     fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/pulls/${id}`, { headers: ghHeaders(env) }),
     fetch(`https://api.github.com/repos/${env.GITHUB_REPO}/issues/${id}/comments?per_page=5`, { headers: ghHeaders(env) })
   ]);
 
-  if (!prRes.ok) return `❌ PR #${id} not found (${prRes.status}).`;
+  if (!prRes.ok) return `PR #${id} not found (${prRes.status}).`;
   const pr = await prRes.json();
   const comments = commentsRes.ok ? await commentsRes.json() : [];
   const labels = pr.labels?.map(l => l.name).join(", ") || "none";
   const body = (pr.body || "No description.").slice(0, 300);
-  const mergeable = pr.mergeable === null ? "unknown" : pr.mergeable ? "✅ yes" : "❌ no";
+  const mergeable = pr.mergeable === null ? "unknown" : pr.mergeable ? "yes" : "no";
 
-  let msg = `**🔀 PR #${pr.number} — ${pr.title}**\n`;
+  let msg = `**PR #${pr.number} — ${pr.title}**\n`;
   msg += `\`${pr.head.ref}\` → \`${pr.base.ref}\` | State: \`${pr.state}\`\n`;
   msg += `Author: \`${pr.user?.login}\` | Labels: \`${labels}\` | Mergeable: ${mergeable}\n`;
   msg += `Commits: \`${pr.commits}\` | +${pr.additions} / -${pr.deletions}\n`;
-  msg += `🔗 ${pr.html_url}\n\n`;
+  msg += `${pr.html_url}\n\n`;
   msg += body + (pr.body?.length > 300 ? "..." : "");
 
   if (comments.length) {
-    msg += `\n\n**💬 Comments:**\n`;
+    msg += `\n\n**Comments:**\n`;
     comments.slice(0, 3).forEach(c => {
       const excerpt = (c.body || "").slice(0, 100);
       msg += `\n\`${c.user.login}\`: ${excerpt}` + (c.body?.length > 100 ? "..." : "");
@@ -846,7 +846,7 @@ async function getPR(env, json) {
 
 async function mergePR(env, json, user) {
   const id = json.data.options?.[0]?.value;
-  if (!id) return "❌ No PR ID provided.";
+  if (!id) return "No PR ID provided.";
 
   const res = await fetch(
     `https://api.github.com/repos/${env.GITHUB_REPO}/pulls/${id}/merge`,
@@ -859,12 +859,12 @@ async function mergePR(env, json, user) {
     }
   );
 
-  if (res.status === 405) return `❌ PR #${id} is not mergeable.`;
-  if (res.status === 409) return `❌ PR #${id} has a merge conflict.`;
-  if (!res.ok) return `❌ Failed to merge PR #${id}: ${res.status}`;
+  if (res.status === 405) return `PR #${id} is not mergeable.`;
+  if (res.status === 409) return `PR #${id} has a merge conflict.`;
+  if (!res.ok) return `Failed to merge PR #${id}: ${res.status}`;
 
   return (
-    `✅ **PR #${id} Merged!**\n` +
+    `**PR #${id} Merged!**\n` +
     `Merged by <@${user.id}>\n` +
     (env.MAINTAINER_ID ? `\n<@${env.MAINTAINER_ID}> FYI — PR #${id} was merged by <@${user.id}>` : "")
   );
@@ -873,9 +873,9 @@ async function mergePR(env, json, user) {
 // ── Help ──────────────────────────────────────────────────────────────────────
 
 function helpMessage() {
-  return `**🤖 GB_Bot — Available Commands**
+  return `**GB_Bot — Available Commands**
 
-**🔒 Restricted (Maintainer / Developer role required)**
+**Restricted (Maintainer / Developer role required)**
 \`/test\` — Trigger CI test workflow (TIRP)
 \`/deploy\` — Deploy to GitHub Pages
 \`/rollback\` — Rollback last deployment
@@ -887,7 +887,7 @@ function helpMessage() {
 \`/pr [id]\` — Get PR details and comments
 \`/merge-pr [id]\` — Merge a pull request
 
-**🌐 Open to all members**
+**Open to all members**
 \`/list-issues\` — List open issues
 \`/create-issue\` — Create a new GitHub issue
 \`/help\` — Show this message`;
@@ -1013,7 +1013,7 @@ jobs:
           exit 0
 
       - name: Generate AI push summary
-        if: always() && github.event_name == 'push'
+        if: always() && (github.event_name == 'push' || github.event_name == 'repository_dispatch')
         env:
           GROQ_API_KEY: ${{ secrets.API }}
           GROQ_MODEL: openai/gpt-oss-20b
@@ -1047,36 +1047,374 @@ jobs:
           SERVER_URL: ${{ github.server_url }}
         run: |
           python3 - <<'PY'
-          # (full Python payload script — see original workflow for complete implementation)
-          # This script parses build_and_test.log and valgrind_tests.log,
-          # assembles Discord message payloads, and writes them to disk.
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          def read_text(path, default=""):
+              try:
+                  with open(path, "r", encoding="utf-8", errors="replace") as fh:
+                      return fh.read()
+              except FileNotFoundError:
+                  return default
+
+          def first_match(pattern, text, flags=0):
+              m = re.search(pattern, text, flags)
+              return m.group(1) if m else ""
+
+          def parse_ctest_stats(log_text):
+              total = first_match(r"100% tests passed, (\d+) tests passed out of (\d+)", log_text)
+              if total:
+                  passed, total_count = re.search(r"100% tests passed, (\d+) tests passed out of (\d+)", log_text).groups()
+                  return int(total_count), int(passed), 0
+
+              m = re.search(r"(\d+)% tests passed, (\d+) tests failed out of (\d+)", log_text)
+              if m:
+                  failed = int(m.group(2))
+                  total_count = int(m.group(3))
+                  passed = total_count - failed
+                  return total_count, passed, failed
+
+              m = re.search(r"Total Tests:\s*(\d+)", log_text)
+              if m:
+                  total_count = int(m.group(1))
+                  failed_list = len(re.findall(r"^\s*\d+\s*-\s+.*\(Failed\)", log_text, re.MULTILINE))
+                  passed = max(total_count - failed_list, 0)
+                  return total_count, passed, failed_list
+
+              return 0, 0, 0
+
+          def extract_failure_block(log_text, max_lines=25):
+              lines = [line.rstrip() for line in log_text.splitlines()]
+              if not lines:
+                  return ["No log output captured."]
+
+              failure_markers = [
+                  "The following tests FAILED:",
+                  "***Failed",
+                  "FAILED",
+                  "Error",
+                  "error:",
+              ]
+
+              start = -1
+              for i, line in enumerate(lines):
+                  if any(marker in line for marker in failure_markers):
+                      start = i
+                      break
+
+              if start == -1:
+                  tail = [x for x in lines if x.strip()][-max_lines:]
+                  return tail if tail else ["Failure detected but no details were found."]
+
+              block = []
+              for line in lines[start:]:
+                  block.append(line)
+                  if len(block) >= max_lines:
+                      break
+              return block
+
+          def parse_valgrind_status(log_text):
+              if re.search(r"ERROR SUMMARY:\s*0\s+errors", log_text):
+                  return "PASS"
+              if re.search(r"ERROR SUMMARY:\s*[1-9]\d*\s+errors", log_text):
+                  return "FAIL"
+              return "UNKNOWN"
+
+          def trim_text(text, max_len=1800):
+              if len(text) <= max_len:
+                  return text
+              return text[: max_len - 18] + "\n...[truncated]"
+
+          def split_text(text, max_len=1800):
+              if not text:
+                  return []
+              lines = text.splitlines()
+              chunks = []
+              current = []
+              current_len = 0
+
+              for line in lines:
+                  add = len(line) + 1
+                  if current and current_len + add > max_len:
+                      chunks.append("\n".join(current))
+                      current = [line]
+                      current_len = add
+                  else:
+                      current.append(line)
+                      current_len += add
+
+              if current:
+                  chunks.append("\n".join(current))
+
+              return chunks
+
+          def clean_markdown_line(line):
+              s = line.strip()
+              if not s:
+                  return ""
+              s = re.sub(r"^\*\*(.+)\*\*$", r"\1", s)
+              s = re.sub(r"^_(.+)_$", r"\1", s)
+              s = s.replace("\u2011", "-")
+              s = re.sub(r"\s+", " ", s).strip()
+              if s.startswith("* "):
+                  s = "- " + s[2:]
+              return s
+
+          def classify_heading(line):
+              raw = line.strip()
+              if not raw:
+                  return ""
+              heading = re.sub(r"^[#\s]+", "", raw)
+              heading = re.sub(r"^\*\*(.+?)\*\*$", r"\1", heading)
+              heading = heading.replace("*", "").replace("`", "")
+              lower = heading.lower().strip(" :")
+
+              if "push summary" in lower:
+                  return "Push Summary"
+              if "key code changes" in lower or "key changes" in lower:
+                  return "Key Changes"
+              if "potential risks" in lower or "follow-up" in lower or "follow ups" in lower:
+                  return "Risks / Follow-ups"
+              if "probable intent" in lower or lower == "intent":
+                  return "Intent"
+              return ""
+
+          def normalize_ai_summary(raw_text):
+              text = (raw_text or "").replace("\r\n", "\n").replace("\r", "\n")
+              lines = []
+              in_fence = False
+              for line in text.splitlines():
+                  stripped = line.strip()
+                  if stripped.startswith("```"):
+                      in_fence = not in_fence
+                      continue
+                  if in_fence:
+                      lines.append(line)
+                      continue
+                  lines.append(line)
+
+              sections = {
+                  "Push Summary": [],
+                  "Key Changes": [],
+                  "Risks / Follow-ups": [],
+                  "Intent": [],
+              }
+
+              current = "Push Summary"
+              for raw in lines:
+                  line = clean_markdown_line(raw)
+                  if not line:
+                      if sections[current] and sections[current][-1] != "":
+                          sections[current].append("")
+                      continue
+
+                  if line.lower().startswith("model used:"):
+                      continue
+
+                  mapped = classify_heading(line)
+                  if mapped:
+                      current = mapped
+                      inline = re.split(r":", line, maxsplit=1)
+                      if len(inline) == 2 and inline[1].strip():
+                          sections[current].append(clean_markdown_line(inline[1]))
+                      continue
+
+                  probable_intent = re.match(r"^\*?probable intent\*?\s*:\s*(.+)$", line, re.IGNORECASE)
+                  if probable_intent:
+                      current = "Intent"
+                      sections[current].append(clean_markdown_line(probable_intent.group(1)))
+                      continue
+
+                  sections[current].append(line)
+
+              def compact(lines_in):
+                  out = []
+                  for item in lines_in:
+                      if item == "":
+                          if out and out[-1] != "":
+                              out.append("")
+                          continue
+                      out.append(item)
+                  while out and out[-1] == "":
+                      out.pop()
+                  return out
+
+              sections = {k: compact(v) for k, v in sections.items()}
+
+              for key in ("Key Changes", "Risks / Follow-ups"):
+                  normalized = []
+                  for item in sections[key]:
+                      if not item:
+                          continue
+                      if item.startswith("- "):
+                          normalized.append(item)
+                      else:
+                          normalized.append(f"- {item}")
+                  sections[key] = normalized
+
+              output = []
+              order = ["Push Summary", "Key Changes", "Risks / Follow-ups", "Intent"]
+              for title in order:
+                  content = sections[title]
+                  if not content:
+                      continue
+                  if output:
+                      output.append("")
+                  output.append(f"**{title}**")
+                  output.extend(content)
+
+              return "\n".join(output).strip()
+
+          event_path = os.environ["EVENT_PATH"]
+          with open(event_path, "r", encoding="utf-8") as fh:
+              event = json.load(fh)
+
+          commits = event.get("commits", [])
+          commit_lines = []
+          for c in commits[:10]:
+              cid = (c.get("id") or "")[:7]
+              msg = ((c.get("message") or "").splitlines() or [""])[0].strip()
+              author = (c.get("author") or {}).get("name", "unknown")
+              commit_lines.append(f"- `{cid}` {msg} ({author})")
+
+          if len(commits) > 10:
+              commit_lines.append(f"- ... and {len(commits) - 10} more commits")
+
+          status = os.environ["JOB_STATUS"].upper()
+          emoji = ":white_check_mark:" if status == "SUCCESS" else ":x:"
+          sha_full = os.environ["SHA"]
+          sha_short = sha_full[:7]
+
+          repo = os.environ["REPO"]
+          ref_name = os.environ["REF_NAME"]
+          actor = os.environ["ACTOR"]
+          run_id = os.environ["RUN_ID"]
+          run_number = os.environ["RUN_NUMBER"]
+          server_url = os.environ["SERVER_URL"]
+          build_test_exit = os.environ.get("BUILD_TEST_EXIT", "1")
+          valgrind_exit = os.environ.get("VALGRIND_EXIT", "1")
+
+          run_url = f"{server_url}/{repo}/actions/runs/{run_id}"
+          commit_url = f"{server_url}/{repo}/commit/{sha_full}"
+          compare_url = event.get("compare", "")
+
+          build_log = read_text("build_and_test.log", "")
+          valgrind_log = read_text("valgrind_tests.log", "")
+          ai_summary = read_text("ai_push_summary.txt", "AI summary unavailable").strip()
+
+          total_tests, passed_tests, failed_tests = parse_ctest_stats(build_log)
+          tests_status = "PASS" if build_test_exit == "0" else "FAIL"
+          vg_status = "PASS" if valgrind_exit == "0" else "FAIL"
+          parsed_vg = parse_valgrind_status(valgrind_log)
+          if vg_status == "PASS" and parsed_vg == "FAIL":
+              vg_status = "FAIL"
+
+          summary_lines = [
+              f"{emoji} **TEST INIT RESPONSE PROTOCOL** `{status}`",
+              "",
+              f"Repository: `{repo}`",
+              f"Branch: `{ref_name}`",
+              f"Actor: `{actor}`",
+              f"Head Commit: [`{sha_short}`]({commit_url})",
+              f"Run: [#{run_number}]({run_url})",
+          ]
+
+          if compare_url:
+              summary_lines.append(f"Compare: {compare_url}")
+
+          summary_lines.extend(
+              [
+                  "",
+                  "**Checks**",
+                  f"- Tests: `{tests_status}` | total=`{total_tests}` passed=`{passed_tests}` failed=`{failed_tests}`",
+                  f"- Valgrind: `{vg_status}`",
+                  f"- Commit Count In Push: `{len(commits)}`",
+              ]
+          )
+
+          if commit_lines:
+              summary_lines.append("")
+              summary_lines.append("Commits:")
+              summary_lines.extend(commit_lines)
+
+          if tests_status == "FAIL":
+              summary_lines.append("")
+              summary_lines.append("**Test Failure Output**")
+              summary_lines.append("```")
+              summary_lines.extend(extract_failure_block(build_log, max_lines=30))
+              summary_lines.append("```")
+
+          if vg_status == "FAIL":
+              summary_lines.append("")
+              summary_lines.append("**Valgrind Failure Output**")
+              summary_lines.append("```")
+              summary_lines.extend(extract_failure_block(valgrind_log, max_lines=30))
+              summary_lines.append("```")
+
+          primary_content = trim_text("\n".join(summary_lines), 1800)
+
+          Path("discord_ai_payloads").mkdir(exist_ok=True)
+
+          with open("discord_payload_main.json", "w", encoding="utf-8") as out:
+              json.dump({"content": primary_content}, out)
+
+          ai_text = normalize_ai_summary(ai_summary)
+          if not ai_text:
+              ai_text = "**Push Summary**\nAI summary unavailable"
+          ai_chunks = split_text(ai_text, 1600)
+          if not ai_chunks:
+              ai_chunks = ["**Push Summary**\nAI summary unavailable"]
+
+          payload_files = []
+          total = len(ai_chunks)
+          for i, chunk in enumerate(ai_chunks, start=1):
+              header = f"**AI Commit Summary ({i}/{total})**"
+              content = "\n\n".join([header, chunk])
+              payload = {"content": trim_text(content, 1800)}
+              path = Path("discord_ai_payloads") / f"ai_{i:02d}.json"
+              path.write_text(json.dumps(payload), encoding="utf-8")
+              payload_files.append(path.as_posix())
+
+          Path("discord_ai_payloads.txt").write_text("\n".join(payload_files) + "\n", encoding="utf-8")
           PY
 
       - name: Validate Discord webhook
         id: webhook_check
-        if: always() && github.event_name == 'push'
+        if: always() && (github.event_name == 'push' || github.event_name == 'repository_dispatch')
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
         run: |
+          rm -f .discord_webhook_blocked
+
           if [ -z "$WEBHOOK" ]; then
+            echo "WEBHOOK secret is not set; skipping Discord notification."
             echo "should_send=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+
           case "$WEBHOOK" in
             https://discord.com/api/webhooks/*|https://ptb.discord.com/api/webhooks/*)
-              echo "should_send=true" >> "$GITHUB_OUTPUT" ;;
+              echo "should_send=true" >> "$GITHUB_OUTPUT"
+              ;;
             *)
-              echo "should_send=false" >> "$GITHUB_OUTPUT" ;;
+              echo "WEBHOOK does not look like a Discord webhook URL; skipping Discord notification."
+              echo "should_send=false" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
           esac
 
       - name: Send Discord notification messages
-        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        if: always() && (github.event_name == 'push' || github.event_name == 'repository_dispatch') && steps.webhook_check.outputs.should_send == 'true'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
         run: |
           curl --fail --silent --show-error \
             -H "Content-Type: application/json" \
-            -X POST --data @discord_payload_main.json "$WEBHOOK"
+            -X POST \
+            --data @discord_payload_main.json \
+            "$WEBHOOK"
 
           if [ -f discord_ai_payloads.txt ]; then
             while IFS= read -r payload_file; do
@@ -1084,7 +1422,9 @@ jobs:
               sleep 5
               curl --fail --silent --show-error \
                 -H "Content-Type: application/json" \
-                -X POST --data @"$payload_file" "$WEBHOOK"
+                -X POST \
+                --data @"$payload_file" \
+                "$WEBHOOK"
             done < discord_ai_payloads.txt
           fi
 
@@ -1129,6 +1469,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     runs-on: ubuntu-latest
 
     steps:
@@ -1153,7 +1494,7 @@ jobs:
         uses: actions/deploy-pages@v4
 ```
 
-### 5.3 Rollback Workflow
+<!--### 5.3 Rollback Workflow
 
 Save as `.github/workflows/rollback.yml`:
 
@@ -1207,7 +1548,7 @@ jobs:
       - name: Deploy previous version
         id: deployment
         uses: actions/deploy-pages@v4
-```
+```-->
 
 ---
 

@@ -63,7 +63,7 @@ jobs:
           exit 0
 
       - name: Generate AI push summary
-        if: always() && github.event_name == 'push'
+        if: always() && (github.event_name == 'push' || github.event_name == 'repository_dispatch')
         env:
           GROQ_API_KEY: ${{ secrets.API }}
           GROQ_MODEL: openai/gpt-oss-20b
@@ -432,7 +432,7 @@ jobs:
 
       - name: Validate Discord webhook
         id: webhook_check
-        if: always() && github.event_name == 'push'
+        if: always() && (github.event_name == 'push' || github.event_name == 'repository_dispatch')
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
         run: |
@@ -456,7 +456,7 @@ jobs:
           esac
 
       - name: Send Discord notification messages
-        if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
+        if: always() && (github.event_name == 'push' || github.event_name == 'repository_dispatch') && steps.webhook_check.outputs.should_send == 'true'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
         run: |
