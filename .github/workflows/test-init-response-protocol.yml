@@ -2,8 +2,18 @@ name: TEST INIT RESPONSE PROTOCOL
 
 on:
   push:
-    pull_request: # Adds support for when someone opens a PR
-      branches: [ "main", "master" ] # Optional: specify branches
+  pull_request:
+    branches: ["main", "master"]
+
+  workflow_dispatch:
+    inputs:
+      trigger_source:
+        description: "Trigger source (discord, manual, etc.)"
+        required: false
+        default: "manual"
+
+  repository_dispatch:
+    types: [run-test]
 
 permissions:
   contents: read
@@ -24,6 +34,12 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
+
+      - name: Print trigger context
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Trigger source: ${{ github.event.inputs.trigger_source }}"
+          echo "Client payload: ${{ toJson(github.event.client_payload) }}"
 
       - name: Build and run tests
         id: run_build_test
@@ -443,7 +459,6 @@ jobs:
         if: always() && github.event_name == 'push' && steps.webhook_check.outputs.should_send == 'true'
         env:
           WEBHOOK: ${{ secrets.WEBHOOK }}
-          DISCORD_BLOCK_FILE: .discord_webhook_blocked
         run: |
           curl --fail --silent --show-error \
             -H "Content-Type: application/json" \
@@ -466,7 +481,8 @@ jobs:
       - name: Mark workflow failed if checks failed
         if: always()
         run: |
-          if [ "${{ steps.run_build_test.outputs.exit_code }}" != "0" ] || [ "${{ steps.run_valgrind.outputs.exit_code }}" != "0" ]; then
+          if [ "${{ steps.run_build_test.outputs.exit_code }}" != "0" ] || \
+             [ "${{ steps.run_valgrind.outputs.exit_code }}" != "0" ]; then
             echo "One or more test protocols failed"
             exit 1
           fi
