@@ -1,125 +1,140 @@
 # GB_Emulator
-**Game Boy (DMG-01) Emulator**
 
-Early-stage emulator for the original Game Boy (Dot-Matrix Game – DMG-01).
+Game Boy (DMG-01) emulator project focused on building an accurate LR35902 CPU core, memory subsystem, and a reliable CI/testing pipeline.
 
-Currently focused on **accurate CPU core** and **basic MMU / cartridge handling**.
+## Current Focus
 
-Repository CI now includes a structured Discord webhook notification flow for push summaries and test status updates.
+- CPU core progression using opcode-function tables (`instructionTable` and `cbInstructionTable`).
+- MMU behavior, ROM mapping, and cartridge metadata parsing.
+- Test-first iteration for opcode implementations (`tests/op_tests`).
+- CI protocol named **TIRP** (Test Init Response Protocol) with automated Discord reporting.
 
-![Game Boy DMG-01](https://placehold.co/480x432/EEE/31343C?text=Game+Boy+DMG-01)  
-*(classic gray brick – the real hardware this project aims to emulate)*
-
-## Current Status (March 2026)
-
-**What works reasonably well:**
-
-- Z80-like CPU core (Sharp LR35902)
-    - Most 8-bit & 16-bit instructions implemented (via `opcodes.cpp` + `cb_opcodes.cpp`)
-    - CB-prefixed opcodes table.
-    - Correct reset state (AF=01B0h, BC=0013h, DE=00D8h, HL=014Dh, SP=FFFEh, PC=0100h)
-    - Basic cycle-accurate stepping (PC increments, NOPs, HALT behavior)
-    - Unknown opcode handling (graceful fallback)
-
-- MMU / Memory Map
-    - ROM loading & mapping (fixed bank 0 + switchable banks not yet)
-    - Cartridge header parsing (title, MBC type, ROM/RAM size, checksum)
-    - WRAM (C000–DFFF), basic echo RAM behavior
-    - Read-only ROM protection
-    - Zero-initialized memory on startup
-
-- Very basic execution loop
-    - Loads & runs ROM until stopped (currently limited instructions executed)
-    - Prints CPU state after reset
-
-**What is NOT implemented yet:**
-
-- PPU / rendering (no screen output)
-- Timer, DMA, interrupts (IME, vblank, joypad, etc.)
-- Sound
-- Input (joypad)
-- MBC1/MBC3/... bank switching (only basic ROM mapping)
-- Proper frame timing & synchronization
-- Save RAM (external cartridge RAM)
-- Display window / SDL / graphics backend
-
-**Tested ROMs (so far):**
-
-- Pokémon Red (executes ~2400 instructions after reset)
-- Tetris 2 (executes ~140 instructions after reset)
-
-Both ROMs pass header check & basic mapping, but obviously stop very early (no graphics/input).
-
-## Project Structure
+## Current Code Structure
 
 ```text
 GB_Emulator/
-├── include/              → public headers
-│   ├── cartridge.hpp
+├── include/
+│   ├── ProcessingUnit.hpp
 │   ├── mmu.hpp
-│   ├── ProcessingUnit.hpp   ← main CPU class
-│   └── ...
+│   ├── cartridge.hpp
+│   ├── opcode_table.hpp
+│   ├── opcodes.hpp
+│   └── cb_opcodes.hpp
 ├── src/
 │   ├── core/
-│   │   ├── cpu/          ← CPU emulation heart
-│   │   └── memory/       ← MMU
-│   ├── display/          ← future rendering stub (port.cpp)
+│   │   ├── cpu/
+│   │   │   ├── ProcessingUnit.cpp
+│   │   │   └── instructions/
+│   │   │       ├── opcode_table.cpp
+│   │   │       ├── opcodes/        # op_00.cpp ... op_0F.cpp
+│   │   │       └── cb_opcodes/     # cb_op_00.cpp ... cb_op_0F.cpp
+│   │   └── memory/
+│   ├── io/
+│   │   └── port.cpp
 │   └── main.cpp
-├── tests/                → unit tests (GoogleTest)
+├── tests/
+│   ├── ProcessingUnitTest.cpp
 │   ├── mmu_tests.cpp
-│   └── ProcessingUnitTest.cpp
-├── roms/                 → test ROMs
-├── utility_scripts/      → quality-of-life scripts
+│   ├── sanity_tests.cpp
+│   └── op_tests/                   # opcode + CB-opcode test files
+├── utility_scripts/
 │   ├── build_and_test.sh
 │   ├── build_and_run.sh
 │   ├── run_game.sh
-│   └── valgrind_tests.sh   ← memory leak checking
-├── documentation/        → Doxygen config
-├── CMakeLists.txt
-└── vcpkg.json            → dependency management
+│   ├── valgrind_tests.sh
+│   ├── opcode_lookup.py
+│   ├── opcode_docs.sh
+│   ├── make_opcode_skeleton.sh
+│   ├── make_cb_opcode_skeleton.sh
+│   └── groq_push_summary.py
+├── pipline/
+│   └── SetUp.md                    # Discord + Cloudflare + workflow integration guide
+└── .github/workflows/
+    ├── test-init-response-protocol.yml
+    └── static.yml
 ```
 
-## Build & Run
+## Opcode Architecture
+
+- Opcode declarations live in `include/opcodes.hpp` and `include/cb_opcodes.hpp`.
+- Dispatch tables are defined in `src/core/cpu/instructions/opcode_table.cpp`.
+- Base opcode implementation files are grouped under `src/core/cpu/instructions/opcodes/`.
+- CB-prefixed opcode implementation files are grouped under `src/core/cpu/instructions/cb_opcodes/`.
+- Matching tests are mirrored under `tests/op_tests/`.
+
+This layout keeps opcode declarations, implementations, and tests aligned and easy to expand incrementally.
+
+## Build and Run
 
 ```bash
-Bash# Build + run unit tests
+# Configure + build + run all tests
 ./utility_scripts/build_and_test.sh
 
-# Build + run Pokémon Red (or edit script for other ROM)
+# Configure + build + run emulator with first ROM in roms/
 ./utility_scripts/build_and_run.sh
 
-# Just run a ROM (after building)
+# Run emulator directly (expects an existing build)
 ./utility_scripts/run_game.sh
 
-# Run valgrind leak check (requires sudo on some systems)
+# Run valgrind protocol (script requires sudo/root)
 sudo ./utility_scripts/valgrind_tests.sh
 ```
-Typical output when launching a game:
-```txt
-ROM Size: 1024K
-Title:  POKEMON RED
-Type:  0x13    ROM: 0x5    RAM: 0x3
-Header OK
 
-ROM successfully mapped to MMU memory ...
+Direct binary usage:
 
-Initial State (Post-Reset):
-AF: 01B0    BC: 0013    DE: 00D8    HL: 014D
-SP: FFFE    PC: 0100
-Flags: Z - H C    [IME:0  HALT:0]
-
-Success!!
-2399 instructions executed
+```bash
+./build/bin/gb_emu <path-to-rom.gb>
 ```
-All 14 unit tests currently pass:
 
-CPU reset values, HALT, PC stepping, unknown opcodes, MMU zero-init, write protection, ROM mapping ...
+## Workflow and Pipeline
 
-## Testing
- > Unit tests → GoogleTest (CPU reset state, instruction stepping, MMU read/write/aliasing, ROM mapping edge cases)
- 
- > 100% pass rate on current suite (~14 tests)
- 
- > Valgrind → no leaks detected on short runs.
+### 1) TIRP CI Workflow
 
- > Doxygen → documentation generation (run doxygen DoxygenConfig in documentation/)
+File: `.github/workflows/test-init-response-protocol.yml`
+
+Triggers:
+- `push`
+- `pull_request` (targeting `main` / `master`)
+- `workflow_dispatch`
+- `repository_dispatch` with type `run-test`
+
+Core stages:
+- Build + test (`build_and_test.sh`)
+- Valgrind protocol (`valgrind_tests.sh`)
+- AI summary generation (`groq_push_summary.py`)
+- Discord payload preparation + webhook notification
+- Final fail/pass gate based on test and valgrind exit codes
+
+### 2) Pages Deploy Workflow
+
+File: `.github/workflows/static.yml`
+
+Triggers:
+- tag pushes matching `deploy-*`
+- `workflow_dispatch`
+- `repository_dispatch` with type `deploy-pages`
+
+Publishes `documentation/html` through GitHub Pages deployment actions.
+
+## Extended Automation Setup
+
+The full Discord bot + Cloudflare Worker + GitHub Actions operational setup is documented in:
+
+- `pipline/SetUp.md`
+
+That document includes:
+- Role-based slash command flow (`/test`, `/deploy`, issue/PR commands)
+- `repository_dispatch` wiring
+- secret/token setup and security notes
+- failure notification and maintainer tagging behavior
+
+## Documentation
+
+- Doxygen config: `DoxygenConfig`
+- Generated docs: `documentation/html/`
+- Pages deployment source: `documentation/html/`
+
+## Notes
+
+- This project is still in active bring-up; CPU and MMU areas are evolving quickly.
+- Graphics/PPU, sound, interrupts/timers, and full hardware timing are still under development.
