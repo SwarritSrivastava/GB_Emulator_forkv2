@@ -7,6 +7,9 @@ on:
 
   workflow_dispatch:
 
+  repository_dispatch:
+    types: [deploy-pages]
+
 permissions:
   contents: read
   pages: write
@@ -27,6 +30,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Print trigger context
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Client payload: ${{ toJson(github.event.client_payload) }}"
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
