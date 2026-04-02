@@ -23,18 +23,261 @@ int op_rl_b(ProcessingUnit& cpu, MMU& mmu) // 0xCB10
 
     return totalMachineCycles(2);
 }
-DUMMY(op_rl_c) // 0xCB11
-DUMMY(op_rl_d) // 0xCB12
-DUMMY(op_rl_e) // 0xCB13
-DUMMY(op_rl_h) // 0xCB14
-DUMMY(op_rl_l) // 0xCB15
-DUMMY(op_rl_hl) // 0xCB16
-DUMMY(op_rl_a) // 0xCB17
-DUMMY(op_rr_b) // 0xCB18
-DUMMY(op_rr_c) // 0xCB19
-DUMMY(op_rr_d) // 0xCB1A
-DUMMY(op_rr_e) // 0xCB1B
-DUMMY(op_rr_h) // 0xCB1C
-DUMMY(op_rr_l) // 0xCB1D
-DUMMY(op_rr_hl) // 0xCB1E
-DUMMY(op_rr_a) // 0xCB1F
+
+int op_rl_c(ProcessingUnit& cpu, MMU& mmu) // 0xCB11
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::C);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+
+    cpu.reg(ProcessingUnit::Register::C) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rl_d(ProcessingUnit& cpu, MMU& mmu) // 0xCB12
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::D);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+
+    cpu.reg(ProcessingUnit::Register::D) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rl_e(ProcessingUnit& cpu, MMU& mmu) // 0xCB13
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::E);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+
+    cpu.reg(ProcessingUnit::Register::E) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rl_h(ProcessingUnit& cpu, MMU& mmu) // 0xCB14
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::H);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+
+    cpu.reg(ProcessingUnit::Register::H) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rl_l(ProcessingUnit& cpu, MMU& mmu) // 0xCB15
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::L);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+
+    cpu.reg(ProcessingUnit::Register::L) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rl_hl(ProcessingUnit& cpu, MMU& mmu) // 0xCB16
+{
+    u16 address = cpu.get_hl();
+    u8 value = mmu.read(address);
+
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+    mmu.write(address, result);
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(4);
+}
+
+int op_rl_a(ProcessingUnit& cpu, MMU& mmu) // 0xCB17
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::A);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = (value >> 7) & 1;
+
+    u8 result = (value << 1) | old_carry;
+
+    cpu.reg(ProcessingUnit::Register::A) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rr_b(ProcessingUnit& cpu, MMU& mmu) // 0xCB18
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::B);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::B) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rr_c(ProcessingUnit& cpu, MMU& mmu) // 0xCB19
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::C);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::C) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rr_d(ProcessingUnit& cpu, MMU& mmu) // 0xCB1A
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::D);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::D) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rr_e(ProcessingUnit& cpu, MMU& mmu) // 0xCB1B
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::E);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::E) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rr_h(ProcessingUnit& cpu, MMU& mmu) // 0xCB1C
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::H);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::H) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rr_l(ProcessingUnit& cpu, MMU& mmu) // 0xCB1D
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::L);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::L) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
+
+int op_rr_hl(ProcessingUnit& cpu,MMU& mmu) // 0xCB1E
+{
+    u16 address = cpu.get_hl();
+    u8 value = mmu.read(address);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+    mmu.write(address,result);
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(4);
+}
+
+int op_rr_a(ProcessingUnit& cpu, MMU& mmu) // 0xCB1F
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::A);
+    u8 old_carry = cpu.get_flag_c() ? 1 : 0;
+    u8 new_carry = value & 1;
+
+    u8 result = (value >> 1) | (old_carry << 7);
+
+    cpu.reg(ProcessingUnit::Register::A) = result;
+    cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, false);
+    cpu.setFlag(ProcessingUnit::Flag::C, new_carry == 1);
+
+    return totalMachineCycles(2);
+}
