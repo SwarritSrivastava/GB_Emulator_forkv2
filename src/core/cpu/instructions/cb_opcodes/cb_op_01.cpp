@@ -247,7 +247,7 @@ int op_rr_l(ProcessingUnit& cpu, MMU& mmu) // 0xCB1D
     return totalMachineCycles(2);
 }
 
-int op_rr_hl(ProcessingUnit& cpu,MMU& mmu) // 0xCB1E
+int op_rr_hl(ProcessingUnit& cpu, MMU& mmu) // 0xCB1E
 {
     u16 address = cpu.get_hl();
     u8 value = mmu.read(address);
