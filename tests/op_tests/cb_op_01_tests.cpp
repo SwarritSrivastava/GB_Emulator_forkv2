@@ -4,13 +4,13 @@
 #include "../../include/cb_opcodes.hpp"
 #include "../../include/opcodes.hpp"
 
-class CB_Op01_Test : public testing::Test {
+class CB_OpcodesCPUTest : public testing::Test {
 protected:
     ProcessingUnit cpu;
     MMU mmu;
 };
 
-TEST_F(CB_Op01_Test, RL_B_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_B_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::B) = 0x80;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -33,7 +33,7 @@ TEST_F(CB_Op01_Test, RL_B_RotatesThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RL_C_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_C_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::C) = 0x85;
     cpu.setFlag(ProcessingUnit::Flag::C, true);
 
@@ -44,7 +44,7 @@ TEST_F(CB_Op01_Test, RL_C_RotatesThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RL_D_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_D_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::D) = 0x11;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -55,7 +55,7 @@ TEST_F(CB_Op01_Test, RL_D_RotatesThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RL_E_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_E_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::E) = 0xFF;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -66,7 +66,7 @@ TEST_F(CB_Op01_Test, RL_E_RotatesThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RL_H_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_H_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::H) = 0x00;
     cpu.setFlag(ProcessingUnit::Flag::C, true);
 
@@ -77,7 +77,7 @@ TEST_F(CB_Op01_Test, RL_H_RotatesThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RL_L_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_L_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -88,7 +88,7 @@ TEST_F(CB_Op01_Test, RL_L_RotatesThroughCarry) {
     EXPECT_TRUE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RL_HL_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_HL_RotatesThroughCarry) {
     u16 hl = 0xC000;
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
@@ -114,7 +114,7 @@ TEST_F(CB_Op01_Test, RL_HL_RotatesThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RL_A_RotatesThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RL_A_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::A) = 0x95;
     cpu.setFlag(ProcessingUnit::Flag::C, true);
 
@@ -125,7 +125,7 @@ TEST_F(CB_Op01_Test, RL_A_RotatesThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_B_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_B_RotatesRightThroughCarry) {
     cpu.reg(ProcessingUnit::Register::B) = 0x01;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -148,7 +148,7 @@ TEST_F(CB_Op01_Test, RR_B_RotatesRightThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_C_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_C_RotatesRightThroughCarry) {
     cpu.reg(ProcessingUnit::Register::C) = 0x8A;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -159,7 +159,7 @@ TEST_F(CB_Op01_Test, RR_C_RotatesRightThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_D_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_D_RotatesRightThroughCarry) {
     cpu.reg(ProcessingUnit::Register::D) = 0x01;
     cpu.setFlag(ProcessingUnit::Flag::C, true);
 
@@ -170,7 +170,7 @@ TEST_F(CB_Op01_Test, RR_D_RotatesRightThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_E_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_E_RotatesRightThroughCarry) {
     cpu.reg(ProcessingUnit::Register::E) = 0xFF;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -181,7 +181,7 @@ TEST_F(CB_Op01_Test, RR_E_RotatesRightThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_H_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_H_RotatesRightThroughCarry) {
     cpu.reg(ProcessingUnit::Register::H) = 0x00;
     cpu.setFlag(ProcessingUnit::Flag::C, true);
 
@@ -192,7 +192,7 @@ TEST_F(CB_Op01_Test, RR_H_RotatesRightThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_L_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_L_RotatesRightThroughCarry) {
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
@@ -203,7 +203,7 @@ TEST_F(CB_Op01_Test, RR_L_RotatesRightThroughCarry) {
     EXPECT_TRUE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_HL_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_HL_RotatesRightThroughCarry) {
     u16 hl = 0xC000;
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
@@ -229,7 +229,7 @@ TEST_F(CB_Op01_Test, RR_HL_RotatesRightThroughCarry) {
     EXPECT_FALSE(cpu.get_flag_z());
 }
 
-TEST_F(CB_Op01_Test, RR_A_RotatesRightThroughCarry) {
+TEST_F(CB_OpcodesCPUTest, RR_A_RotatesRightThroughCarry) {
     cpu.reg(ProcessingUnit::Register::A) = 0x3B;
     cpu.setFlag(ProcessingUnit::Flag::C, false);
 
