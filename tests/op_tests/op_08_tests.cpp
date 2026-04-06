@@ -198,3 +198,149 @@ TEST_F(OpcodesCPUTest, ADD_A_A_AddsAndUpdatesFlags)
     EXPECT_EQ(cpu.get_flag_h(), 1);
     EXPECT_EQ(cpu.get_flag_c(), 0);
 }
+
+TEST_F(OpcodesCPUTest, ADC_A_B_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::B) = 0x4B;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_b(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x4B + 1 = 0x96
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x96);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);  // (10+11+1=22 > 15)
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_C_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::C) = 0x4B;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_c(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x4B + 1 = 0x96
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x96);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);  // (10+11+1=22 > 15)
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_D_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::D) = 0x4B;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_d(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x4B + 1 = 0x96
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x96);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_E_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::E) = 0x4B;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_e(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x4B + 1 = 0x96
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x96);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_H_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::H) = 0x4B;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_h(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x4B + 1 = 0x96
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x96);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_L_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::L) = 0x4B;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_l(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x4B + 1 = 0x96
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x96);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_HL_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+	cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+    mmu.write(0xC000, 0x4B);
+
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_hl(cpu, mmu);
+    EXPECT_EQ(cycles, 8);
+
+    // 0x4A + 0x4B + 1 = 0x96
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x96);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_A_AddsWithCarryAndUpdatesFlags)
+{
+    cpu.reg(ProcessingUnit::Register::A) = 0x4A;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;  // Carry=1
+
+    const int cycles = op_adc_a_a(cpu, mmu);
+    EXPECT_EQ(cycles, 4);
+
+    // 0x4A + 0x4A + 1 = 0x95
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x95);
+
+    EXPECT_EQ(cpu.get_flag_z(), 0);
+    EXPECT_EQ(cpu.get_flag_n(), 0);
+    EXPECT_EQ(cpu.get_flag_h(), 1);  // (10+10+1=21 > 15)
+    EXPECT_EQ(cpu.get_flag_c(), 0);
+}

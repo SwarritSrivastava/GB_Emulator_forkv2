@@ -146,7 +146,7 @@ int op_adc_a_b(ProcessingUnit& cpu, MMU& mmu) // 0x88
 {
 	const u8 a = cpu.reg(ProcessingUnit::Register::A);
 	const u8 b = cpu.reg(ProcessingUnit::Register::B);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
 	const u16 sum = a + b + carry;
 
 	const u8 result = static_cast<u8>(sum & 0xFF);
@@ -164,7 +164,7 @@ int op_adc_a_c(ProcessingUnit& cpu, MMU& mmu) // 0x89
 {
 	const u8 a = cpu.reg(ProcessingUnit::Register::A);
 	const u8 b = cpu.reg(ProcessingUnit::Register::C);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
 	const u16 sum = a + b + carry;
 
 	const u8 result = static_cast<u8>(sum & 0xFF);
@@ -182,7 +182,7 @@ int op_adc_a_d(ProcessingUnit& cpu, MMU& mmu) // 0x8A
 {
 	const u8 a = cpu.reg(ProcessingUnit::Register::A);
 	const u8 b = cpu.reg(ProcessingUnit::Register::D);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
 	const u16 sum = a + b + carry;
 
 	const u8 result = static_cast<u8>(sum & 0xFF);
@@ -200,7 +200,7 @@ int op_adc_a_e(ProcessingUnit& cpu, MMU& mmu) // 0x8B
 {
 	const u8 a = cpu.reg(ProcessingUnit::Register::A);
 	const u8 b = cpu.reg(ProcessingUnit::Register::E);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
 	const u16 sum = a + b + carry;
 
 	const u8 result = static_cast<u8>(sum & 0xFF);
@@ -218,7 +218,7 @@ int op_adc_a_h(ProcessingUnit& cpu, MMU& mmu) // 0x8C
 {
 	const u8 a = cpu.reg(ProcessingUnit::Register::A);
 	const u8 b = cpu.reg(ProcessingUnit::Register::H);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
 	const u16 sum = a + b + carry;
 
 	const u8 result = static_cast<u8>(sum & 0xFF);
@@ -236,7 +236,7 @@ int op_adc_a_l(ProcessingUnit& cpu, MMU& mmu) // 0x8D
 {
 	const u8 a = cpu.reg(ProcessingUnit::Register::A);
 	const u8 b = cpu.reg(ProcessingUnit::Register::L);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
 	const u16 sum = a + b + carry;
 
 	const u8 result = static_cast<u8>(sum & 0xFF);
@@ -255,7 +255,7 @@ int op_adc_a_hl(ProcessingUnit& cpu, MMU& mmu) // 0x8E
     const u8 a = cpu.reg(ProcessingUnit::Register::A);
     const u16 hl = cpu.get_hl();
     const u8 value = mmu.read(hl);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
     const u16 sum = a + value + carry;
 
     const u8 result = static_cast<u8>(sum & 0xFF);
@@ -263,7 +263,7 @@ int op_adc_a_hl(ProcessingUnit& cpu, MMU& mmu) // 0x8E
 
     cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
     cpu.setFlag(ProcessingUnit::Flag::N, false);
-    cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0x0F) + (value & 0x0F)) > 0x0F);
+    cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0x0F) + (value & 0x0F) + carry) > 0x0F);
     cpu.setFlag(ProcessingUnit::Flag::C, sum > 0xFF);
 
     return totalMachineCycles(2);
@@ -272,7 +272,7 @@ int op_adc_a_hl(ProcessingUnit& cpu, MMU& mmu) // 0x8E
 int op_adc_a_a(ProcessingUnit& cpu, MMU& mmu) // 0x8F
 {
 	const u8 a = cpu.reg(ProcessingUnit::Register::A);
-	const bool carry = cpu.getFlag(ProcessingUnit::Flag::C);
+	const bool carry = cpu.get_flag_c();
 	const u16 sum = 2 * a + carry;
 
 	const u8 result = static_cast<u8>(sum & 0xFF);
@@ -280,7 +280,7 @@ int op_adc_a_a(ProcessingUnit& cpu, MMU& mmu) // 0x8F
 
 	cpu.setFlag(ProcessingUnit::Flag::Z, result == 0);
 	cpu.setFlag(ProcessingUnit::Flag::N, false);
-	cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0x0F) + (b & 0x0F) + carry) > 0x0F);
+	cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0x0F) + (a & 0x0F) + carry) > 0x0F);
 	cpu.setFlag(ProcessingUnit::Flag::C, sum > 0xFF);
 
 	return totalMachineCycles(1);
