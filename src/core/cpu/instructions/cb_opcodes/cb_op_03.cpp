@@ -7,7 +7,7 @@ constexpr int machine_cycles = 4;
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
-int op_swap_b(ProcessingUnit& cpu , MMU& mmu) // 0xCB30
+int op_swap_b(ProcessingUnit& cpu, MMU& mmu) // 0xCB30
 {
     u8 value = cpu.reg(ProcessingUnit::Register::B);
 
@@ -22,7 +22,7 @@ int op_swap_b(ProcessingUnit& cpu , MMU& mmu) // 0xCB30
     return totalMachineCycles(2);
 }
 
-int op_swap_c(ProcessingUnit& cpu , MMU& mmu) // 0xCB31
+int op_swap_c(ProcessingUnit& cpu, MMU& mmu) // 0xCB31
 {
     u8 value = cpu.reg(ProcessingUnit::Register::C);
 
@@ -37,7 +37,7 @@ int op_swap_c(ProcessingUnit& cpu , MMU& mmu) // 0xCB31
     return totalMachineCycles(2);
 }
 
-int op_swap_d(ProcessingUnit& cpu , MMU& mmu) // 0xCB32
+int op_swap_d(ProcessingUnit& cpu, MMU& mmu) // 0xCB32
 {
     u8 value = cpu.reg(ProcessingUnit::Register::D);
 
@@ -52,7 +52,7 @@ int op_swap_d(ProcessingUnit& cpu , MMU& mmu) // 0xCB32
     return totalMachineCycles(2);
 }
 
-int op_swap_e(ProcessingUnit& cpu , MMU& mmu) // 0xCB33
+int op_swap_e(ProcessingUnit& cpu, MMU& mmu) // 0xCB33
 {
     u8 value = cpu.reg(ProcessingUnit::Register::E);
 
@@ -67,7 +67,7 @@ int op_swap_e(ProcessingUnit& cpu , MMU& mmu) // 0xCB33
     return totalMachineCycles(2);
 }
 
-int op_swap_h(ProcessingUnit& cpu , MMU& mmu) // 0xCB34
+int op_swap_h(ProcessingUnit& cpu, MMU& mmu) // 0xCB34
 {
     u8 value = cpu.reg(ProcessingUnit::Register::H);
     
@@ -82,7 +82,7 @@ int op_swap_h(ProcessingUnit& cpu , MMU& mmu) // 0xCB34
     return totalMachineCycles(2);
 }
 
-int op_swap_l(ProcessingUnit& cpu , MMU& mmu) // 0xCB35
+int op_swap_l(ProcessingUnit& cpu, MMU& mmu) // 0xCB35
 {
     u8 value = cpu.reg(ProcessingUnit::Register::L);
     
@@ -97,7 +97,7 @@ int op_swap_l(ProcessingUnit& cpu , MMU& mmu) // 0xCB35
     return totalMachineCycles(2);
 }
 
-int op_swap_hl(ProcessingUnit& cpu , MMU& mmu) // 0xCB36
+int op_swap_hl(ProcessingUnit& cpu, MMU& mmu) // 0xCB36
 {
     u16 address = cpu.get_hl();
     
@@ -114,7 +114,7 @@ int op_swap_hl(ProcessingUnit& cpu , MMU& mmu) // 0xCB36
     return totalMachineCycles(4);
 }
 
-int op_swap_a(ProcessingUnit& cpu , MMU& mmu) // 0xCB37
+int op_swap_a(ProcessingUnit& cpu, MMU& mmu) // 0xCB37
 {
     u8 value = cpu.reg(ProcessingUnit::Register::A);
     
