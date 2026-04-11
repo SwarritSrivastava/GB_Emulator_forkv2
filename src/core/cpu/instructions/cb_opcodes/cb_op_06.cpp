@@ -7,19 +7,180 @@ constexpr int machine_cycles = 4;
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
-DUMMY(op_bit_4_b) // 0xCB60
-DUMMY(op_bit_4_c) // 0xCB61
-DUMMY(op_bit_4_d) // 0xCB62
-DUMMY(op_bit_4_e) // 0xCB63
-DUMMY(op_bit_4_h) // 0xCB64
-DUMMY(op_bit_4_l) // 0xCB65
-DUMMY(op_bit_4_hl) // 0xCB66
-DUMMY(op_bit_4_a) // 0xCB67
-DUMMY(op_bit_5_b) // 0xCB68
-DUMMY(op_bit_5_c) // 0xCB69
-DUMMY(op_bit_5_d) // 0xCB6A
-DUMMY(op_bit_5_e) // 0xCB6B
-DUMMY(op_bit_5_h) // 0xCB6C
-DUMMY(op_bit_5_l) // 0xCB6D
-DUMMY(op_bit_5_hl) // 0xCB6E
-DUMMY(op_bit_5_a) // 0xCB6F
+int op_bit_4_b(ProcessingUnit& cpu, MMU& mmu) // 0xCB60
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::B) & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_4_c(ProcessingUnit& cpu, MMU& mmu) // 0xCB61
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::C) & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_4_d(ProcessingUnit& cpu, MMU& mmu) // 0xCB62
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::D) & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_4_e(ProcessingUnit& cpu, MMU& mmu) // 0xCB63
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::E) & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_4_h(ProcessingUnit& cpu, MMU& mmu) // 0xCB64
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::H) & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_4_l(ProcessingUnit& cpu, MMU& mmu) // 0xCB65
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::L) & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_4_hl(ProcessingUnit& cpu, MMU& mmu) // 0xCB66
+{
+    u8 value = mmu.read(cpu.get_hl());
+    bool set = (value & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(3);
+}
+
+int op_bit_4_a(ProcessingUnit& cpu, MMU& mmu) // 0xCB67
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::A) & 0x10) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_5_b(ProcessingUnit& cpu, MMU& mmu) // 0xCB68
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::B) & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_5_c(ProcessingUnit& cpu, MMU& mmu) // 0xCB69
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::C) & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_5_d(ProcessingUnit& cpu, MMU& mmu) // 0xCB6A
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::D) & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_5_e(ProcessingUnit& cpu, MMU& mmu) // 0xCB6B
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::E) & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_5_h(ProcessingUnit& cpu, MMU& mmu) // 0xCB6C
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::H) & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_5_l(ProcessingUnit& cpu, MMU& mmu) // 0xCB6D
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::L) & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
+
+int op_bit_5_hl(ProcessingUnit& cpu, MMU& mmu) // 0xCB6E
+{
+    u8 value = mmu.read(cpu.get_hl());
+    bool set = (value & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(3);
+}
+
+int op_bit_5_a(ProcessingUnit& cpu, MMU& mmu) // 0xCB6F
+{
+    bool set = (cpu.reg(ProcessingUnit::Register::A) & 0x20) != 0;
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, !set);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, true);
+
+    return totalMachineCycles(2);
+}
