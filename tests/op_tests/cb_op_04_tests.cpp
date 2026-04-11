@@ -12,62 +12,128 @@ protected:
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0xFE;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_b(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0xFE);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::B) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_b(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_C) {
     cpu.reg(ProcessingUnit::Register::C) = 0xFE;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_c(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0xFE);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::C) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_c(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_D) {
     cpu.reg(ProcessingUnit::Register::D) = 0xFE;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_d(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0xFE);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::D) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_d(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_E) {
     cpu.reg(ProcessingUnit::Register::E) = 0xFE;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_e(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0xFE);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::E) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_e(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_H) {
     cpu.reg(ProcessingUnit::Register::H) = 0xFE;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_h(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0xFE);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::H) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_h(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_L) {
     cpu.reg(ProcessingUnit::Register::L) = 0xFE;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_l(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0xFE);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::L) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_l(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_HL) {
@@ -75,82 +141,170 @@ TEST_F(CB_OpcodesCPUTest, BIT_0_HL) {
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     mmu.write(addr, 0xFE);
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_hl(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(mmu.read(addr), 0xFE);
     EXPECT_EQ(cycles, 12);
+
     mmu.write(addr, 0x01);
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_hl(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(mmu.read(addr), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_0_A) {
     cpu.reg(ProcessingUnit::Register::A) = 0xFE;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_0_a(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xFE);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::A) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_0_a(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x01);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0xFD; // 1111 1101
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_b(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0xFD);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::B) = 0x02; // 0000 0010
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_b(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x02);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_C) {
     cpu.reg(ProcessingUnit::Register::C) = 0xFD;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_c(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0xFD);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::C) = 0x02;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_c(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x02);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_D) {
     cpu.reg(ProcessingUnit::Register::D) = 0xFD;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_d(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0xFD);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::D) = 0x02;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_d(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x02);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_E) {
     cpu.reg(ProcessingUnit::Register::E) = 0xFD;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_e(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0xFD);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::E) = 0x02;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_e(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x02);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_H) {
     cpu.reg(ProcessingUnit::Register::H) = 0xFD;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_h(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0xFD);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::H) = 0x02;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_h(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0x02);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_L) {
     cpu.reg(ProcessingUnit::Register::L) = 0xFD;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_l(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0xFD);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::L) = 0x02;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_l(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x02);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_HL) {
@@ -158,20 +312,42 @@ TEST_F(CB_OpcodesCPUTest, BIT_1_HL) {
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     mmu.write(addr, 0xFD);
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_hl(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(mmu.read(addr), 0xFD);
     EXPECT_EQ(cycles, 12);
+
     mmu.write(addr, 0x02);
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_hl(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(mmu.read(addr), 0x02);
 }
 
 TEST_F(CB_OpcodesCPUTest, BIT_1_A) {
     cpu.reg(ProcessingUnit::Register::A) = 0xFD;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
     int cycles = op_bit_1_a(cpu, mmu);
     EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xFD);
     EXPECT_EQ(cycles, 8);
+
     cpu.reg(ProcessingUnit::Register::A) = 0x02;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
     op_bit_1_a(cpu, mmu);
     EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x02);
 }
