@@ -12,8 +12,10 @@ protected:
 
 TEST_F(CB_OpcodesCPUTest, RES_6_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
     int cycles = op_res_6_b(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0xBF);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
     EXPECT_EQ(cycles, 8);
 }
 
@@ -71,8 +73,10 @@ TEST_F(CB_OpcodesCPUTest, RES_6_A) {
 
 TEST_F(CB_OpcodesCPUTest, RES_7_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0xFF;
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
     int cycles = op_res_7_b(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x7F);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
     EXPECT_EQ(cycles, 8);
 }
 
