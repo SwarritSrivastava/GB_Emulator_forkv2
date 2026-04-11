@@ -31,3 +31,35 @@ TEST_F(OpcodesCPUTest, CB_Prefix_ChecksForCorrectCBOpcodeCall)
 
     cbInstructionTable[test_opcode] = original;
 }
+
+TEST_F(OpcodesCPUTest, RET_NZ_DoesNotReturnWhenZeroFlagSet)
+{
+    cpu.set_pc(0x1234);
+    cpu.set_sp(0xC100);
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    mmu.write(0xC100, 0x78);
+    mmu.write(0xC101, 0x56);
+
+    const int cycles = op_ret_nz(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_pc(), 0x1234);
+    EXPECT_EQ(cpu.get_sp(), 0xC100);
+}
+
+TEST_F(OpcodesCPUTest, RET_NZ_ReturnsWhenZeroFlagClear)
+{
+    cpu.set_pc(0x1234);
+    cpu.set_sp(0xC100);
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    mmu.write(0xC100, 0x78);
+    mmu.write(0xC101, 0x56);
+
+    const int cycles = op_ret_nz(cpu, mmu);
+
+    EXPECT_EQ(cycles, 20);
+    EXPECT_EQ(cpu.get_pc(), 0x5678);
+    EXPECT_EQ(cpu.get_sp(), 0xC102);
+}

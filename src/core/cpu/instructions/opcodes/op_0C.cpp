@@ -8,7 +8,22 @@ constexpr int machine_cycles = 4;
 
 #define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
 
-DUMMY(op_ret_nz) // 0xC0
+int op_ret_nz(ProcessingUnit& cpu, MMU& mmu) // 0xC0
+{
+    if (cpu.get_flag_z()) {
+        return totalMachineCycles(2);
+    }
+
+    const u16 sp = cpu.get_sp();
+    const u8 lo = mmu.read(sp);
+    const u8 hi = mmu.read(sp + 1);
+
+    cpu.set_sp(sp + 2);
+    cpu.set_pc(static_cast<u16>((hi << 8) | lo));
+
+    return totalMachineCycles(5);
+}
+
 DUMMY(op_pop_bc) // 0xC1
 DUMMY(op_jp_nz) // 0xC2
 DUMMY(op_jp) // 0xC3
