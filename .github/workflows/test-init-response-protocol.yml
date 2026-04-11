@@ -3,7 +3,7 @@ name: TEST INIT RESPONSE PROTOCOL
 on:
   push:
   pull_request:
-    branches: ["main", "master"]
+    branches: ["test/TIRP"]
 
   workflow_dispatch:
     inputs:
