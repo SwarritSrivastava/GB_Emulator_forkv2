@@ -10,27 +10,232 @@ protected:
     MMU mmu;
 };
 
-TEST_F(CB_OpcodesCPUTest, RLB_RotatesBRegisterLeft) {
+TEST_F(CB_OpcodesCPUTest, RL_B_RotatesThroughCarry) {
     cpu.reg(ProcessingUnit::Register::B) = 0x80;
-    cpu.setFlag(ProcessingUnit::Flag::C , false);
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
 
-    const int c0 = op_rl_b(cpu, mmu);
+    int cycles = op_rl_b(cpu, mmu);
 
-    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B) , 0x00);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x00);
     EXPECT_TRUE(cpu.get_flag_c());
     EXPECT_TRUE(cpu.get_flag_z());
     EXPECT_FALSE(cpu.get_flag_n());
     EXPECT_FALSE(cpu.get_flag_h());
-    EXPECT_EQ(c0, 8);
+    EXPECT_EQ(cycles, 8);
 
     cpu.reg(ProcessingUnit::Register::B) = 0x01;
-    cpu.setFlag(ProcessingUnit::Flag::C , true);
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
 
     op_rl_b(cpu, mmu);
 
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x03);
     EXPECT_FALSE(cpu.get_flag_c());
     EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RL_C_RotatesThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::C) = 0x85;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rl_c(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x0B);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RL_D_RotatesThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::D) = 0x11;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    op_rl_d(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x22);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RL_E_RotatesThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::E) = 0xFF;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    op_rl_e(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0xFE);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RL_H_RotatesThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::H) = 0x00;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rl_h(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0x01);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RL_L_RotatesThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    op_rl_l(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x00);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_TRUE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RL_HL_RotatesThroughCarry) {
+    u16 hl = 0xC000;
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+    mmu.write(hl, 0x80);
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    int cycles = op_rl_hl(cpu, mmu);
+
+    EXPECT_EQ(mmu.read(hl), 0x00);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_TRUE(cpu.get_flag_z());
     EXPECT_FALSE(cpu.get_flag_n());
     EXPECT_FALSE(cpu.get_flag_h());
+    EXPECT_EQ(cycles, 16);
+
+    mmu.write(hl, 0x01);
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rl_hl(cpu, mmu);
+
+    EXPECT_EQ(mmu.read(hl), 0x03);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RL_A_RotatesThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::A) = 0x95;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rl_a(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x2B);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_B_RotatesRightThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::B) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    int cycles = op_rr_b(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0x00);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_FALSE(cpu.get_flag_h());
+    EXPECT_EQ(cycles, 8);
+
+    cpu.reg(ProcessingUnit::Register::B) = 0x8A;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rr_b(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0xC5);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_C_RotatesRightThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::C) = 0x8A;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    op_rr_c(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0x45);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_D_RotatesRightThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::D) = 0x01;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rr_d(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0x80);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_E_RotatesRightThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::E) = 0xFF;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    op_rr_e(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x7F);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_H_RotatesRightThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::H) = 0x00;
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rr_h(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0x80);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_L_RotatesRightThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    op_rr_l(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0x00);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_TRUE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_HL_RotatesRightThroughCarry) {
+    u16 hl = 0xC000;
+    cpu.reg(ProcessingUnit::Register::H) = 0xC0;
+    cpu.reg(ProcessingUnit::Register::L) = 0x00;
+    mmu.write(hl, 0x01);
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    int cycles = op_rr_hl(cpu, mmu);
+
+    EXPECT_EQ(mmu.read(hl), 0x00);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_TRUE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_FALSE(cpu.get_flag_h());
+    EXPECT_EQ(cycles, 16);
+
+    mmu.write(hl, 0x8A);
+    cpu.setFlag(ProcessingUnit::Flag::C, true);
+
+    op_rr_hl(cpu, mmu);
+
+    EXPECT_EQ(mmu.read(hl), 0xC5);
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
+}
+
+TEST_F(CB_OpcodesCPUTest, RR_A_RotatesRightThroughCarry) {
+    cpu.reg(ProcessingUnit::Register::A) = 0x3B;
+    cpu.setFlag(ProcessingUnit::Flag::C, false);
+
+    op_rr_a(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x1D);
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_FALSE(cpu.get_flag_z());
 }
