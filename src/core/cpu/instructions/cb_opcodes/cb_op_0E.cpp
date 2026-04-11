@@ -5,21 +5,164 @@
 constexpr int machine_cycles = 4;
 #define totalMachineCycles(n) ((n) * machine_cycles)
 
-#define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
+int op_set_4_b(ProcessingUnit& cpu, MMU& mmu) // 0xCBE0
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::B);
 
-DUMMY(op_set_4_b) // 0xCBE0
-DUMMY(op_set_4_c) // 0xCBE1
-DUMMY(op_set_4_d) // 0xCBE2
-DUMMY(op_set_4_e) // 0xCBE3
-DUMMY(op_set_4_h) // 0xCBE4
-DUMMY(op_set_4_l) // 0xCBE5
-DUMMY(op_set_4_hl) // 0xCBE6
-DUMMY(op_set_4_a) // 0xCBE7
-DUMMY(op_set_5_b) // 0xCBE8
-DUMMY(op_set_5_c) // 0xCBE9
-DUMMY(op_set_5_d) // 0xCBEA
-DUMMY(op_set_5_e) // 0xCBEB
-DUMMY(op_set_5_h) // 0xCBEC
-DUMMY(op_set_5_l) // 0xCBED
-DUMMY(op_set_5_hl) // 0xCBEE
-DUMMY(op_set_5_a) // 0xCBEF
+    u8 result = value | 0x10;
+    cpu.reg(ProcessingUnit::Register::B) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_4_c(ProcessingUnit& cpu, MMU& mmu) // 0xCBE1
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::C);
+
+    u8 result = value | 0x10;
+    cpu.reg(ProcessingUnit::Register::C) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_4_d(ProcessingUnit& cpu, MMU& mmu) // 0xCBE2
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::D);
+
+    u8 result = value | 0x10;
+    cpu.reg(ProcessingUnit::Register::D) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_4_e(ProcessingUnit& cpu, MMU& mmu) // 0xCBE3
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::E);
+
+    u8 result = value | 0x10;
+    cpu.reg(ProcessingUnit::Register::E) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_4_h(ProcessingUnit& cpu, MMU& mmu) // 0xCBE4
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::H);
+
+    u8 result = value | 0x10;
+    cpu.reg(ProcessingUnit::Register::H) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_4_l(ProcessingUnit& cpu, MMU& mmu) // 0xCBE5
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::L);
+
+    u8 result = value | 0x10;
+    cpu.reg(ProcessingUnit::Register::L) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_4_hl(ProcessingUnit& cpu, MMU& mmu) // 0xCBE6
+{
+    u16 addr = cpu.get_hl();
+    u8 value = mmu.read(addr);
+
+    u8 result = value | 0x10;
+    mmu.write(addr, result);
+
+    return totalMachineCycles(4);
+}
+
+int op_set_4_a(ProcessingUnit& cpu, MMU& mmu) // 0xCBE7
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::A);
+
+    u8 result = value | 0x10;
+    cpu.reg(ProcessingUnit::Register::A) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_5_b(ProcessingUnit& cpu, MMU& mmu) // 0xCBE8
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::B);
+
+    u8 result = value | 0x20;
+    cpu.reg(ProcessingUnit::Register::B) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_5_c(ProcessingUnit& cpu, MMU& mmu) // 0xCBE9
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::C);
+
+    u8 result = value | 0x20;
+    cpu.reg(ProcessingUnit::Register::C) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_5_d(ProcessingUnit& cpu, MMU& mmu) // 0xCBEA
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::D);
+
+    u8 result = value | 0x20;
+    cpu.reg(ProcessingUnit::Register::D) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_5_e(ProcessingUnit& cpu, MMU& mmu) // 0xCBEB
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::E);
+
+    u8 result = value | 0x20;
+    cpu.reg(ProcessingUnit::Register::E) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_5_h(ProcessingUnit& cpu, MMU& mmu) // 0xCBEC
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::H);
+
+    u8 result = value | 0x20;
+    cpu.reg(ProcessingUnit::Register::H) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_5_l(ProcessingUnit& cpu, MMU& mmu) // 0xCBED
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::L);
+
+    u8 result = value | 0x20;
+    cpu.reg(ProcessingUnit::Register::L) = result;
+
+    return totalMachineCycles(2);
+}
+
+int op_set_5_hl(ProcessingUnit& cpu, MMU& mmu) // 0xCBEE
+{
+    u16 addr = cpu.get_hl();
+    u8 value = mmu.read(addr);
+
+    u8 result = value | 0x20;
+    mmu.write(addr, result);
+
+    return totalMachineCycles(4);
+}
+
+int op_set_5_a(ProcessingUnit& cpu, MMU& mmu) // 0xCBEF
+{
+    u8 value = cpu.reg(ProcessingUnit::Register::A);
+
+    u8 result = value | 0x20;
+    cpu.reg(ProcessingUnit::Register::A) = result;
+
+    return totalMachineCycles(2);
+}
