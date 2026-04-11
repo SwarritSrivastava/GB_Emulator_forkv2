@@ -23,7 +23,22 @@ int op_sub_b(ProcessingUnit &cpu, MMU &mmu) // 0x90
     return totalMachineCycles(1);
 }
 
-DUMMY(op_sub_c)    // 0x91
+int op_sub_c(ProcessingUnit &cpu, MMU &mmu) // 0x91
+{
+    const u8 a = cpu.reg(ProcessingUnit::Register::A);
+    const u8 c = cpu.reg(ProcessingUnit::Register::C);
+    const int result = a - c;
+    const int half_carry = (a & 0x0F) - (c & 0x0F);
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, (result & 0xFF) == 0);
+    cpu.setFlag(ProcessingUnit::Flag::N, true);
+    cpu.setFlag(ProcessingUnit::Flag::H, half_carry < 0);
+    cpu.setFlag(ProcessingUnit::Flag::C, result < 0);
+
+    cpu.reg(ProcessingUnit::Register::A) = static_cast<u8>(result);
+    return totalMachineCycles(1);
+}
+
 DUMMY(op_sub_d)    // 0x92
 DUMMY(op_sub_e)    // 0x93
 DUMMY(op_sub_h)    // 0x94
