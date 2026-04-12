@@ -77,6 +77,14 @@ void ProcessingUnit::setHalt(const bool newValue) {
     halt = newValue;
 }
 
+void ProcessingUnit::setIME(bool newValue) {
+    IME = newValue;
+}
+
+bool ProcessingUnit::getIME() const
+{
+    return IME;
+}
 u8& ProcessingUnit::reg(const Register r)
 {
     switch (r)
