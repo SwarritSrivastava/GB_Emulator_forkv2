@@ -85,6 +85,7 @@ bool ProcessingUnit::getIME() const
 {
     return IME;
 }
+
 u8& ProcessingUnit::reg(const Register r)
 {
     switch (r)
