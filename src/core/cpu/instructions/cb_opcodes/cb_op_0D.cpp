@@ -5,6 +5,8 @@
 constexpr int machine_cycles = 4;
 #define totalMachineCycles(n) ((n) * machine_cycles)
 
+#define DUMMY(name) int name(ProcessingUnit&, MMU&) { return totalMachineCycles(1); }
+
 int op_set_2_b(ProcessingUnit& cpu, MMU& mmu) // 0xCBD0
 {
     u8 value = cpu.reg(ProcessingUnit::Register::B);

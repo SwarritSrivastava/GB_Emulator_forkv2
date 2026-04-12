@@ -47,6 +47,8 @@ public:
 
     [[nodiscard]] bool isHalt() const;
 
+    void setIME(bool newValue);
+    bool getIME() const;
 /* -------------------------------- */
 /*        Register Identifiers      */
 /* -------------------------------- */
