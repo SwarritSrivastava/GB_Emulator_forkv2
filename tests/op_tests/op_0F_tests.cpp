@@ -103,6 +103,7 @@ TEST_F(OpcodesCPUTest, OR_D8_TakesOR_A)
     int cycles = op_or_d8(cpu, mmu);
 
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xFF);
+    EXPECT_EQ(cpu.get_pc(), init_pc + 1);
     EXPECT_EQ(cpu.get_flag_z(), false);
     EXPECT_EQ(cpu.get_flag_n(), false);
     EXPECT_EQ(cpu.get_flag_h(), false);
@@ -117,6 +118,7 @@ TEST_F(OpcodesCPUTest, OR_D8_TakesOR_A)
     op_or_d8(cpu, mmu);
 
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x00);
+    EXPECT_EQ(cpu.get_pc(), init_pc2 + 1);
     EXPECT_EQ(cpu.get_flag_z(), true);
 }
 
