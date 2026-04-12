@@ -19,9 +19,26 @@ DIST_DIR = PROJECT_ROOT / "dist"
 INDEX_HTML = DIST_DIR / "index.html"
 INDEX_JSON = DIST_DIR / "opcode_lookup_index.json"
 
+OPCODES_HEADER = PROJECT_ROOT / "include" / "opcodes.hpp"
+CB_OPCODES_HEADER = PROJECT_ROOT / "include" / "cb_opcodes.hpp"
+BASE_OPCODE_SRC_DIR = PROJECT_ROOT / "src" / "core" / "cpu" / "instructions" / "opcodes"
+CB_OPCODE_SRC_DIR = (
+    PROJECT_ROOT / "src" / "core" / "cpu" / "instructions" / "cb_opcodes"
+)
+
+OP_DECL_PATTERN = re.compile(
+    r"^\s*int\s+(op_[A-Za-z0-9_]+)\s*\([^;]*\)\s*;\s*//\s*(0x[0-9A-Fa-f]+)\s*$"
+)
+DUMMY_PATTERN = re.compile(r"DUMMY\(\s*(op_[A-Za-z0-9_]+)\s*\)")
+
 
 def find_chromium_binary() -> str:
-    for name in ("chromium", "chromium-browser", "google-chrome", "google-chrome-stable"):
+    for name in (
+        "chromium",
+        "chromium-browser",
+        "google-chrome",
+        "google-chrome-stable",
+    ):
         binary = shutil.which(name)
         if binary:
             return binary
@@ -41,8 +58,52 @@ def run_chromium_dump(helper_file: Path) -> str:
     ]
     proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if proc.returncode != 0:
-        raise RuntimeError(f"Chromium failed: {proc.stderr.strip() or proc.stdout.strip()}")
+        raise RuntimeError(
+            f"Chromium failed: {proc.stderr.strip() or proc.stdout.strip()}"
+        )
     return proc.stdout
+
+
+def parse_opcode_declarations(header_path: Path) -> list[tuple[str, str]]:
+    entries: list[tuple[str, str]] = []
+    for line in header_path.read_text(encoding="utf-8").splitlines():
+        match = OP_DECL_PATTERN.match(line)
+        if match:
+            entries.append((match.group(1), match.group(2).upper()))
+    return entries
+
+
+def collect_dummy_symbols(source_dir: Path) -> set[str]:
+    dummies: set[str] = set()
+    for cpp_file in sorted(source_dir.glob("*.cpp")):
+        content = cpp_file.read_text(encoding="utf-8")
+        for symbol in DUMMY_PATTERN.findall(content):
+            dummies.add(symbol)
+    return dummies
+
+
+def get_implemented_opcode_keys() -> set[str]:
+    base_entries = parse_opcode_declarations(OPCODES_HEADER)
+    cb_entries = parse_opcode_declarations(CB_OPCODES_HEADER)
+
+    base_dummies = collect_dummy_symbols(BASE_OPCODE_SRC_DIR)
+    cb_dummies = collect_dummy_symbols(CB_OPCODE_SRC_DIR)
+
+    implemented: set[str] = set()
+    implemented.update(
+        opcode.upper() for name, opcode in base_entries if name not in base_dummies
+    )
+    implemented.update(
+        opcode.upper() for name, opcode in cb_entries if name not in cb_dummies
+    )
+    return implemented
+
+
+def annotate_implementation_status(entries: list[dict]) -> None:
+    implemented_keys = get_implemented_opcode_keys()
+    for entry in entries:
+        key = str(entry.get("opcode", "")).upper()
+        entry["implemented"] = key in implemented_keys
 
 
 def scrape_rows_from_dist() -> list[dict]:
@@ -321,7 +382,9 @@ def wrap_lines(text: str, width: int) -> list[str]:
         return [text]
     out = []
     for raw in (text or "").splitlines() or [""]:
-        chunks = textwrap.wrap(raw, width=width, replace_whitespace=False, drop_whitespace=False)
+        chunks = textwrap.wrap(
+            raw, width=width, replace_whitespace=False, drop_whitespace=False
+        )
         if chunks:
             out.extend(chunks)
         else:
@@ -386,7 +449,9 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
         height, width = stdscr.getmaxyx()
         if width < 70 or height < 16:
             stdscr.erase()
-            stdscr.addstr(0, 0, "Terminal too small. Resize to at least 70x16.", palette["warn"])
+            stdscr.addstr(
+                0, 0, "Terminal too small. Resize to at least 70x16.", palette["warn"]
+            )
             stdscr.addstr(1, 0, "Press q to quit.", palette["muted"])
             stdscr.refresh()
             ch = stdscr.getch()
@@ -418,7 +483,10 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
         stdscr.addstr(1, 8, f"{query}", palette["value"])
         stdscr.addstr(2, 0, "Matches:", palette["label"])
         stdscr.addstr(2, 9, f"{len(filtered)}/{len(entries)}", palette["good"])
-        stdscr.addstr(2, detail_x, "Keys: Up/Down PgUp/PgDn Backspace q", palette["muted"])
+        stdscr.addstr(2, 22, "[I] implemented", palette["good"])
+        stdscr.addstr(
+            2, detail_x, "Keys: Up/Down PgUp/PgDn Backspace q", palette["muted"]
+        )
 
         for row in range(3, height - 2):
             stdscr.addch(row, list_width + 1, "|", palette["divider"])
@@ -427,12 +495,20 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
         for idx, entry in enumerate(visible):
             y = 3 + idx
             absolute_idx = scroll + idx
-            label = f"{entry.get('opcode', ''):<8} {entry.get('mnemonic', '')}"
+            marker = "I" if entry.get("implemented", False) else " "
+            label = (
+                f"[{marker}] {entry.get('opcode', ''):<8} {entry.get('mnemonic', '')}"
+            )
             label = label[: list_width - 1]
             if absolute_idx == selected:
                 stdscr.addstr(y, 0, label.ljust(list_width - 1), palette["selected"])
             else:
-                stdscr.addstr(y, 0, label.ljust(list_width - 1), palette["value"])
+                value_attr = (
+                    palette["good"]
+                    if entry.get("implemented", False)
+                    else palette["value"]
+                )
+                stdscr.addstr(y, 0, label.ljust(list_width - 1), value_attr)
 
         if filtered:
             current = filtered[selected]
@@ -446,6 +522,7 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
             detail_rows: list[tuple[str, str]] = [
                 ("Opcode", str(current.get("opcode", ""))),
                 ("Mnemonic", str(current.get("mnemonic", ""))),
+                ("Implemented", "Yes" if current.get("implemented", False) else "No"),
                 ("Prefix", str(current.get("prefix", ""))),
                 ("Bytes", str(current.get("bytes", ""))),
                 ("Cycles", str(current.get("cycles", ""))),
@@ -457,8 +534,17 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
                 if y >= height - 1:
                     break
                 stdscr.addstr(y, detail_x, f"{label:<9}", palette["label"])
-                value_attr = palette["good"] if label in ("Opcode", "Cycles", "Bytes") else palette["value"]
-                stdscr.addstr(y, detail_x + 10, value[: max(1, detail_width - 11)], value_attr)
+                if label == "Implemented":
+                    value_attr = palette["good"] if value == "Yes" else palette["warn"]
+                else:
+                    value_attr = (
+                        palette["good"]
+                        if label in ("Opcode", "Cycles", "Bytes")
+                        else palette["value"]
+                    )
+                stdscr.addstr(
+                    y, detail_x + 10, value[: max(1, detail_width - 11)], value_attr
+                )
                 y += 1
 
             if y < height - 1:
@@ -467,7 +553,9 @@ def draw_tui(stdscr, entries: list[dict]) -> int:
                 stdscr.addstr(y, detail_x, "Description", palette["label"])
                 y += 1
 
-            desc_lines = wrap_lines(str(current.get("description", "")), detail_width - 1)
+            desc_lines = wrap_lines(
+                str(current.get("description", "")), detail_width - 1
+            )
             for line in desc_lines:
                 if y >= height - 1:
                     break
@@ -515,6 +603,7 @@ def run_tui(index: dict) -> int:
     if not isinstance(entries, list):
         print("Invalid index data", file=sys.stderr)
         return 1
+    annotate_implementation_status(entries)
     return curses.wrapper(lambda stdscr: draw_tui(stdscr, entries))
 
 
@@ -522,11 +611,19 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Lookup Game Boy opcodes from dist/index.html metadata"
     )
-    parser.add_argument("query", nargs="?", help="opcode (e.g. 0x04, CB 11) or mnemonic")
-    parser.add_argument("--build", action="store_true", help="build dist/opcode_lookup_index.json")
-    parser.add_argument("--json", action="store_true", help="output JSON for query result")
+    parser.add_argument(
+        "query", nargs="?", help="opcode (e.g. 0x04, CB 11) or mnemonic"
+    )
+    parser.add_argument(
+        "--build", action="store_true", help="build dist/opcode_lookup_index.json"
+    )
+    parser.add_argument(
+        "--json", action="store_true", help="output JSON for query result"
+    )
     parser.add_argument("--all", action="store_true", help="show all mnemonic matches")
-    parser.add_argument("--tui", action="store_true", help="launch interactive terminal UI")
+    parser.add_argument(
+        "--tui", action="store_true", help="launch interactive terminal UI"
+    )
     args = parser.parse_args()
 
     if args.build:
@@ -557,7 +654,9 @@ def main() -> int:
         return 0
 
     if len(results) > 1 and not args.all:
-        print(f"Found {len(results)} matches, showing best match. Use --all to list all.")
+        print(
+            f"Found {len(results)} matches, showing best match. Use --all to list all."
+        )
         print()
         print_entry(results[0])
         return 0
