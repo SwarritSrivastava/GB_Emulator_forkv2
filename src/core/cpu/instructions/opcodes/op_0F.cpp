@@ -98,6 +98,7 @@ int op_rst_30(ProcessingUnit& cpu, MMU& mmu) // 0xF7
 
     return totalMachineCycles(4);
 }
+DUMMY(op_ld_hl_sp_e8) // 0xF8
 DUMMY(op_ld_sp_hl) // 0xF9
 DUMMY(op_ld_a_a16) // 0xFA
 DUMMY(op_ei) // 0xFB
