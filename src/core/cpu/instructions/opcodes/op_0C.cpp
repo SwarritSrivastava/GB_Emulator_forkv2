@@ -24,7 +24,20 @@ int op_ret_nz(ProcessingUnit& cpu, MMU& mmu) // 0xC0
     return totalMachineCycles(5);
 }
 
-DUMMY(op_pop_bc) // 0xC1
+int op_pop_bc(ProcessingUnit& cpu, MMU& mmu) // 0xC1
+{
+    const u16 sp = cpu.get_sp();
+    const u8 lo = mmu.read(sp);
+    const u8 hi = mmu.read(sp + 1);
+
+    cpu.reg(ProcessingUnit::Register::C) = lo;
+    cpu.reg(ProcessingUnit::Register::B) = hi;
+
+    cpu.set_sp(sp + 2);
+    
+    return totalMachineCycles(3);
+}
+
 DUMMY(op_jp_nz) // 0xC2
 DUMMY(op_jp) // 0xC3
 DUMMY(op_call_nz) // 0xC4
