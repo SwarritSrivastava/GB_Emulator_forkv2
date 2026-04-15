@@ -138,3 +138,26 @@ TEST_F(OpcodesCPUTest, RST_30_PushesPCAndJumps)
     EXPECT_EQ(mmu.read(initial_sp - 2), initial_pc & 0xFF);
     EXPECT_EQ(cycles, 16);
 }
+
+TEST_F(OpcodesCPUTest, LD_HL_SP_S8_Verification)
+{
+    cpu.set_sp(0x1000);
+    cpu.set_pc(0xD000); 
+    mmu.write(0xD000, 0x02); 
+
+    int cycles = op_ld_hl_sp_e8(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_hl(), 0x1002);
+    EXPECT_EQ(cpu.get_flag_z(), false);
+    EXPECT_EQ(cpu.get_flag_n(), false);
+    EXPECT_EQ(cycles, 12);
+    cpu.set_sp(0x1000);
+    cpu.set_pc(0xD100);
+    mmu.write(0xD100, 0xFE); // -2
+
+    op_ld_hl_sp_e8(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_hl(), 0x0FFE);
+    EXPECT_EQ(cpu.get_flag_h(), false);
+    EXPECT_EQ(cpu.get_flag_c(), false);
+}

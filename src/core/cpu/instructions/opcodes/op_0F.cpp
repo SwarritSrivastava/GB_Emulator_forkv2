@@ -98,7 +98,24 @@ int op_rst_30(ProcessingUnit& cpu, MMU& mmu) // 0xF7
 
     return totalMachineCycles(4);
 }
-DUMMY(op_ld_hl_sp_e8) // 0xF8
+
+int op_ld_hl_sp_e8(ProcessingUnit& cpu, MMU& mmu) // 0xF8
+{
+    u8 operand = mmu.read(cpu.inc_pc());
+    int8_t s8 = static_cast<int8_t>(operand);
+    u16 sp = cpu.get_sp();
+
+    cpu.setFlag(ProcessingUnit::Flag::Z, false);
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, (sp & 0x0F) + (operand & 0x0F) > 0x0F);
+    cpu.setFlag(ProcessingUnit::Flag::C, (sp & 0x00FF) + (operand & 0x00FF) > 0x00FF);
+
+    u16 result = sp + s8;
+    cpu.reg(ProcessingUnit::Register::H) = (result >> 8) & 0xFF;
+    cpu.reg(ProcessingUnit::Register::L) = result & 0xFF;
+
+    return totalMachineCycles(3);
+}
 DUMMY(op_ld_sp_hl) // 0xF9
 DUMMY(op_ld_a_a16) // 0xFA
 DUMMY(op_ei) // 0xFB
