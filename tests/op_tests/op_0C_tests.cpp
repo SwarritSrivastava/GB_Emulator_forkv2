@@ -64,6 +64,83 @@ TEST_F(OpcodesCPUTest, RET_NZ_ReturnsWhenZeroFlagClear)
     EXPECT_EQ(cpu.get_sp(), 0xC102);
 }
 
+TEST_F(OpcodesCPUTest, JP_NZ_JumpsWhenZeroFlagClear)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0x34;
+    rom[0x101] = 0x12;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = op_jp_nz(cpu, mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x1234);
+}
+
+TEST_F(OpcodesCPUTest, JP_NZ_DoesNotJumpWhenZeroFlagSet)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0x34;
+    rom[0x101] = 0x12;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    const int cycles = op_jp_nz(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}
+
+TEST_F(OpcodesCPUTest, JP_NZ_ThroughStep_UsesOpcodeTableAndJumps)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0xC2;
+    rom[0x101] = 0x78;
+    rom[0x102] = 0x56;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_pc(0x100);
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = cpu.step(mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x5678);
+}
+
+TEST_F(OpcodesCPUTest, JP_Z_JumpsWhenZeroFlagSet)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0x34;
+    rom[0x101] = 0x12;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    const int cycles = op_jp_z(cpu, mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x1234);
+}
+
+TEST_F(OpcodesCPUTest, JP_Z_DoesNotJumpWhenZeroFlagClear)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0x34;
+    rom[0x101] = 0x12;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = op_jp_z(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+}
+
 TEST_F(OpcodesCPUTest, POP_BC_LoadsLowByteIntoCAndHighByteIntoB)
 {
     cpu.reg(ProcessingUnit::Register::B) = 0x00;
@@ -134,4 +211,19 @@ TEST_F(OpcodesCPUTest, POP_BC_ThroughStep_UsesOpcodeTableAndAdvancesPC)
     EXPECT_EQ(cpu.get_pc(), 0x101);
     EXPECT_EQ(cpu.get_sp(), 0xC202);
     EXPECT_EQ(cpu.get_bc(), 0xBEEF);
+}
+TEST_F(OpcodesCPUTest, JP_Z_ThroughStep_UsesOpcodeTableAndJumps)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0xCA;
+    rom[0x101] = 0x78;
+    rom[0x102] = 0x56;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_pc(0x100);
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+    const int cycles = cpu.step(mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x5678);
 }

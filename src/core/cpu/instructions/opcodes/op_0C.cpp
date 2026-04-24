@@ -38,7 +38,21 @@ int op_pop_bc(ProcessingUnit& cpu, MMU& mmu) // 0xC1
     return totalMachineCycles(3);
 }
 
-DUMMY(op_jp_nz) // 0xC2
+int op_jp_nz(ProcessingUnit& cpu, MMU& mmu) // 0xC2
+{
+    const u8 lo = mmu.read(cpu.inc_pc());
+    const u8 hi = mmu.read(cpu.inc_pc());
+    const u16 addr = static_cast<u16>((hi << 8) | lo);
+
+    if (!cpu.get_flag_z())
+    {
+        cpu.set_pc(addr);
+        return totalMachineCycles(4);
+    }
+
+    return totalMachineCycles(3);
+}
+
 DUMMY(op_jp) // 0xC3
 DUMMY(op_call_nz) // 0xC4
 DUMMY(op_push_bc) // 0xC5
@@ -46,7 +60,21 @@ DUMMY(op_add_a_d8) // 0xC6
 DUMMY(op_rst_00) // 0xC7
 DUMMY(op_ret_z) // 0xC8
 DUMMY(op_ret) // 0xC9
-DUMMY(op_jp_z) // 0xCA
+
+int op_jp_z(ProcessingUnit& cpu, MMU& mmu) // 0xCA
+{
+    const u8 lo = mmu.read(cpu.inc_pc());
+    const u8 hi = mmu.read(cpu.inc_pc());
+    const u16 addr = static_cast<u16>((hi << 8) | lo);
+
+    if (cpu.get_flag_z())
+    {
+        cpu.set_pc(addr);
+        return totalMachineCycles(4);
+    }
+
+    return totalMachineCycles(3);
+}
 
 int op_cb_prefix(ProcessingUnit& cpu , MMU& mmu) // 0xCB
 {
