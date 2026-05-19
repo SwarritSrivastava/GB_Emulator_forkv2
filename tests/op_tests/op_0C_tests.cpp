@@ -227,3 +227,192 @@ TEST_F(OpcodesCPUTest, JP_Z_ThroughStep_UsesOpcodeTableAndJumps)
     EXPECT_EQ(cycles, 16);
     EXPECT_EQ(cpu.get_pc(), 0x5678);
 }
+
+TEST_F(OpcodesCPUTest, JP_JumpsUnconditionally)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0x34;
+    rom[0x101] = 0x12;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::F) = 0x00; // the flags are irrelevant,
+                                                 //use a non-zero value to confirm no flag check
+    const int cycles = op_jp(cpu, mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x1234);
+}
+
+TEST_F(OpcodesCPUTest, JP_ThroughStep_UsesOpcodeTableAndJumps)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0xC3;
+    rom[0x101] = 0x78;
+    rom[0x102] = 0x56;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_pc(0x100);
+
+    const int cycles = cpu.step(mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x5678);
+}
+
+TEST_F(OpcodesCPUTest, CALL_NZ_CallsWhenZeroFlagClear)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    // addr = 0x2000
+    rom[0x100] = 0x00; // low
+    rom[0x101] = 0x20; // hi
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_sp(0xFFFE);
+    cpu.reg(ProcessingUnit::Register::F) = 0x00; // Z clear
+
+    const int cycles = op_call_nz(cpu, mmu);
+
+    EXPECT_EQ(cycles, 24);
+    EXPECT_EQ(cpu.get_pc(), 0x2000);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    // return addr 0x102 pushed hi 1st
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x02);
+}
+
+TEST_F(OpcodesCPUTest, CALL_NZ_SkipsWhenZeroFlagSet)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x100] = 0x00;
+    rom[0x101] = 0x20;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_sp(0xFFFE);
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+    const int cycles = op_call_nz(cpu, mmu);
+
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFE);
+}
+
+TEST_F(OpcodesCPUTest, CALL_NZ_ThroughStep_UsesOpcodeTableAndCalls)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    // addr = 0x5678
+    rom[0x100] = 0xC4;
+    rom[0x101] = 0x78;
+    rom[0x102] = 0x56;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_pc(0x100);
+    cpu.set_sp(0xFFFE);
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = cpu.step(mmu);
+
+    EXPECT_EQ(cycles, 24);
+    EXPECT_EQ(cpu.get_pc(), 0x5678);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x03);
+}
+
+TEST_F(OpcodesCPUTest, PUSH_BC_WritesBCOntoStack)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::B) = 0x12;
+    cpu.reg(ProcessingUnit::Register::C) = 0x34;
+    cpu.set_sp(0xFFFE);
+
+    const int cycles = op_push_bc(cpu, mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    EXPECT_EQ(mmu.read(0xFFFD), 0x12);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x34);
+}
+
+TEST_F(OpcodesCPUTest, ADD_A_D8_SetsCarryAndHalfCarryAndZero)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    rom[0x100] = 0x01;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::A) = 0xFF;
+
+    const int cycles = op_add_a_d8(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x00);
+    EXPECT_EQ(cpu.get_flag_z(),  true);
+    EXPECT_EQ(cpu.get_flag_n(),  false);
+    EXPECT_EQ(cpu.get_flag_h(),  true);
+    EXPECT_EQ(cpu.get_flag_c(), true);
+}
+
+TEST_F(OpcodesCPUTest, RST_00_PushesReturnAddrAndJumpsTo0x0000)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_pc(0x0150);
+    cpu.set_sp(0xFFFE);
+
+    const int cycles = op_rst_00(cpu, mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x0000);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x50);
+}
+
+TEST_F(OpcodesCPUTest, RET_Z_ReturnWhenZeroFlagSet)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    mmu.write(0xFFFC, 0x34);
+    mmu.write(0xFFFD, 0x12);
+    cpu.set_sp(0xFFFC);
+    cpu.reg(ProcessingUnit::Register::F) = 0x80;
+
+    const int cycles = op_ret_z(cpu, mmu);
+
+    EXPECT_EQ(cycles, 20);
+    EXPECT_EQ(cpu.get_pc(), 0x1234);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFE);
+}
+
+TEST_F(OpcodesCPUTest, RET_Z_SkipsWhenZeroFlagClear)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_sp(0xFFFC);
+    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+
+    const int cycles = op_ret_z(cpu, mmu);
+
+    EXPECT_EQ(cycles, 8);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+}
+
+TEST_F(OpcodesCPUTest, RET_PopsReturnAddressAndRestoresSP)
+{
+    std::vector<u8> rom(0x200, 0x00);
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    mmu.write(0xFFFC, 0x34);
+    mmu.write(0xFFFD, 0x12);
+    cpu.set_sp(0xFFFC);
+
+    const int cycles = op_ret(cpu, mmu);
+
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x1234);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFE);
+}

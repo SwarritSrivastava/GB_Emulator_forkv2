@@ -98,17 +98,21 @@ int op_rst_30(ProcessingUnit& cpu, MMU& mmu) // 0xF7
 
     return totalMachineCycles(4);
 }
+
 DUMMY(op_ld_hl_sp_e8) // 0xF8
 DUMMY(op_ld_sp_hl) // 0xF9
 DUMMY(op_ld_a_a16) // 0xFA
 DUMMY(op_ei) // 0xFB
+
 int op_illegal_fc(ProcessingUnit& cpu, MMU& mmu) // 0xFC 
 {
     return totalMachineCycles(1);
 }
+
 int op_illegal_fd(ProcessingUnit& cpu, MMU& mmu) // 0xFD
 {
     return totalMachineCycles(1);
 }
+
 DUMMY(op_cp_d8) // 0xFE
 DUMMY(op_rst_38) // 0xFF
