@@ -138,3 +138,107 @@ TEST_F(OpcodesCPUTest, RST_30_PushesPCAndJumps)
     EXPECT_EQ(mmu.read(initial_sp - 2), initial_pc & 0xFF);
     EXPECT_EQ(cycles, 16);
 }
+
+TEST_F(OpcodesCPUTest, LD_HL_SP_E8_AddsSignedOffsetAndUpdatesFlags)
+{
+    u16 initial_sp = 0xFFFA;
+    u16 initial_pc = 0xC000;
+    u8 offset = 0x0A;
+
+    cpu.set_sp(initial_sp);
+    cpu.set_pc(initial_pc);
+    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    mmu.write(initial_pc, offset);
+
+    int cycles = op_ld_hl_sp_e8(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_hl(), static_cast<u16>(initial_sp + 10));
+    EXPECT_EQ(cpu.get_pc(), initial_pc + 1);
+    EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_FALSE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_TRUE(cpu.get_flag_c());
+    EXPECT_EQ(cycles, 12);
+}
+
+TEST_F(OpcodesCPUTest, LD_SP_HL_CopiesRegisterPair)
+{
+    u16 hl = 0xC123;
+    cpu.reg(ProcessingUnit::Register::H) = static_cast<u8>(hl >> 8);
+    cpu.reg(ProcessingUnit::Register::L) = static_cast<u8>(hl & 0xFF);
+
+    int cycles = op_ld_sp_hl(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_sp(), hl);
+    EXPECT_EQ(cycles, 8);
+}
+
+TEST_F(OpcodesCPUTest, LD_A_A16_LoadsFromAbsoluteAddress)
+{
+    u16 initial_pc = 0xC010;
+    u16 addr = 0xD234;
+    u8 value = 0x7E;
+
+    cpu.set_pc(initial_pc);
+    mmu.write(initial_pc, static_cast<u8>(addr & 0xFF));
+    mmu.write(initial_pc + 1, static_cast<u8>((addr >> 8) & 0xFF));
+    mmu.write(addr, value);
+
+    int cycles = op_ld_a_a16(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), value);
+    EXPECT_EQ(cpu.get_pc(), initial_pc + 2);
+    EXPECT_EQ(cycles, 16);
+}
+
+TEST_F(OpcodesCPUTest, EI_FB_EnablesInterrupts)
+{
+    cpu.setIME(false);
+    ASSERT_FALSE(cpu.getIME());
+
+    int cycles = op_ei(cpu, mmu);
+
+    EXPECT_TRUE(cpu.getIME());
+    EXPECT_EQ(cycles, 4);
+}
+
+TEST_F(OpcodesCPUTest, CP_D8_SetsFlagsWithoutChangingA)
+{
+    u16 initial_pc = 0xC020;
+    cpu.set_pc(initial_pc);
+    cpu.reg(ProcessingUnit::Register::A) = 0x3C;
+    mmu.write(initial_pc, 0x2F);
+
+    int cycles = op_cp_d8(cpu, mmu);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x3C);
+    EXPECT_EQ(cpu.get_pc(), initial_pc + 1);
+    EXPECT_FALSE(cpu.get_flag_z());
+    EXPECT_TRUE(cpu.get_flag_n());
+    EXPECT_TRUE(cpu.get_flag_h());
+    EXPECT_FALSE(cpu.get_flag_c());
+    EXPECT_EQ(cycles, 8);
+
+    cpu.set_pc(initial_pc + 1);
+    mmu.write(initial_pc + 1, 0x3C);
+    op_cp_d8(cpu, mmu);
+
+    EXPECT_TRUE(cpu.get_flag_z());
+}
+
+TEST_F(OpcodesCPUTest, RST_38_PushesPCAndJumps)
+{
+    u16 initial_pc = 0xC123;
+    u16 initial_sp = 0xD200;
+
+    cpu.set_pc(initial_pc);
+    cpu.set_sp(initial_sp);
+
+    int cycles = op_rst_38(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_pc(), 0x38);
+    EXPECT_EQ(cpu.get_sp(), initial_sp - 2);
+    EXPECT_EQ(mmu.read(initial_sp - 1), (initial_pc >> 8) & 0xFF);
+    EXPECT_EQ(mmu.read(initial_sp - 2), initial_pc & 0xFF);
+    EXPECT_EQ(cycles, 16);
+}
