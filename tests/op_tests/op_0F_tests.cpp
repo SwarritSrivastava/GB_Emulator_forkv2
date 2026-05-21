@@ -147,7 +147,7 @@ TEST_F(OpcodesCPUTest, LD_HL_SP_E8_AddsSignedOffsetAndUpdatesFlags)
 
     cpu.set_sp(initial_sp);
     cpu.set_pc(initial_pc);
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     mmu.write(initial_pc, offset);
 
     int cycles = op_ld_hl_sp_e8(cpu, mmu);

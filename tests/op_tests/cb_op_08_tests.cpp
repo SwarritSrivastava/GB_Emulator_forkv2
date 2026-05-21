@@ -13,7 +13,7 @@ protected:
 // --- RES 0 ---
 TEST_F(CB_OpcodesCPUTest, RES_0_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0; // Set flags to ensure they aren't cleared
+    cpu.normalizeFlags(); // Set flags to ensure they aren't cleared
     int cycles = op_res_0_b(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0); // Flags unchanged
@@ -26,7 +26,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_B) {
 
 TEST_F(CB_OpcodesCPUTest, RES_0_C) {
     cpu.reg(ProcessingUnit::Register::C) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_0_c(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -35,7 +35,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_C) {
 
 TEST_F(CB_OpcodesCPUTest, RES_0_D) {
     cpu.reg(ProcessingUnit::Register::D) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_0_d(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -44,7 +44,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_D) {
 
 TEST_F(CB_OpcodesCPUTest, RES_0_E) {
     cpu.reg(ProcessingUnit::Register::E) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_0_e(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -53,7 +53,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_E) {
 
 TEST_F(CB_OpcodesCPUTest, RES_0_H) {
     cpu.reg(ProcessingUnit::Register::H) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_0_h(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -62,7 +62,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_H) {
 
 TEST_F(CB_OpcodesCPUTest, RES_0_L) {
     cpu.reg(ProcessingUnit::Register::L) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_0_l(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -74,7 +74,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_HL) {
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     mmu.write(addr, 0xFF);
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_0_hl(cpu, mmu);
     EXPECT_EQ(mmu.read(addr), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -83,7 +83,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_HL) {
 
 TEST_F(CB_OpcodesCPUTest, RES_0_A) {
     cpu.reg(ProcessingUnit::Register::A) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_0_a(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xFE);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -93,7 +93,7 @@ TEST_F(CB_OpcodesCPUTest, RES_0_A) {
 // --- RES 1 ---
 TEST_F(CB_OpcodesCPUTest, RES_1_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_b(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::B), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -102,7 +102,7 @@ TEST_F(CB_OpcodesCPUTest, RES_1_B) {
 
 TEST_F(CB_OpcodesCPUTest, RES_1_C) {
     cpu.reg(ProcessingUnit::Register::C) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_c(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::C), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -111,7 +111,7 @@ TEST_F(CB_OpcodesCPUTest, RES_1_C) {
 
 TEST_F(CB_OpcodesCPUTest, RES_1_D) {
     cpu.reg(ProcessingUnit::Register::D) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_d(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::D), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -120,7 +120,7 @@ TEST_F(CB_OpcodesCPUTest, RES_1_D) {
 
 TEST_F(CB_OpcodesCPUTest, RES_1_E) {
     cpu.reg(ProcessingUnit::Register::E) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_e(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -129,7 +129,7 @@ TEST_F(CB_OpcodesCPUTest, RES_1_E) {
 
 TEST_F(CB_OpcodesCPUTest, RES_1_H) {
     cpu.reg(ProcessingUnit::Register::H) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_h(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::H), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -138,7 +138,7 @@ TEST_F(CB_OpcodesCPUTest, RES_1_H) {
 
 TEST_F(CB_OpcodesCPUTest, RES_1_L) {
     cpu.reg(ProcessingUnit::Register::L) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_l(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::L), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -150,7 +150,7 @@ TEST_F(CB_OpcodesCPUTest, RES_1_HL) {
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     mmu.write(addr, 0xFF);
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_hl(cpu, mmu);
     EXPECT_EQ(mmu.read(addr), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
@@ -159,7 +159,7 @@ TEST_F(CB_OpcodesCPUTest, RES_1_HL) {
 
 TEST_F(CB_OpcodesCPUTest, RES_1_A) {
     cpu.reg(ProcessingUnit::Register::A) = 0xFF;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     int cycles = op_res_1_a(cpu, mmu);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0xFD);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);

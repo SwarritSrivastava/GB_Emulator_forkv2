@@ -14,7 +14,7 @@ TEST_F(OpcodesCPUTest, JR_NZ_JumpsWhenZeroFlagIsClear)
     std::vector<u8> rom(0x200);
     rom[0x101] = 0x05;
     mmu.map_rom(rom);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_jr_nz(cpu, mmu);
 
@@ -120,7 +120,7 @@ TEST_F(OpcodesCPUTest, LD_H_D8_LoadsImmediateIntoH)
 TEST_F(OpcodesCPUTest, DAA_AdjustsAfterAddition)
 {
     cpu.reg(ProcessingUnit::Register::A) = 0x3C;
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_daa(cpu, mmu);
 
@@ -165,7 +165,7 @@ TEST_F(OpcodesCPUTest, JR_Z_DoesNotJumpWhenZeroFlagIsClear)
     std::vector<u8> rom(0x200);
     rom[0x101] = 0xFB;
     mmu.map_rom(rom);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_jr_z(cpu, mmu);
 

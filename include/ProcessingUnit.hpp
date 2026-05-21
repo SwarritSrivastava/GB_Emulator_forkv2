@@ -79,7 +79,7 @@ public:
     }
     void normalizeFlags()
     {
-        F &= 0xF0;
+        F = 0xF0;
     }
     void setFlag(Flag flag, bool value)
     {

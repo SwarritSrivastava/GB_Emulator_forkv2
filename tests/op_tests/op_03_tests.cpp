@@ -14,7 +14,7 @@ TEST_F(OpcodesCPUTest, JR_NC_JumpsWhenCarryFlagIsClear)
     std::vector<u8> rom(0x200);
     rom[0x101] = 0x05;
     mmu.map_rom(rom);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_jr_nc(cpu, mmu);
 
@@ -153,7 +153,7 @@ TEST_F(OpcodesCPUTest, JR_C_DoesNotJumpWhenCarryFlagIsClear)
     std::vector<u8> rom(0x200);
     rom[0x101] = 0x05;
     mmu.map_rom(rom);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_jr_c(cpu, mmu);
 
@@ -247,7 +247,7 @@ TEST_F(OpcodesCPUTest, LD_A_D8_LoadsImmediateIntoA)
 
 TEST_F(OpcodesCPUTest, CCF_ComplementsCarryAndClearsNH)
 {
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     const int cycles = op_ccf(cpu, mmu);
 
