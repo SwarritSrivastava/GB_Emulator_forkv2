@@ -4,9 +4,9 @@ Game Boy (DMG-01) emulator project focused on building an accurate LR35902 CPU c
 
 ```bash
 ❯ ./utility_scripts/opcode_progress.py
-- Base Opcodes: [███████████████░░░░░] 79.7% (204/256)
+- Base Opcodes: [██████████████████░░] 92.2% (236/256)
 - CB Opcodes:   [████████████████████] 100.0% (256/256)
-- Combined:     [█████████████████░░░] 89.8% (460/512)
+- Combined:     [███████████████████░] 96.1% (492/512)
 ```
 
 ## Current Focus
