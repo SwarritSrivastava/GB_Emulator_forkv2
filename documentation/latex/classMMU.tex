@@ -11,6 +11,28 @@ void \doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}} (u
 \begin{DoxyCompactList}\small\item\em Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the physical ROM. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
+\doxysubsection{Detailed Description}
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8hpp_source_l00006}{6}} of file \doxymbox{\hyperlink{mmu_8hpp_source}{mmu.\+hpp}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{classMMU_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classMMU_a3cc26755183540beee71619d7549b189}\index{MMU@{MMU}!MMU@{MMU}}
+\index{MMU@{MMU}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{MMU()}{MMU()}}
+{\footnotesize\ttfamily \label{classMMU_a3cc26755183540beee71619d7549b189} 
+MMU::\+\+MMU (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00006}{6}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+
+
 \label{doc-func-members}
 \Hypertarget{classMMU_doc-func-members}
 \doxysubsection{Member Function Documentation}
@@ -32,6 +54,10 @@ Maps a loaded ROM vector into the Game Boy\textquotesingle{}s physical ROM space
 \begin{DoxyReturn}{Returns}
 true if successfully mapped, false if the vector was empty. 
 \end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00035}{35}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
 \Hypertarget{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}\index{MMU@{MMU}!read@{read}}
 \index{read@{read}!MMU@{MMU}}
 \doxysubsubsection{\texorpdfstring{read()}{read()}}
@@ -50,6 +76,10 @@ Reads a single byte from the emulated memory bus.
 \begin{DoxyReturn}{Returns}
 The 8-\/bit value at the specified address. 
 \end{DoxyReturn}
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00011}{11}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
 \Hypertarget{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}\index{MMU@{MMU}!write@{write}}
 \index{write@{write}!MMU@{MMU}}
 \doxysubsubsection{\texorpdfstring{write()}{write()}}
@@ -67,6 +97,10 @@ Writes a single byte to the emulated memory bus. Safeguards are in place to prev
 {\em value} & The 8-\/bit value to store. \\
 \hline
 \end{DoxyParams}
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00020}{20}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
 
 
 The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}

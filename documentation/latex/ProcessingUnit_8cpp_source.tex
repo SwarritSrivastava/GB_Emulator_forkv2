@@ -1,0 +1,119 @@
+\doxysection{Processing\+Unit.\+cpp}
+\hypertarget{ProcessingUnit_8cpp_source}{}\label{ProcessingUnit_8cpp_source}\index{src/core/cpu/ProcessingUnit.cpp@{src/core/cpu/ProcessingUnit.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}../../../include/ProcessingUnit.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}../../../include/mmu.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}../../../include/opcode\_table.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00005}00005\ ProcessingUnit::ProcessingUnit()\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00006}00006\ \ \ \ \ reset();}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00007}00007\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00009}00009\ \textcolor{keywordtype}{void}\ ProcessingUnit::reset()\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00010}00010\ \ \ \ \ \textcolor{comment}{//\ DMG\ Default}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00011}00011\ \ \ \ \ A\ =\ 0x01;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00012}00012\ \ \ \ \ F\ =\ 0xB0;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00013}00013\ \ \ \ \ B\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00014}00014\ \ \ \ \ C\ =\ 0x13;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00015}00015\ \ \ \ \ D\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00016}00016\ \ \ \ \ E\ =\ 0xD8;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00017}00017\ \ \ \ \ H\ =\ 0x01;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00018}00018\ \ \ \ \ L\ =\ 0x4D;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00019}00019\ \ \ \ \ SP\ =\ 0xFFFE;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00020}00020\ \ \ \ \ PC\ =\ 0x0100;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00022}00022\ \ \ \ \ IME\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00023}00023\ \ \ \ \ halt\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00024}00024\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00026}00026\ \textcolor{keywordtype}{void}\ ProcessingUnit::printStatus()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00027}00027\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00028}00028\ \ \ \ \ std::ios\ oldState(\textcolor{keyword}{nullptr});}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00029}00029\ \ \ \ \ oldState.copyfmt(std::cout);\ \textcolor{comment}{//\ copy\ old\ format}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00030}00030\ \ \ \ \ std::cout\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00031}00031\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}-\/-\/-\/\ CPU\ State\ -\/-\/-\/"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00032}00032\ \ \ \ \ std::cout\ <<\ std::hex\ <<\ std::uppercase\ <<\ std::setfill(\textcolor{charliteral}{'0'});}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00033}00033\ \ \ \ \ \textcolor{comment}{//\ Print\ 16\ bit\ Registers\ and\ their\ high\ and\ low\ counterparts}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00034}00034\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}AF:\ "{}}\ <<\ std::setw(4)\ <<\ get\_af()\ <<\ \textcolor{stringliteral}{"{}\ [A:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(A)\ <<\ \textcolor{stringliteral}{"{}\ F:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(F)\ <<\ \textcolor{stringliteral}{"{}]"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00035}00035\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}BC:\ "{}}\ <<\ std::setw(4)\ <<\ get\_bc()\ <<\ \textcolor{stringliteral}{"{}\ [B:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(B)\ <<\ \textcolor{stringliteral}{"{}\ C:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(C)\ <<\ \textcolor{stringliteral}{"{}]"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00036}00036\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}DE:\ "{}}\ <<\ std::setw(4)\ <<\ get\_de()\ <<\ \textcolor{stringliteral}{"{}\ [D:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(D)\ <<\ \textcolor{stringliteral}{"{}\ E:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(E)\ <<\ \textcolor{stringliteral}{"{}]"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00037}00037\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}HL:\ "{}}\ <<\ std::setw(4)\ <<\ get\_hl()\ <<\ \textcolor{stringliteral}{"{}\ [H:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(H)\ <<\ \textcolor{stringliteral}{"{}\ L:"{}}\ <<\ std::setw(2)\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(L)\ <<\ \textcolor{stringliteral}{"{}]"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00038}00038\ \ \ \ \ \textcolor{comment}{//\ Print\ SP\ and\ PC}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00039}00039\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}SP:\ "{}}\ <<\ std::setw(4)\ <<\ SP\ <<\ \textcolor{stringliteral}{"{}\ PC:\ "{}}\ <<\ std::setw(4)\ <<\ PC\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00040}00040\ \ \ \ \ \textcolor{comment}{//\ Print\ Flag\ Register\ Values}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00041}00041\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Flags:\ "{}}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ (get\_flag\_z()\ ?\ \textcolor{charliteral}{'Z'}\ :\ \textcolor{charliteral}{'-\/'})}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00043}00043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ (get\_flag\_n()\ ?\ \textcolor{charliteral}{'N'}\ :\ \textcolor{charliteral}{'-\/'})}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00044}00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ (get\_flag\_h()\ ?\ \textcolor{charliteral}{'H'}\ :\ \textcolor{charliteral}{'-\/'})}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ (get\_flag\_c()\ ?\ \textcolor{charliteral}{'C'}\ :\ \textcolor{charliteral}{'-\/'})}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}\ [IME:"{}}\ <<\ IME\ <<\ \textcolor{stringliteral}{"{}\ HALT:"{}}\ <<\ halt\ <<\ \textcolor{stringliteral}{"{}]"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00047}00047\ \ \ \ \ std::cout\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00048}00048\ \ \ \ \ std::cout.copyfmt(oldState);\ \textcolor{comment}{//\ set\ to\ old\ format}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00049}00049\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00051}00051\ \textcolor{keywordtype}{int}\ ProcessingUnit::step(\doxymbox{\hyperlink{classMMU}{MMU}}\ \&mmu)}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00052}00052\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00053}00053\ \ \ \ \ \textcolor{keywordflow}{if}\ (isHalt())\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00054}00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 4;\ \textcolor{comment}{//\ Minimum\ instruction\ time\ =\ 4\ cycles}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00055}00055\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00057}00057\ \ \ \ \ \textcolor{keyword}{const}\ u8\ opcode\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(PC++);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00058}00058\ \ \ \ \ \textcolor{keywordflow}{return}\ instructionTable[opcode](*\textcolor{keyword}{this},\ mmu);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00059}00059\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00061}00061\ \textcolor{keywordtype}{bool}\ ProcessingUnit::isHalt()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00062}00062\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00063}00063\ \ \ \ \ \textcolor{keywordflow}{return}\ halt;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00064}00064\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00066}00066\ u16\ ProcessingUnit::get\_pc()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00067}00067\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00068}00068\ \ \ \ \ \textcolor{keywordflow}{return}\ PC;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00069}00069\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00070}00070\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00071}00071\ u16\ ProcessingUnit::get\_sp()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00072}00072\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00073}00073\ \ \ \ \ \textcolor{keywordflow}{return}\ SP;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00074}00074\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00075}00075\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00076}00076\ \textcolor{keywordtype}{void}\ ProcessingUnit::setHalt(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ newValue)\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00077}00077\ \ \ \ \ halt\ =\ newValue;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00078}00078\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00080}00080\ \textcolor{keywordtype}{void}\ ProcessingUnit::setIME(\textcolor{keywordtype}{bool}\ newValue)\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00081}00081\ \ \ \ \ IME\ =\ newValue;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00082}00082\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00083}00083\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00084}00084\ \textcolor{keywordtype}{bool}\ ProcessingUnit::getIME()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00085}00085\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00086}00086\ \ \ \ \ \textcolor{keywordflow}{return}\ IME;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00087}00087\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00088}00088\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00089}00089\ u8\&\ ProcessingUnit::reg(\textcolor{keyword}{const}\ Register\ r)}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00090}00090\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00091}00091\ \ \ \ \ \textcolor{keywordflow}{switch}\ (r)}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00092}00092\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00093}00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::B:\ \textcolor{keywordflow}{return}\ B;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00094}00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::C:\ \textcolor{keywordflow}{return}\ C;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00095}00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::D:\ \textcolor{keywordflow}{return}\ D;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00096}00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::E:\ \textcolor{keywordflow}{return}\ E;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00097}00097\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::H:\ \textcolor{keywordflow}{return}\ H;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00098}00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::L:\ \textcolor{keywordflow}{return}\ L;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00099}00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::A:\ \textcolor{keywordflow}{return}\ A;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00100}00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Register::F:\ \textcolor{keywordflow}{return}\ F;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00101}00101\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00102}00102\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00103}00103\ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Invalid\ register"{}});}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00104}00104\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00105}00105\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00106}00106\ \textcolor{keyword}{const}\ u8\&\ ProcessingUnit::reg(\textcolor{keyword}{const}\ Register\ r)\textcolor{keyword}{\ const}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00107}00107\ \textcolor{keyword}{}\{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00108}00108\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{const\_cast<}ProcessingUnit*\textcolor{keyword}{>}(\textcolor{keyword}{this})-\/>reg(r);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00109}00109\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00110}00110\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00111}00111\ u16\ ProcessingUnit::inc\_pc()\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00112}00112\ \ \ \ \ \textcolor{keywordflow}{return}\ PC++;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8cpp_source_l00113}00113\ \}}
+
+\end{DoxyCode}

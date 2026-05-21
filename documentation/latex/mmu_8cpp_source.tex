@@ -1,0 +1,53 @@
+\doxysection{mmu.\+cpp}
+\hypertarget{mmu_8cpp_source}{}\label{mmu_8cpp_source}\index{src/core/memory/mmu.cpp@{src/core/memory/mmu.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}../../../include/mmu.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <iterator>}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00006}00006\ MMU::MMU()\ \{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00007}00007\ \ \ \ \ \textcolor{comment}{//\ zero\ out\ the\ memory}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00008}00008\ \ \ \ \ std::ranges::fill(memory,\ 0);}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00009}00009\ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00011}\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{00011}}\ u8\ \doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{MMU::read}}(\textcolor{keyword}{const}\ u16\ address)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00012}00012\ \ \ \ \ \textcolor{comment}{//\ wram}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00013}00013\ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ >=\ 0xC000\ \&\&\ address\ <=\ 0xDFFF)\ \{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00014}00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ wram[address\ -\/\ 0xC000];}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00015}00015\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00016}00016\ \ \ \ \ \textcolor{comment}{//\ return\ what\ is\ in\ the\ array}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00017}00017\ \ \ \ \ \textcolor{keywordflow}{return}\ memory[address];}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00018}00018\ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00020}\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{00020}}\ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{MMU::write}}(\textcolor{keyword}{const}\ u16\ address,\ u8\ value)\ \{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00021}00021\ \ \ \ \ \textcolor{comment}{//\ cannot\ overwrite\ the\ physical\ game\ cartridge\ i.e\ from\ 0x0000\ to\ 0x7FFF}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00022}00022\ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ <\ 0x8000)\ \{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00023}00023\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00024}00024\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00026}00026\ \ \ \ \ \textcolor{comment}{//\ instead\ of\ the\ flat\ array\ save\ it\ into\ our\ dedicated\ wram\ chip}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00027}00027\ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ >=\ 0xC000\ \&\&\ address\ <=\ 0xDFFF)\ \{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00028}00028\ \ \ \ \ \ \ \ \ wram[address\ -\/\ 0xC000]\ =\ value;}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00029}00029\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00030}00030\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00032}00032\ \ \ \ \ memory[address]\ =\ value;}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00033}00033\ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00035}\doxymbox{\hyperlink{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9}{00035}}\ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9}{MMU::map\_rom}}(\textcolor{keyword}{const}\ std::vector<u8>\&\ rom\_data)\ \{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00036}00036\ \ \ \ \ \textcolor{keywordflow}{if}(rom\_data.empty())\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00038}00038\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ copy\_size\ =\ rom\_data.size();}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00039}00039\ \ \ \ \ \textcolor{comment}{//\ fixed\ ROM\ is\ strictly\ 32\ KB,\ chop\ off\ if\ size\ is\ greater}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00040}00040\ \ \ \ \ \textcolor{keywordflow}{if}(copy\_size\ >\ 0x8000)\ \{}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00041}00041\ \ \ \ \ \ \ \ \ copy\_size\ =\ 0x8000;}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00042}00042\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00044}00044\ \ \ \ \ std::copy\_n(rom\_data.begin(),\ copy\_size,\ std::begin(memory));}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{mmu_8cpp_source_l00047}00047\ \}}
+
+\end{DoxyCode}

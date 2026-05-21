@@ -1,0 +1,210 @@
+\doxysection{opcode\+\_\+table.\+cpp}
+\hypertarget{opcode__table_8cpp_source}{}\label{opcode__table_8cpp_source}\index{src/core/cpu/instructions/opcode\_table.cpp@{src/core/cpu/instructions/opcode\_table.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}../../../../include/opcode\_table.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}../../../../include/ProcessingUnit.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}../../../../include/mmu.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}../../../../include/opcodes.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}../../../../include/cb\_opcodes.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00007}00007\ OpcodeFunc\ instructionTable[256]\ =\ \{}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00009}00009\ \ \ \ \ \textcolor{comment}{//\ 0x00}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00010}00010\ \ \ \ \ op\_nop,\ op\_ld\_bc\_d16,\ op\_ld\_bc\_a,\ op\_inc\_bc,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00011}00011\ \ \ \ \ op\_inc\_b,\ op\_dec\_b,\ op\_ld\_b\_d8,\ op\_rlca,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00012}00012\ \ \ \ \ op\_ld\_a16\_sp,\ op\_add\_hl\_bc,\ op\_ld\_a\_bc,\ op\_dec\_bc,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00013}00013\ \ \ \ \ op\_inc\_c,\ op\_dec\_c,\ op\_ld\_c\_d8,\ op\_rrca,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00015}00015\ \ \ \ \ \textcolor{comment}{//\ 0x10}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00016}00016\ \ \ \ \ op\_stop,\ op\_ld\_de\_d16,\ op\_ld\_de\_a,\ op\_inc\_de,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00017}00017\ \ \ \ \ op\_inc\_d,\ op\_dec\_d,\ op\_ld\_d\_d8,\ op\_rla,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00018}00018\ \ \ \ \ op\_jr\_r8,\ op\_add\_hl\_de,\ op\_ld\_a\_de,\ op\_dec\_de,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00019}00019\ \ \ \ \ op\_inc\_e,\ op\_dec\_e,\ op\_ld\_e\_d8,\ op\_rra,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00021}00021\ \ \ \ \ \textcolor{comment}{//\ 0x20}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00022}00022\ \ \ \ \ op\_jr\_nz,\ op\_ld\_hl\_d16,\ op\_ld\_hli\_a,\ op\_inc\_hl,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00023}00023\ \ \ \ \ op\_inc\_h,\ op\_dec\_h,\ op\_ld\_h\_d8,\ op\_daa,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00024}00024\ \ \ \ \ op\_jr\_z,\ op\_add\_hl\_hl,\ op\_ld\_a\_hli,\ op\_dec\_hl,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00025}00025\ \ \ \ \ op\_inc\_l,\ op\_dec\_l,\ op\_ld\_l\_d8,\ op\_cpl,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00027}00027\ \ \ \ \ \textcolor{comment}{//\ 0x30}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00028}00028\ \ \ \ \ op\_jr\_nc,\ op\_ld\_sp\_d16,\ op\_ld\_hld\_a,\ op\_inc\_sp,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00029}00029\ \ \ \ \ op\_inc\_hl\_ptr,\ op\_dec\_hl\_ptr,\ op\_ld\_hl\_d8,\ op\_scf,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00030}00030\ \ \ \ \ op\_jr\_c,\ op\_add\_hl\_sp,\ op\_ld\_a\_hld,\ op\_dec\_sp,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00031}00031\ \ \ \ \ op\_inc\_a,\ op\_dec\_a,\ op\_ld\_a\_d8,\ op\_ccf,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00032}00032\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00033}00033\ \ \ \ \ \textcolor{comment}{//\ 0x40}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00034}00034\ \ \ \ \ op\_ld\_b\_b,\ op\_ld\_b\_c,\ op\_ld\_b\_d,\ op\_ld\_b\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00035}00035\ \ \ \ \ op\_ld\_b\_h,\ op\_ld\_b\_l,\ op\_ld\_b\_hl,\ op\_ld\_b\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00036}00036\ \ \ \ \ op\_ld\_c\_b,\ op\_ld\_c\_c,\ op\_ld\_c\_d,\ op\_ld\_c\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00037}00037\ \ \ \ \ op\_ld\_c\_h,\ op\_ld\_c\_l,\ op\_ld\_c\_hl,\ op\_ld\_c\_a\_4f,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00038}00038\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00039}00039\ \ \ \ \ \textcolor{comment}{//\ 0x50}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00040}00040\ \ \ \ \ op\_ld\_d\_b,\ op\_ld\_d\_c,\ op\_ld\_d\_d,\ op\_ld\_d\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00041}00041\ \ \ \ \ op\_ld\_d\_h,\ op\_ld\_d\_l,\ op\_ld\_d\_hl,\ op\_ld\_d\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00042}00042\ \ \ \ \ op\_ld\_e\_b,\ op\_ld\_e\_c,\ op\_ld\_e\_d,\ op\_ld\_e\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00043}00043\ \ \ \ \ op\_ld\_e\_h,\ op\_ld\_e\_l,\ op\_ld\_e\_hl,\ op\_ld\_e\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00045}00045\ \ \ \ \ \textcolor{comment}{//\ 0x60}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00046}00046\ \ \ \ \ op\_ld\_h\_b,\ op\_ld\_h\_c,\ op\_ld\_h\_d,\ op\_ld\_h\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00047}00047\ \ \ \ \ op\_ld\_h\_h,\ op\_ld\_h\_l,\ op\_ld\_h\_hl,\ op\_ld\_h\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00048}00048\ \ \ \ \ op\_ld\_l\_b,\ op\_ld\_l\_c,\ op\_ld\_l\_d,\ op\_ld\_l\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00049}00049\ \ \ \ \ op\_ld\_l\_h,\ op\_ld\_l\_l,\ op\_ld\_l\_hl,\ op\_ld\_l\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00051}00051\ \ \ \ \ \textcolor{comment}{//\ 0x70}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00052}00052\ \ \ \ \ op\_ld\_hl\_b,\ op\_ld\_hl\_c,\ op\_ld\_hl\_d,\ op\_ld\_hl\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00053}00053\ \ \ \ \ op\_ld\_hl\_h,\ op\_ld\_hl\_l,\ op\_halt,\ op\_ld\_hl\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00054}00054\ \ \ \ \ op\_ld\_a\_b,\ op\_ld\_a\_c\_79,\ op\_ld\_a\_d,\ op\_ld\_a\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00055}00055\ \ \ \ \ op\_ld\_a\_h,\ op\_ld\_a\_l,\ op\_ld\_a\_hl,\ op\_ld\_a\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00057}00057\ \ \ \ \ \textcolor{comment}{//\ 0x80}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00058}00058\ \ \ \ \ op\_add\_a\_b,\ op\_add\_a\_c,\ op\_add\_a\_d,\ op\_add\_a\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00059}00059\ \ \ \ \ op\_add\_a\_h,\ op\_add\_a\_l,\ op\_add\_a\_hl,\ op\_add\_a\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00060}00060\ \ \ \ \ op\_adc\_a\_b,\ op\_adc\_a\_c,\ op\_adc\_a\_d,\ op\_adc\_a\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00061}00061\ \ \ \ \ op\_adc\_a\_h,\ op\_adc\_a\_l,\ op\_adc\_a\_hl,\ op\_adc\_a\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00062}00062\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00063}00063\ \ \ \ \ \textcolor{comment}{//\ 0x90}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00064}00064\ \ \ \ \ op\_sub\_b,\ op\_sub\_c,\ op\_sub\_d,\ op\_sub\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00065}00065\ \ \ \ \ op\_sub\_h,\ op\_sub\_l,\ op\_sub\_hl,\ op\_sub\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00066}00066\ \ \ \ \ op\_sbc\_a\_b,\ op\_sbc\_a\_c,\ op\_sbc\_a\_d,\ op\_sbc\_a\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00067}00067\ \ \ \ \ op\_sbc\_a\_h,\ op\_sbc\_a\_l,\ op\_sbc\_a\_hl,\ op\_sbc\_a\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00069}00069\ \ \ \ \ \textcolor{comment}{//\ 0xA0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00070}00070\ \ \ \ \ op\_and\_b,\ op\_and\_c,\ op\_and\_d,\ op\_and\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00071}00071\ \ \ \ \ op\_and\_h,\ op\_and\_l,\ op\_and\_hl,\ op\_and\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00072}00072\ \ \ \ \ op\_xor\_b,\ op\_xor\_c,\ op\_xor\_d,\ op\_xor\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00073}00073\ \ \ \ \ op\_xor\_h,\ op\_xor\_l,\ op\_xor\_hl,\ op\_xor\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00075}00075\ \ \ \ \ \textcolor{comment}{//\ 0xB0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00076}00076\ \ \ \ \ op\_or\_b,\ op\_or\_c,\ op\_or\_d,\ op\_or\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00077}00077\ \ \ \ \ op\_or\_h,\ op\_or\_l,\ op\_or\_hl,\ op\_or\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00078}00078\ \ \ \ \ op\_cp\_b,\ op\_cp\_c,\ op\_cp\_d,\ op\_cp\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00079}00079\ \ \ \ \ op\_cp\_h,\ op\_cp\_l,\ op\_cp\_hl,\ op\_cp\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00080}00080\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00081}00081\ \ \ \ \ \textcolor{comment}{//\ 0xC0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00082}00082\ \ \ \ \ op\_ret\_nz,\ op\_pop\_bc,\ op\_jp\_nz,\ op\_jp,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00083}00083\ \ \ \ \ op\_call\_nz,\ op\_push\_bc,\ op\_add\_a\_d8,\ op\_rst\_00,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00084}00084\ \ \ \ \ op\_ret\_z,\ op\_ret,\ op\_jp\_z,\ op\_cb\_prefix,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00085}00085\ \ \ \ \ op\_call\_z,\ op\_call,\ op\_adc\_a\_d8,\ op\_rst\_08,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00086}00086\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00087}00087\ \ \ \ \ \textcolor{comment}{//\ 0xD0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00088}00088\ \ \ \ \ op\_ret\_nc,\ op\_pop\_de,\ op\_jp\_nc,\ op\_illegal\_d3,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00089}00089\ \ \ \ \ op\_call\_nc,\ op\_push\_de,\ op\_sub\_d8,\ op\_rst\_10,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00090}00090\ \ \ \ \ op\_ret\_c,\ op\_reti,\ op\_jp\_c,\ op\_illegal\_db,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00091}00091\ \ \ \ \ op\_call\_c,\ op\_illegal\_dd,\ op\_sbc\_a\_d8,\ op\_rst\_18,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00092}00092\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00093}00093\ \ \ \ \ \textcolor{comment}{//\ 0xE0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00094}00094\ \ \ \ \ op\_ldh\_a8\_a,\ op\_pop\_hl,\ op\_ld\_c\_a\_e2,\ op\_illegal\_e3,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00095}00095\ \ \ \ \ op\_illegal\_e4,\ op\_push\_hl,\ op\_and\_d8,\ op\_rst\_20,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00096}00096\ \ \ \ \ op\_add\_sp\_e8,\ op\_jp\_hl,\ op\_ld\_a16\_a,\ op\_illegal\_eb,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00097}00097\ \ \ \ \ op\_illegal\_ec,\ op\_illegal\_ed,\ op\_xor\_d8,\ op\_rst\_28,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00099}00099\ \ \ \ \ \textcolor{comment}{//\ 0xF0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00100}00100\ \ \ \ \ op\_ldh\_a\_a8,\ op\_pop\_af,\ op\_ld\_a\_c\_f2,\ op\_di,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00101}00101\ \ \ \ \ op\_illegal\_f4,\ op\_push\_af,\ op\_or\_d8,\ op\_rst\_30,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00102}00102\ \ \ \ \ op\_ld\_hl\_sp\_e8,\ op\_ld\_sp\_hl,\ op\_ld\_a\_a16,\ op\_ei,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00103}00103\ \ \ \ \ op\_illegal\_fc,\ op\_illegal\_fd,\ op\_cp\_d8,\ op\_rst\_38}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00104}00104\ \};}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00105}00105\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00106}00106\ OpcodeFunc\ cbInstructionTable[256]\ =\ \{}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00107}00107\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00108}00108\ \ \ \ \ \textcolor{comment}{//\ 0x00}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00109}00109\ \ \ \ \ op\_rlc\_b,\ op\_rlc\_c,\ op\_rlc\_d,\ op\_rlc\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00110}00110\ \ \ \ \ op\_rlc\_h,\ op\_rlc\_l,\ op\_rlc\_hl,\ op\_rlc\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00111}00111\ \ \ \ \ op\_rrc\_b,\ op\_rrc\_c,\ op\_rrc\_d,\ op\_rrc\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00112}00112\ \ \ \ \ op\_rrc\_h,\ op\_rrc\_l,\ op\_rrc\_hl,\ op\_rrc\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00113}00113\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00114}00114\ \ \ \ \ \textcolor{comment}{//\ 0x10}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00115}00115\ \ \ \ \ op\_rl\_b,\ op\_rl\_c,\ op\_rl\_d,\ op\_rl\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00116}00116\ \ \ \ \ op\_rl\_h,\ op\_rl\_l,\ op\_rl\_hl,\ op\_rl\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00117}00117\ \ \ \ \ op\_rr\_b,\ op\_rr\_c,\ op\_rr\_d,\ op\_rr\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00118}00118\ \ \ \ \ op\_rr\_h,\ op\_rr\_l,\ op\_rr\_hl,\ op\_rr\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00119}00119\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00120}00120\ \ \ \ \ \textcolor{comment}{//\ 0x20}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00121}00121\ \ \ \ \ op\_sla\_b,\ op\_sla\_c,\ op\_sla\_d,\ op\_sla\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00122}00122\ \ \ \ \ op\_sla\_h,\ op\_sla\_l,\ op\_sla\_hl,\ op\_sla\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00123}00123\ \ \ \ \ op\_sra\_b,\ op\_sra\_c,\ op\_sra\_d,\ op\_sra\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00124}00124\ \ \ \ \ op\_sra\_h,\ op\_sra\_l,\ op\_sra\_hl,\ op\_sra\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00125}00125\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00126}00126\ \ \ \ \ \textcolor{comment}{//\ 0x30}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00127}00127\ \ \ \ \ op\_swap\_b,\ op\_swap\_c,\ op\_swap\_d,\ op\_swap\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00128}00128\ \ \ \ \ op\_swap\_h,\ op\_swap\_l,\ op\_swap\_hl,\ op\_swap\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00129}00129\ \ \ \ \ op\_srl\_b,\ op\_srl\_c,\ op\_srl\_d,\ op\_srl\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00130}00130\ \ \ \ \ op\_srl\_h,\ op\_srl\_l,\ op\_srl\_hl,\ op\_srl\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00131}00131\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00132}00132\ \ \ \ \ \textcolor{comment}{//\ 0x40}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00133}00133\ \ \ \ \ op\_bit\_0\_b,\ op\_bit\_0\_c,\ op\_bit\_0\_d,\ op\_bit\_0\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00134}00134\ \ \ \ \ op\_bit\_0\_h,\ op\_bit\_0\_l,\ op\_bit\_0\_hl,\ op\_bit\_0\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00135}00135\ \ \ \ \ op\_bit\_1\_b,\ op\_bit\_1\_c,\ op\_bit\_1\_d,\ op\_bit\_1\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00136}00136\ \ \ \ \ op\_bit\_1\_h,\ op\_bit\_1\_l,\ op\_bit\_1\_hl,\ op\_bit\_1\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00137}00137\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00138}00138\ \ \ \ \ \textcolor{comment}{//\ 0x50}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00139}00139\ \ \ \ \ op\_bit\_2\_b,\ op\_bit\_2\_c,\ op\_bit\_2\_d,\ op\_bit\_2\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00140}00140\ \ \ \ \ op\_bit\_2\_h,\ op\_bit\_2\_l,\ op\_bit\_2\_hl,\ op\_bit\_2\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00141}00141\ \ \ \ \ op\_bit\_3\_b,\ op\_bit\_3\_c,\ op\_bit\_3\_d,\ op\_bit\_3\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00142}00142\ \ \ \ \ op\_bit\_3\_h,\ op\_bit\_3\_l,\ op\_bit\_3\_hl,\ op\_bit\_3\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00143}00143\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00144}00144\ \ \ \ \ \textcolor{comment}{//\ 0x60}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00145}00145\ \ \ \ \ op\_bit\_4\_b,\ op\_bit\_4\_c,\ op\_bit\_4\_d,\ op\_bit\_4\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00146}00146\ \ \ \ \ op\_bit\_4\_h,\ op\_bit\_4\_l,\ op\_bit\_4\_hl,\ op\_bit\_4\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00147}00147\ \ \ \ \ op\_bit\_5\_b,\ op\_bit\_5\_c,\ op\_bit\_5\_d,\ op\_bit\_5\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00148}00148\ \ \ \ \ op\_bit\_5\_h,\ op\_bit\_5\_l,\ op\_bit\_5\_hl,\ op\_bit\_5\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00149}00149\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00150}00150\ \ \ \ \ \textcolor{comment}{//\ 0x70}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00151}00151\ \ \ \ \ op\_bit\_6\_b,\ op\_bit\_6\_c,\ op\_bit\_6\_d,\ op\_bit\_6\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00152}00152\ \ \ \ \ op\_bit\_6\_h,\ op\_bit\_6\_l,\ op\_bit\_6\_hl,\ op\_bit\_6\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00153}00153\ \ \ \ \ op\_bit\_7\_b,\ op\_bit\_7\_c,\ op\_bit\_7\_d,\ op\_bit\_7\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00154}00154\ \ \ \ \ op\_bit\_7\_h,\ op\_bit\_7\_l,\ op\_bit\_7\_hl,\ op\_bit\_7\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00155}00155\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00156}00156\ \ \ \ \ \textcolor{comment}{//\ 0x80}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00157}00157\ \ \ \ \ op\_res\_0\_b,\ op\_res\_0\_c,\ op\_res\_0\_d,\ op\_res\_0\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00158}00158\ \ \ \ \ op\_res\_0\_h,\ op\_res\_0\_l,\ op\_res\_0\_hl,\ op\_res\_0\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00159}00159\ \ \ \ \ op\_res\_1\_b,\ op\_res\_1\_c,\ op\_res\_1\_d,\ op\_res\_1\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00160}00160\ \ \ \ \ op\_res\_1\_h,\ op\_res\_1\_l,\ op\_res\_1\_hl,\ op\_res\_1\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00161}00161\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00162}00162\ \ \ \ \ \textcolor{comment}{//\ 0x90}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00163}00163\ \ \ \ \ op\_res\_2\_b,\ op\_res\_2\_c,\ op\_res\_2\_d,\ op\_res\_2\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00164}00164\ \ \ \ \ op\_res\_2\_h,\ op\_res\_2\_l,\ op\_res\_2\_hl,\ op\_res\_2\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00165}00165\ \ \ \ \ op\_res\_3\_b,\ op\_res\_3\_c,\ op\_res\_3\_d,\ op\_res\_3\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00166}00166\ \ \ \ \ op\_res\_3\_h,\ op\_res\_3\_l,\ op\_res\_3\_hl,\ op\_res\_3\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00167}00167\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00168}00168\ \ \ \ \ \textcolor{comment}{//\ 0xA0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00169}00169\ \ \ \ \ op\_res\_4\_b,\ op\_res\_4\_c,\ op\_res\_4\_d,\ op\_res\_4\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00170}00170\ \ \ \ \ op\_res\_4\_h,\ op\_res\_4\_l,\ op\_res\_4\_hl,\ op\_res\_4\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00171}00171\ \ \ \ \ op\_res\_5\_b,\ op\_res\_5\_c,\ op\_res\_5\_d,\ op\_res\_5\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00172}00172\ \ \ \ \ op\_res\_5\_h,\ op\_res\_5\_l,\ op\_res\_5\_hl,\ op\_res\_5\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00173}00173\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00174}00174\ \ \ \ \ \textcolor{comment}{//\ 0xB0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00175}00175\ \ \ \ \ op\_res\_6\_b,\ op\_res\_6\_c,\ op\_res\_6\_d,\ op\_res\_6\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00176}00176\ \ \ \ \ op\_res\_6\_h,\ op\_res\_6\_l,\ op\_res\_6\_hl,\ op\_res\_6\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00177}00177\ \ \ \ \ op\_res\_7\_b,\ op\_res\_7\_c,\ op\_res\_7\_d,\ op\_res\_7\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00178}00178\ \ \ \ \ op\_res\_7\_h,\ op\_res\_7\_l,\ op\_res\_7\_hl,\ op\_res\_7\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00179}00179\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00180}00180\ \ \ \ \ \textcolor{comment}{//\ 0xC0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00181}00181\ \ \ \ \ op\_set\_0\_b,\ op\_set\_0\_c,\ op\_set\_0\_d,\ op\_set\_0\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00182}00182\ \ \ \ \ op\_set\_0\_h,\ op\_set\_0\_l,\ op\_set\_0\_hl,\ op\_set\_0\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00183}00183\ \ \ \ \ op\_set\_1\_b,\ op\_set\_1\_c,\ op\_set\_1\_d,\ op\_set\_1\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00184}00184\ \ \ \ \ op\_set\_1\_h,\ op\_set\_1\_l,\ op\_set\_1\_hl,\ op\_set\_1\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00185}00185\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00186}00186\ \ \ \ \ \textcolor{comment}{//\ 0xD0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00187}00187\ \ \ \ \ op\_set\_2\_b,\ op\_set\_2\_c,\ op\_set\_2\_d,\ op\_set\_2\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00188}00188\ \ \ \ \ op\_set\_2\_h,\ op\_set\_2\_l,\ op\_set\_2\_hl,\ op\_set\_2\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00189}00189\ \ \ \ \ op\_set\_3\_b,\ op\_set\_3\_c,\ op\_set\_3\_d,\ op\_set\_3\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00190}00190\ \ \ \ \ op\_set\_3\_h,\ op\_set\_3\_l,\ op\_set\_3\_hl,\ op\_set\_3\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00191}00191\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00192}00192\ \ \ \ \ \textcolor{comment}{//\ 0xE0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00193}00193\ \ \ \ \ op\_set\_4\_b,\ op\_set\_4\_c,\ op\_set\_4\_d,\ op\_set\_4\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00194}00194\ \ \ \ \ op\_set\_4\_h,\ op\_set\_4\_l,\ op\_set\_4\_hl,\ op\_set\_4\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00195}00195\ \ \ \ \ op\_set\_5\_b,\ op\_set\_5\_c,\ op\_set\_5\_d,\ op\_set\_5\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00196}00196\ \ \ \ \ op\_set\_5\_h,\ op\_set\_5\_l,\ op\_set\_5\_hl,\ op\_set\_5\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00197}00197\ }
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00198}00198\ \ \ \ \ \textcolor{comment}{//\ 0xF0}}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00199}00199\ \ \ \ \ op\_set\_6\_b,\ op\_set\_6\_c,\ op\_set\_6\_d,\ op\_set\_6\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00200}00200\ \ \ \ \ op\_set\_6\_h,\ op\_set\_6\_l,\ op\_set\_6\_hl,\ op\_set\_6\_a,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00201}00201\ \ \ \ \ op\_set\_7\_b,\ op\_set\_7\_c,\ op\_set\_7\_d,\ op\_set\_7\_e,}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00202}00202\ \ \ \ \ op\_set\_7\_h,\ op\_set\_7\_l,\ op\_set\_7\_hl,\ op\_set\_7\_a}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00203}00203\ \};}
+\DoxyCodeLine{\Hypertarget{opcode__table_8cpp_source_l00204}00204\ }
+
+\end{DoxyCode}

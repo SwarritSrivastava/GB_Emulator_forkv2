@@ -28,6 +28,7 @@
   <td id="projectalign">
    <div id="projectname">GameBoy Emulator<span id="projectnumber">&#160;1</span>
    </div>
+   <div id="projectbrief">Game Boy emulator core and tooling</div>
   </td>
  </tr>
  </tbody>
@@ -107,12 +108,10 @@ $(function(){initNavTree('common_8hpp_source.html','',''); });
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">typedef</span> uint64_t u64;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#define BIT(a, n) ((a &amp; (1 &lt;&lt; n)) ? 1 : 0)</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#define BIT_SET(a, n, on) (on ? (a) |= (1 &lt;&lt; n) : (a) &amp;= ~(1 &lt;&lt; n))</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#define BIT_SET(a, n, on) (on ? (a) |= (1 &lt;&lt; n) : (a) &amp;= ~(1 &lt;&lt; n))</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#define BETWEEN(a, b, c) ((a &gt;= b) &amp;&amp; (a &lt;= c))</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#define BETWEEN(a, b, c) ((a &gt;= b) &amp;&amp; (a &lt;= c))</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keywordtype">void</span> delay(u32 ms);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keywordtype">void</span> delay(u32 ms);</div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

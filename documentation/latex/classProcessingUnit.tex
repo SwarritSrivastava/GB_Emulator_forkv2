@@ -3,7 +3,6 @@
 \doxysubsubsection*{Public Types}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{classProcessingUnit_af3210d732345cef08b6b81c7bed7256b}\label{classProcessingUnit_af3210d732345cef08b6b81c7bed7256b} 
 enum class {\bfseries Register} \{ \newline
 {\bfseries B}
 , {\bfseries C}
@@ -15,61 +14,412 @@ enum class {\bfseries Register} \{ \newline
 , {\bfseries A}
 , {\bfseries F}
  \}
+\item 
+enum class {\bfseries Flag} \{ {\bfseries Z} = 7
+, {\bfseries N} = 6
+, {\bfseries H} = 5
+, {\bfseries C} = 4
+ \}
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{classProcessingUnit_ab173ae78f65807f5677f403c9448d7ea}\label{classProcessingUnit_ab173ae78f65807f5677f403c9448d7ea} 
-void {\bfseries reset} ()
+void \doxymbox{\hyperlink{classProcessingUnit_ab173ae78f65807f5677f403c9448d7ea}{reset}} ()
 \item 
-\Hypertarget{classProcessingUnit_acf986523a07d7a8929e513465e240f4b}\label{classProcessingUnit_acf986523a07d7a8929e513465e240f4b} 
-void {\bfseries print\+Status} () const
+void \doxymbox{\hyperlink{classProcessingUnit_acf986523a07d7a8929e513465e240f4b}{print\+Status}} () const
 \item 
-\Hypertarget{classProcessingUnit_ae3293275dcaab0d90999cb986f5d4c68}\label{classProcessingUnit_ae3293275dcaab0d90999cb986f5d4c68} 
-u16 {\bfseries get\+\_\+pc} () const
+u16 \doxymbox{\hyperlink{classProcessingUnit_ae3293275dcaab0d90999cb986f5d4c68}{get\+\_\+pc}} () const
 \item 
-\Hypertarget{classProcessingUnit_a8c43e3545db61bd8ff3423fc50ba3eda}\label{classProcessingUnit_a8c43e3545db61bd8ff3423fc50ba3eda} 
-u16 {\bfseries get\+\_\+bc} () const
+void \doxymbox{\hyperlink{classProcessingUnit_a4ec212489ebd5e9d0ae8bfeb9aa8665d}{set\+\_\+pc}} (u16 value)
 \item 
-\Hypertarget{classProcessingUnit_a99c410e0a89e8ccfee852b7531c18e0a}\label{classProcessingUnit_a99c410e0a89e8ccfee852b7531c18e0a} 
-u16 {\bfseries get\+\_\+de} () const
+u16 \doxymbox{\hyperlink{classProcessingUnit_a7385e5ac33afa5cace8a6e36023a777d}{get\+\_\+sp}} () const
 \item 
-\Hypertarget{classProcessingUnit_a4f7ad60267cab698de3be433b5503c0d}\label{classProcessingUnit_a4f7ad60267cab698de3be433b5503c0d} 
-u16 {\bfseries get\+\_\+hl} () const
+void \doxymbox{\hyperlink{classProcessingUnit_ad4465e938f227fea364aeac99ed33309}{set\+\_\+sp}} (u16 value)
 \item 
-\Hypertarget{classProcessingUnit_adba812708fa35a06bfa475d7fa0f66be}\label{classProcessingUnit_adba812708fa35a06bfa475d7fa0f66be} 
-u16 {\bfseries get\+\_\+af} () const
+u16 \doxymbox{\hyperlink{classProcessingUnit_a8c43e3545db61bd8ff3423fc50ba3eda}{get\+\_\+bc}} () const
 \item 
-\Hypertarget{classProcessingUnit_a3594631b380912d31e42d582367094e7}\label{classProcessingUnit_a3594631b380912d31e42d582367094e7} 
-bool {\bfseries get\+\_\+flag\+\_\+z} () const
+u16 \doxymbox{\hyperlink{classProcessingUnit_a99c410e0a89e8ccfee852b7531c18e0a}{get\+\_\+de}} () const
 \item 
-\Hypertarget{classProcessingUnit_a42fc65cac6cc66b68c05789f623c6879}\label{classProcessingUnit_a42fc65cac6cc66b68c05789f623c6879} 
-bool {\bfseries get\+\_\+flag\+\_\+n} () const
+u16 \doxymbox{\hyperlink{classProcessingUnit_a4f7ad60267cab698de3be433b5503c0d}{get\+\_\+hl}} () const
 \item 
-\Hypertarget{classProcessingUnit_a53035da400cb1129a7ae10c5097b3410}\label{classProcessingUnit_a53035da400cb1129a7ae10c5097b3410} 
-bool {\bfseries get\+\_\+flag\+\_\+h} () const
+u16 \doxymbox{\hyperlink{classProcessingUnit_adba812708fa35a06bfa475d7fa0f66be}{get\+\_\+af}} () const
 \item 
-\Hypertarget{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4}\label{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4} 
-bool {\bfseries get\+\_\+flag\+\_\+c} () const
+bool \doxymbox{\hyperlink{classProcessingUnit_a3594631b380912d31e42d582367094e7}{get\+\_\+flag\+\_\+z}} () const
 \item 
-\Hypertarget{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a}\label{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a} 
-int {\bfseries step} (\doxymbox{\hyperlink{classMMU}{MMU}} \&mmu)
+bool \doxymbox{\hyperlink{classProcessingUnit_a42fc65cac6cc66b68c05789f623c6879}{get\+\_\+flag\+\_\+n}} () const
 \item 
-\Hypertarget{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737}\label{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737} 
-void {\bfseries set\+Halt} (bool new\+Value)
+bool \doxymbox{\hyperlink{classProcessingUnit_a53035da400cb1129a7ae10c5097b3410}{get\+\_\+flag\+\_\+h}} () const
 \item 
-\Hypertarget{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee}\label{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee} 
-bool {\bfseries is\+Halt} () const
+bool \doxymbox{\hyperlink{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4}{get\+\_\+flag\+\_\+c}} () const
 \item 
-\Hypertarget{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed}\label{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed} 
-u8 \& {\bfseries reg} (Register r)
+int \doxymbox{\hyperlink{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a}{step}} (\doxymbox{\hyperlink{classMMU}{MMU}} \&mmu)
 \item 
-\Hypertarget{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad}\label{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad} 
-const u8 \& {\bfseries reg} (Register r) const
+void \doxymbox{\hyperlink{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737}{set\+Halt}} (bool new\+Value)
 \item 
-\Hypertarget{classProcessingUnit_aac98159ed863ce2db0888167232b9693}\label{classProcessingUnit_aac98159ed863ce2db0888167232b9693} 
-u16 {\bfseries inc\+\_\+pc} ()
+bool \doxymbox{\hyperlink{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee}{is\+Halt}} () const
+\item 
+void \doxymbox{\hyperlink{classProcessingUnit_aba5643b98c6753b0b4b60356fd922cff}{set\+IME}} (bool new\+Value)
+\item 
+bool \doxymbox{\hyperlink{classProcessingUnit_a6f26e586cd129a1ffcec49c1e3ca641e}{get\+IME}} () const
+\item 
+u8 \& \doxymbox{\hyperlink{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed}{reg}} (Register r)
+\item 
+const u8 \& \doxymbox{\hyperlink{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad}{reg}} (Register r) const
+\item 
+u16 \doxymbox{\hyperlink{classProcessingUnit_aac98159ed863ce2db0888167232b9693}{inc\+\_\+pc}} ()
+\item 
+void \doxymbox{\hyperlink{classProcessingUnit_aebebf75fb1ce5ab6553d8705e4c08a36}{clear\+Flags}} ()
+\item 
+void \doxymbox{\hyperlink{classProcessingUnit_ab7cf9fa208301479b20e7e0faa24e49e}{normalize\+Flags}} ()
+\item 
+void \doxymbox{\hyperlink{classProcessingUnit_a41b51309757559d6c99a37961963c80c}{set\+Flag}} (Flag flag, bool value)
+\item 
+void \doxymbox{\hyperlink{classProcessingUnit_a513c8305d835e925c6e89b0e496c4033}{set\+Stop}} (const bool value)
+\item 
+bool \doxymbox{\hyperlink{classProcessingUnit_a00c4d85de5e338f79e13bb8dd8d775d3}{is\+Stop}} () const
 \end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \doxymbox{\hyperlink{classProcessingUnit_aaebc999b2c2b6ab6ba794b78b73342be}{stop}} \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00007}{7}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{classProcessingUnit_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{classProcessingUnit_a7ebfaf334058b39a6c335dbddcc1e47e}\index{ProcessingUnit@{ProcessingUnit}!Flag@{Flag}}
+\index{Flag@{Flag}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{Flag}{Flag}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a7ebfaf334058b39a6c335dbddcc1e47e} 
+enum class Processing\+Unit::\+\+Flag\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00061}{61}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_af3210d732345cef08b6b81c7bed7256b}\index{ProcessingUnit@{ProcessingUnit}!Register@{Register}}
+\index{Register@{Register}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{Register}{Register}}
+{\footnotesize\ttfamily \label{classProcessingUnit_af3210d732345cef08b6b81c7bed7256b} 
+enum class Processing\+Unit::\+\+Register\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00055}{55}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{classProcessingUnit_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classProcessingUnit_acb5a9259395084449f3b76835a4cc249}\index{ProcessingUnit@{ProcessingUnit}!ProcessingUnit@{ProcessingUnit}}
+\index{ProcessingUnit@{ProcessingUnit}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{ProcessingUnit()}{ProcessingUnit()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_acb5a9259395084449f3b76835a4cc249} 
+Processing\+Unit::\+\+Processing\+Unit (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00005}{5}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{classProcessingUnit_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classProcessingUnit_aebebf75fb1ce5ab6553d8705e4c08a36}\index{ProcessingUnit@{ProcessingUnit}!clearFlags@{clearFlags}}
+\index{clearFlags@{clearFlags}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{clearFlags()}{clearFlags()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_aebebf75fb1ce5ab6553d8705e4c08a36} 
+void Processing\+Unit::\+clear\+Flags (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00077}{77}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_adba812708fa35a06bfa475d7fa0f66be}\index{ProcessingUnit@{ProcessingUnit}!get\_af@{get\_af}}
+\index{get\_af@{get\_af}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_af()}{get\_af()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_adba812708fa35a06bfa475d7fa0f66be} 
+u16 Processing\+Unit::\+get\+\_\+af (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00036}{36}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a8c43e3545db61bd8ff3423fc50ba3eda}\index{ProcessingUnit@{ProcessingUnit}!get\_bc@{get\_bc}}
+\index{get\_bc@{get\_bc}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_bc()}{get\_bc()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a8c43e3545db61bd8ff3423fc50ba3eda} 
+u16 Processing\+Unit::\+get\+\_\+bc (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00033}{33}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a99c410e0a89e8ccfee852b7531c18e0a}\index{ProcessingUnit@{ProcessingUnit}!get\_de@{get\_de}}
+\index{get\_de@{get\_de}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_de()}{get\_de()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a99c410e0a89e8ccfee852b7531c18e0a} 
+u16 Processing\+Unit::\+get\+\_\+de (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00034}{34}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4}\index{ProcessingUnit@{ProcessingUnit}!get\_flag\_c@{get\_flag\_c}}
+\index{get\_flag\_c@{get\_flag\_c}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_flag\_c()}{get\_flag\_c()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4} 
+bool Processing\+Unit::\+get\+\_\+flag\+\_\+c (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00042}{42}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a53035da400cb1129a7ae10c5097b3410}\index{ProcessingUnit@{ProcessingUnit}!get\_flag\_h@{get\_flag\_h}}
+\index{get\_flag\_h@{get\_flag\_h}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_flag\_h()}{get\_flag\_h()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a53035da400cb1129a7ae10c5097b3410} 
+bool Processing\+Unit::\+get\+\_\+flag\+\_\+h (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00041}{41}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a42fc65cac6cc66b68c05789f623c6879}\index{ProcessingUnit@{ProcessingUnit}!get\_flag\_n@{get\_flag\_n}}
+\index{get\_flag\_n@{get\_flag\_n}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_flag\_n()}{get\_flag\_n()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a42fc65cac6cc66b68c05789f623c6879} 
+bool Processing\+Unit::\+get\+\_\+flag\+\_\+n (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00040}{40}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a3594631b380912d31e42d582367094e7}\index{ProcessingUnit@{ProcessingUnit}!get\_flag\_z@{get\_flag\_z}}
+\index{get\_flag\_z@{get\_flag\_z}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_flag\_z()}{get\_flag\_z()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a3594631b380912d31e42d582367094e7} 
+bool Processing\+Unit::\+get\+\_\+flag\+\_\+z (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00039}{39}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a4f7ad60267cab698de3be433b5503c0d}\index{ProcessingUnit@{ProcessingUnit}!get\_hl@{get\_hl}}
+\index{get\_hl@{get\_hl}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_hl()}{get\_hl()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a4f7ad60267cab698de3be433b5503c0d} 
+u16 Processing\+Unit::\+get\+\_\+hl (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00035}{35}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_ae3293275dcaab0d90999cb986f5d4c68}\index{ProcessingUnit@{ProcessingUnit}!get\_pc@{get\_pc}}
+\index{get\_pc@{get\_pc}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_pc()}{get\_pc()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_ae3293275dcaab0d90999cb986f5d4c68} 
+u16 Processing\+Unit::\+get\+\_\+pc (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00066}{66}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a7385e5ac33afa5cace8a6e36023a777d}\index{ProcessingUnit@{ProcessingUnit}!get\_sp@{get\_sp}}
+\index{get\_sp@{get\_sp}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{get\_sp()}{get\_sp()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a7385e5ac33afa5cace8a6e36023a777d} 
+u16 Processing\+Unit::\+get\+\_\+sp (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00071}{71}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a6f26e586cd129a1ffcec49c1e3ca641e}\index{ProcessingUnit@{ProcessingUnit}!getIME@{getIME}}
+\index{getIME@{getIME}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{getIME()}{getIME()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a6f26e586cd129a1ffcec49c1e3ca641e} 
+bool Processing\+Unit::\+get\+IME (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00084}{84}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_aac98159ed863ce2db0888167232b9693}\index{ProcessingUnit@{ProcessingUnit}!inc\_pc@{inc\_pc}}
+\index{inc\_pc@{inc\_pc}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{inc\_pc()}{inc\_pc()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_aac98159ed863ce2db0888167232b9693} 
+u16 Processing\+Unit::\+inc\+\_\+pc (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00111}{111}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee}\index{ProcessingUnit@{ProcessingUnit}!isHalt@{isHalt}}
+\index{isHalt@{isHalt}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{isHalt()}{isHalt()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee} 
+bool Processing\+Unit::\+is\+Halt (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00061}{61}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a00c4d85de5e338f79e13bb8dd8d775d3}\index{ProcessingUnit@{ProcessingUnit}!isStop@{isStop}}
+\index{isStop@{isStop}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{isStop()}{isStop()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a00c4d85de5e338f79e13bb8dd8d775d3} 
+bool Processing\+Unit::\+is\+Stop (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00094}{94}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_ab7cf9fa208301479b20e7e0faa24e49e}\index{ProcessingUnit@{ProcessingUnit}!normalizeFlags@{normalizeFlags}}
+\index{normalizeFlags@{normalizeFlags}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{normalizeFlags()}{normalizeFlags()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_ab7cf9fa208301479b20e7e0faa24e49e} 
+void Processing\+Unit::\+normalize\+Flags (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00080}{80}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_acf986523a07d7a8929e513465e240f4b}\index{ProcessingUnit@{ProcessingUnit}!printStatus@{printStatus}}
+\index{printStatus@{printStatus}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{printStatus()}{printStatus()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_acf986523a07d7a8929e513465e240f4b} 
+void Processing\+Unit::\+print\+Status (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00026}{26}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed}\index{ProcessingUnit@{ProcessingUnit}!reg@{reg}}
+\index{reg@{reg}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{reg()}{reg()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed} 
+u8 \& Processing\+Unit::\+reg (\begin{DoxyParamCaption}\item[{Register}]{r}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00089}{89}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad}\index{ProcessingUnit@{ProcessingUnit}!reg@{reg}}
+\index{reg@{reg}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{reg()}{reg()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad} 
+const u8 \& Processing\+Unit::\+reg (\begin{DoxyParamCaption}\item[{Register}]{r}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [nodiscard]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00106}{106}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_ab173ae78f65807f5677f403c9448d7ea}\index{ProcessingUnit@{ProcessingUnit}!reset@{reset}}
+\index{reset@{reset}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_ab173ae78f65807f5677f403c9448d7ea} 
+void Processing\+Unit::\+reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00009}{9}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a4ec212489ebd5e9d0ae8bfeb9aa8665d}\index{ProcessingUnit@{ProcessingUnit}!set\_pc@{set\_pc}}
+\index{set\_pc@{set\_pc}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{set\_pc()}{set\_pc()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a4ec212489ebd5e9d0ae8bfeb9aa8665d} 
+void Processing\+Unit::\+set\+\_\+pc (\begin{DoxyParamCaption}\item[{u16}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00029}{29}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_ad4465e938f227fea364aeac99ed33309}\index{ProcessingUnit@{ProcessingUnit}!set\_sp@{set\_sp}}
+\index{set\_sp@{set\_sp}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{set\_sp()}{set\_sp()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_ad4465e938f227fea364aeac99ed33309} 
+void Processing\+Unit::\+set\+\_\+sp (\begin{DoxyParamCaption}\item[{u16}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00031}{31}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a41b51309757559d6c99a37961963c80c}\index{ProcessingUnit@{ProcessingUnit}!setFlag@{setFlag}}
+\index{setFlag@{setFlag}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{setFlag()}{setFlag()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a41b51309757559d6c99a37961963c80c} 
+void Processing\+Unit::\+set\+Flag (\begin{DoxyParamCaption}\item[{Flag}]{flag}{, }\item[{bool}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00084}{84}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737}\index{ProcessingUnit@{ProcessingUnit}!setHalt@{setHalt}}
+\index{setHalt@{setHalt}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{setHalt()}{setHalt()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737} 
+void Processing\+Unit::\+set\+Halt (\begin{DoxyParamCaption}\item[{bool}]{new\+Value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00076}{76}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_aba5643b98c6753b0b4b60356fd922cff}\index{ProcessingUnit@{ProcessingUnit}!setIME@{setIME}}
+\index{setIME@{setIME}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{setIME()}{setIME()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_aba5643b98c6753b0b4b60356fd922cff} 
+void Processing\+Unit::\+set\+IME (\begin{DoxyParamCaption}\item[{bool}]{new\+Value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00080}{80}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+\Hypertarget{classProcessingUnit_a513c8305d835e925c6e89b0e496c4033}\index{ProcessingUnit@{ProcessingUnit}!setStop@{setStop}}
+\index{setStop@{setStop}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{setStop()}{setStop()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a513c8305d835e925c6e89b0e496c4033} 
+void Processing\+Unit::\+set\+Stop (\begin{DoxyParamCaption}\item[{const bool}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00093}{93}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a}\index{ProcessingUnit@{ProcessingUnit}!step@{step}}
+\index{step@{step}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a} 
+int Processing\+Unit::\+step (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classMMU}{MMU}} \&}]{mmu}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00051}{51}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{classProcessingUnit_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{classProcessingUnit_aaebc999b2c2b6ab6ba794b78b73342be}\index{ProcessingUnit@{ProcessingUnit}!stop@{stop}}
+\index{stop@{stop}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{stop}{stop}}
+{\footnotesize\ttfamily \label{classProcessingUnit_aaebc999b2c2b6ab6ba794b78b73342be} 
+bool Processing\+Unit::\+stop \{\}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00091}{91}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
 
 
 The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}

@@ -1,0 +1,158 @@
+\chapter{GB\+\_\+\+Emulator }
+\hypertarget{index}{}\label{index}\index{GB\_Emulator@{GB\_Emulator}}
+\label{index_md_README}%
+\Hypertarget{index_md_README}%
+
+
+Game Boy (DMG-\/01) emulator project focused on building an accurate LR35902 CPU core, memory subsystem, and a reliable CI/\+testing pipeline.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{❯\ ./utility\_scripts/opcode\_progress.py}
+\DoxyCodeLine{-\/\ Base\ Opcodes:\ [████████████████████]\ 100.0\%\ (256/256)}
+\DoxyCodeLine{-\/\ CB\ Opcodes:\ \ \ [████████████████████]\ 100.0\%\ (256/256)}
+\DoxyCodeLine{-\/\ Combined:\ \ \ \ \ [████████████████████]\ 100.0\%\ (512/512)}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{Current Focus}{Current Focus}}\label{index_autotoc_md1}
+
+\begin{DoxyItemize}
+\item CPU core progression using opcode-\/function tables ({\ttfamily instruction\+Table} and {\ttfamily cb\+Instruction\+Table}).
+\item \doxylink{classMMU}{MMU} behavior, ROM mapping, and cartridge metadata parsing.
+\item Test-\/first iteration for opcode implementations ({\ttfamily tests/\+op\+\_\+tests}).
+\item CI protocol named {\bfseries{TIRP}} (Test Init Response Protocol) with automated Discord reporting.
+\end{DoxyItemize}\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{Current Code Structure}{Current Code Structure}}\label{index_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{GB\_Emulator/}
+\DoxyCodeLine{├──\ include/}
+\DoxyCodeLine{│\ \ \ ├──\ ProcessingUnit.hpp}
+\DoxyCodeLine{│\ \ \ ├──\ mmu.hpp}
+\DoxyCodeLine{│\ \ \ ├──\ cartridge.hpp}
+\DoxyCodeLine{│\ \ \ ├──\ opcode\_table.hpp}
+\DoxyCodeLine{│\ \ \ ├──\ opcodes.hpp}
+\DoxyCodeLine{│\ \ \ └──\ cb\_opcodes.hpp}
+\DoxyCodeLine{├──\ src/}
+\DoxyCodeLine{│\ \ \ ├──\ core/}
+\DoxyCodeLine{│\ \ \ │\ \ \ ├──\ cpu/}
+\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ ├──\ ProcessingUnit.cpp}
+\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ └──\ instructions/}
+\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ \ \ \ \ ├──\ opcode\_table.cpp}
+\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ \ \ \ \ ├──\ opcodes/\ \ \ \ \ \ \ \ \#\ op\_00.cpp\ ...\ op\_0F.cpp}
+\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ \ \ \ \ └──\ cb\_opcodes/\ \ \ \ \ \#\ cb\_op\_00.cpp\ ...\ cb\_op\_0F.cpp}
+\DoxyCodeLine{│\ \ \ │\ \ \ └──\ memory/}
+\DoxyCodeLine{│\ \ \ ├──\ io/}
+\DoxyCodeLine{│\ \ \ │\ \ \ └──\ port.cpp}
+\DoxyCodeLine{│\ \ \ └──\ main.cpp}
+\DoxyCodeLine{├──\ tests/}
+\DoxyCodeLine{│\ \ \ ├──\ ProcessingUnitTest.cpp}
+\DoxyCodeLine{│\ \ \ ├──\ mmu\_tests.cpp}
+\DoxyCodeLine{│\ \ \ ├──\ sanity\_tests.cpp}
+\DoxyCodeLine{│\ \ \ └──\ op\_tests/\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ opcode\ +\ CB-\/opcode\ test\ files}
+\DoxyCodeLine{├──\ utility\_scripts/}
+\DoxyCodeLine{│\ \ \ ├──\ build\_and\_test.sh}
+\DoxyCodeLine{│\ \ \ ├──\ build\_and\_run.sh}
+\DoxyCodeLine{│\ \ \ ├──\ run\_game.sh}
+\DoxyCodeLine{│\ \ \ ├──\ valgrind\_tests.sh}
+\DoxyCodeLine{│\ \ \ ├──\ opcode\_lookup.py}
+\DoxyCodeLine{│\ \ \ ├──\ opcode\_docs.sh}
+\DoxyCodeLine{│\ \ \ ├──\ make\_opcode\_skeleton.sh}
+\DoxyCodeLine{│\ \ \ ├──\ make\_cb\_opcode\_skeleton.sh}
+\DoxyCodeLine{│\ \ \ └──\ groq\_push\_summary.py}
+\DoxyCodeLine{├──\ pipline/}
+\DoxyCodeLine{│\ \ \ └──\ SetUp.md\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ Discord\ +\ Cloudflare\ +\ workflow\ integration\ guide}
+\DoxyCodeLine{└──\ .github/workflows/}
+\DoxyCodeLine{\ \ \ \ ├──\ test-\/init-\/response-\/protocol.yml}
+\DoxyCodeLine{\ \ \ \ └──\ static.yml}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{Opcode Architecture}{Opcode Architecture}}\label{index_autotoc_md3}
+
+\begin{DoxyItemize}
+\item Opcode declarations live in {\ttfamily \doxylink{opcodes_8hpp_source}{include/\+opcodes.\+hpp}} and {\ttfamily \doxylink{cb__opcodes_8hpp_source}{include/\+cb\+\_\+opcodes.\+hpp}}.
+\item Dispatch tables are defined in {\ttfamily \doxylink{opcode__table_8cpp_source}{src/\+core/\+cpu/\+instructions/\+opcode\+\_\+table.\+cpp}}.
+\item Base opcode implementation files are grouped under {\ttfamily src/\+core/\+cpu/\+instructions/\+opcodes/\+}.
+\item CB-\/prefixed opcode implementation files are grouped under {\ttfamily src/\+core/\+cpu/\+instructions/\+cb\+\_\+opcodes/\+}.
+\item Matching tests are mirrored under {\ttfamily tests/\+op\+\_\+tests/\+}.
+\end{DoxyItemize}
+
+This layout keeps opcode declarations, implementations, and tests aligned and easy to expand incrementally.\hypertarget{index_autotoc_md4}{}\doxysection{\texorpdfstring{Build and Run}{Build and Run}}\label{index_autotoc_md4}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\#\ Configure\ +\ build\ +\ run\ all\ tests}
+\DoxyCodeLine{./utility\_scripts/build\_and\_test.sh}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ Configure\ +\ build\ +\ run\ emulator\ with\ first\ ROM\ in\ roms/}
+\DoxyCodeLine{./utility\_scripts/build\_and\_run.sh}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ Run\ emulator\ directly\ (expects\ an\ existing\ build)}
+\DoxyCodeLine{./utility\_scripts/run\_game.sh}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\ Run\ valgrind\ protocol\ (script\ requires\ sudo/root)}
+\DoxyCodeLine{sudo\ ./utility\_scripts/valgrind\_tests.sh}
+
+\end{DoxyCode}
+
+
+Direct binary usage:\+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./build/bin/gb\_emu\ <path-\/to-\/rom.gb>}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md5}{}\doxysection{\texorpdfstring{Workflow and Pipeline}{Workflow and Pipeline}}\label{index_autotoc_md5}
+\hypertarget{index_autotoc_md6}{}\doxysubsection{\texorpdfstring{1) TIRP CI Workflow}{1) TIRP CI Workflow}}\label{index_autotoc_md6}
+File:\+ {\ttfamily .github/\+workflows/\+test-\/init-\/response-\/protocol.\+yml}
+
+Triggers:\+
+\begin{DoxyItemize}
+\item {\ttfamily push}
+\item {\ttfamily pull\+\_\+request} (targeting {\ttfamily main} /\+ {\ttfamily master})
+\item {\ttfamily workflow\+\_\+dispatch}
+\item {\ttfamily repository\+\_\+dispatch} with type {\ttfamily run-\/test}
+\end{DoxyItemize}
+
+Core stages:\+
+\begin{DoxyItemize}
+\item Build + test ({\ttfamily build\+\_\+and\+\_\+test.\+sh})
+\item Valgrind protocol ({\ttfamily valgrind\+\_\+tests.\+sh})
+\item AI summary generation ({\ttfamily groq\+\_\+push\+\_\+summary.\+py})
+\item Discord payload preparation + webhook notification
+\item Final fail/\+pass gate based on test and valgrind exit codes
+\end{DoxyItemize}\hypertarget{index_autotoc_md7}{}\doxysubsection{\texorpdfstring{2) Pages Deploy Workflow}{2) Pages Deploy Workflow}}\label{index_autotoc_md7}
+File:\+ {\ttfamily .github/\+workflows/\+static.\+yml}
+
+Triggers:\+
+\begin{DoxyItemize}
+\item tag pushes matching {\ttfamily deploy-\/\texorpdfstring{$\ast$}{*}}
+\item {\ttfamily workflow\+\_\+dispatch}
+\item {\ttfamily repository\+\_\+dispatch} with type {\ttfamily deploy-\/pages}
+\end{DoxyItemize}
+
+Publishes {\ttfamily documentation/\+html} through Git\+Hub Pages deployment actions.\hypertarget{index_autotoc_md8}{}\doxysection{\texorpdfstring{Extended Automation Setup}{Extended Automation Setup}}\label{index_autotoc_md8}
+The full Discord bot + Cloudflare Worker + Git\+Hub Actions operational setup is documented in:\+
+
+
+\begin{DoxyItemize}
+\item {\ttfamily pipline/\+\+Set\+Up.\+md}
+\end{DoxyItemize}
+
+That document includes:\+
+\begin{DoxyItemize}
+\item Role-\/based slash command flow ({\ttfamily /\+test}, {\ttfamily /\+deploy}, issue/\+\+PR commands)
+\item {\ttfamily repository\+\_\+dispatch} wiring
+\item secret/\+token setup and security notes
+\item failure notification and maintainer tagging behavior
+\end{DoxyItemize}\hypertarget{index_autotoc_md9}{}\doxysection{\texorpdfstring{Documentation}{Documentation}}\label{index_autotoc_md9}
+
+\begin{DoxyItemize}
+\item Doxygen config:\+ {\ttfamily Doxygen\+Config}
+\item Generated docs:\+ {\ttfamily documentation/\+html/\+}
+\item Pages deployment source:\+ {\ttfamily documentation/\+html/\+}
+\end{DoxyItemize}\hypertarget{index_autotoc_md10}{}\doxysection{\texorpdfstring{Notes}{Notes}}\label{index_autotoc_md10}
+
+\begin{DoxyItemize}
+\item This project is still in active bring-\/up; CPU and \doxylink{classMMU}{MMU} areas are evolving quickly.
+\item Graphics/\+\+PPU, sound, interrupts/\+timers, and full hardware timing are still under development. 
+\end{DoxyItemize}

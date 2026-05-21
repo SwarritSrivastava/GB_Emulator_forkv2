@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.16.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>GameBoy Emulator: Main Page</title>
+<title>GameBoy Emulator: GB_Emulator</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -28,6 +28,7 @@
   <td id="projectalign">
    <div id="projectname">GameBoy Emulator<span id="projectnumber">&#160;1</span>
    </div>
+   <div id="projectbrief">Game Boy emulator core and tooling</div>
   </td>
  </tr>
  </tbody>
@@ -87,10 +88,144 @@ $(function(){initNavTree('index.html','',''); });
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">GameBoy Emulator Documentation</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">GB_Emulator </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md_README"></a></p>
+<p>Game Boy (DMG-01) emulator project focused on building an accurate LR35902 CPU core, memory subsystem, and a reliable CI/testing pipeline.</p>
+<div class="fragment"><div class="line">❯ ./utility_scripts/opcode_progress.py</div>
+<div class="line">- Base Opcodes: [████████████████████] 100.0% (256/256)</div>
+<div class="line">- CB Opcodes:   [████████████████████] 100.0% (256/256)</div>
+<div class="line">- Combined:     [████████████████████] 100.0% (512/512)</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
+Current Focus</h1>
+<ul>
+<li>CPU core progression using opcode-function tables (<span class="tt">instructionTable</span> and <span class="tt">cbInstructionTable</span>).</li>
+<li><a class="el" href="classMMU.html">MMU</a> behavior, ROM mapping, and cartridge metadata parsing.</li>
+<li>Test-first iteration for opcode implementations (<span class="tt">tests/op_tests</span>).</li>
+<li>CI protocol named <b>TIRP</b> (Test Init Response Protocol) with automated Discord reporting.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
+Current Code Structure</h1>
+<div class="fragment"><div class="line">GB_Emulator/</div>
+<div class="line">├── include/</div>
+<div class="line">│   ├── ProcessingUnit.hpp</div>
+<div class="line">│   ├── mmu.hpp</div>
+<div class="line">│   ├── cartridge.hpp</div>
+<div class="line">│   ├── opcode_table.hpp</div>
+<div class="line">│   ├── opcodes.hpp</div>
+<div class="line">│   └── cb_opcodes.hpp</div>
+<div class="line">├── src/</div>
+<div class="line">│   ├── core/</div>
+<div class="line">│   │   ├── cpu/</div>
+<div class="line">│   │   │   ├── ProcessingUnit.cpp</div>
+<div class="line">│   │   │   └── instructions/</div>
+<div class="line">│   │   │       ├── opcode_table.cpp</div>
+<div class="line">│   │   │       ├── opcodes/        # op_00.cpp ... op_0F.cpp</div>
+<div class="line">│   │   │       └── cb_opcodes/     # cb_op_00.cpp ... cb_op_0F.cpp</div>
+<div class="line">│   │   └── memory/</div>
+<div class="line">│   ├── io/</div>
+<div class="line">│   │   └── port.cpp</div>
+<div class="line">│   └── main.cpp</div>
+<div class="line">├── tests/</div>
+<div class="line">│   ├── ProcessingUnitTest.cpp</div>
+<div class="line">│   ├── mmu_tests.cpp</div>
+<div class="line">│   ├── sanity_tests.cpp</div>
+<div class="line">│   └── op_tests/                   # opcode + CB-opcode test files</div>
+<div class="line">├── utility_scripts/</div>
+<div class="line">│   ├── build_and_test.sh</div>
+<div class="line">│   ├── build_and_run.sh</div>
+<div class="line">│   ├── run_game.sh</div>
+<div class="line">│   ├── valgrind_tests.sh</div>
+<div class="line">│   ├── opcode_lookup.py</div>
+<div class="line">│   ├── opcode_docs.sh</div>
+<div class="line">│   ├── make_opcode_skeleton.sh</div>
+<div class="line">│   ├── make_cb_opcode_skeleton.sh</div>
+<div class="line">│   └── groq_push_summary.py</div>
+<div class="line">├── pipline/</div>
+<div class="line">│   └── SetUp.md                    # Discord + Cloudflare + workflow integration guide</div>
+<div class="line">└── .github/workflows/</div>
+<div class="line">    ├── test-init-response-protocol.yml</div>
+<div class="line">    └── static.yml</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+Opcode Architecture</h1>
+<ul>
+<li>Opcode declarations live in <span class="tt"><a class="el" href="opcodes_8hpp_source.html">include/opcodes.hpp</a></span> and <span class="tt"><a class="el" href="cb__opcodes_8hpp_source.html">include/cb_opcodes.hpp</a></span>.</li>
+<li>Dispatch tables are defined in <span class="tt"><a class="el" href="opcode__table_8cpp_source.html">src/core/cpu/instructions/opcode_table.cpp</a></span>.</li>
+<li>Base opcode implementation files are grouped under <span class="tt">src/core/cpu/instructions/opcodes/</span>.</li>
+<li>CB-prefixed opcode implementation files are grouped under <span class="tt">src/core/cpu/instructions/cb_opcodes/</span>.</li>
+<li>Matching tests are mirrored under <span class="tt">tests/op_tests/</span>.</li>
+</ul>
+<p>This layout keeps opcode declarations, implementations, and tests aligned and easy to expand incrementally.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
+Build and Run</h1>
+<div class="fragment"><div class="line"># Configure + build + run all tests</div>
+<div class="line">./utility_scripts/build_and_test.sh</div>
+<div class="line"> </div>
+<div class="line"># Configure + build + run emulator with first ROM in roms/</div>
+<div class="line">./utility_scripts/build_and_run.sh</div>
+<div class="line"> </div>
+<div class="line"># Run emulator directly (expects an existing build)</div>
+<div class="line">./utility_scripts/run_game.sh</div>
+<div class="line"> </div>
+<div class="line"># Run valgrind protocol (script requires sudo/root)</div>
+<div class="line">sudo ./utility_scripts/valgrind_tests.sh</div>
+</div><!-- fragment --><p>Direct binary usage:</p>
+<div class="fragment"><div class="line">./build/bin/gb_emu &lt;path-to-rom.gb&gt;</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+Workflow and Pipeline</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+1) TIRP CI Workflow</h2>
+<p>File: <span class="tt">.github/workflows/test-init-response-protocol.yml</span></p>
+<p>Triggers:</p><ul>
+<li><span class="tt">push</span></li>
+<li><span class="tt">pull_request</span> (targeting <span class="tt">main</span> / <span class="tt">master</span>)</li>
+<li><span class="tt">workflow_dispatch</span></li>
+<li><span class="tt">repository_dispatch</span> with type <span class="tt">run-test</span></li>
+</ul>
+<p>Core stages:</p><ul>
+<li>Build + test (<span class="tt">build_and_test.sh</span>)</li>
+<li>Valgrind protocol (<span class="tt">valgrind_tests.sh</span>)</li>
+<li>AI summary generation (<span class="tt">groq_push_summary.py</span>)</li>
+<li>Discord payload preparation + webhook notification</li>
+<li>Final fail/pass gate based on test and valgrind exit codes</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+2) Pages Deploy Workflow</h2>
+<p>File: <span class="tt">.github/workflows/static.yml</span></p>
+<p>Triggers:</p><ul>
+<li>tag pushes matching <span class="tt">deploy-*</span></li>
+<li><span class="tt">workflow_dispatch</span></li>
+<li><span class="tt">repository_dispatch</span> with type <span class="tt">deploy-pages</span></li>
+</ul>
+<p>Publishes <span class="tt">documentation/html</span> through GitHub Pages deployment actions.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+Extended Automation Setup</h1>
+<p>The full Discord bot + Cloudflare Worker + GitHub Actions operational setup is documented in:</p>
+<ul>
+<li><span class="tt">pipline/SetUp.md</span></li>
+</ul>
+<p>That document includes:</p><ul>
+<li>Role-based slash command flow (<span class="tt">/test</span>, <span class="tt">/deploy</span>, issue/PR commands)</li>
+<li><span class="tt">repository_dispatch</span> wiring</li>
+<li>secret/token setup and security notes</li>
+<li>failure notification and maintainer tagging behavior</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+Documentation</h1>
+<ul>
+<li>Doxygen config: <span class="tt">DoxygenConfig</span></li>
+<li>Generated docs: <span class="tt">documentation/html/</span></li>
+<li>Pages deployment source: <span class="tt">documentation/html/</span></li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
+Notes</h1>
+<ul>
+<li>This project is still in active bring-up; CPU and <a class="el" href="classMMU.html">MMU</a> areas are evolving quickly.</li>
+<li>Graphics/PPU, sound, interrupts/timers, and full hardware timing are still under development. </li>
+</ul>
+</div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->
 </div><!-- doc-content -->
