@@ -416,3 +416,54 @@ TEST_F(OpcodesCPUTest, RET_PopsReturnAddressAndRestoresSP)
     EXPECT_EQ(cpu.get_pc(), 0x1234);
     EXPECT_EQ(cpu.get_sp(), 0xFFFE);
 }
+
+TEST_F(OpcodesCPUTest, CALL_Z_CallsWhenZeroFlagSet)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    // addr = 0x2000
+    rom[0x100] = 0x00;
+    rom[0x101] = 0x20;
+    ASSERT_TRUE(mmu.map_rom(rom));
+    cpu.set_sp(0xFFFE);
+    cpu.reg(ProcessingUnit::Register::F) = 0x80; // Z set
+    const int cycles = op_call_z(cpu, mmu);
+    EXPECT_EQ(cycles, 24);
+    EXPECT_EQ(cpu.get_pc(), 0x2000);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    // return addr 0x102 pushed hi 1st
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x02);
+}
+
+TEST_F(OpcodesCPUTest, CALL_Z_SkipsWhenZeroFlagClear)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x100] = 0x00;
+    rom[0x101] = 0x20;
+    ASSERT_TRUE(mmu.map_rom(rom));
+    cpu.set_sp(0xFFFE);
+    cpu.reg(ProcessingUnit::Register::F) = 0x00; // Z clear
+    const int cycles = op_call_z(cpu, mmu);
+    EXPECT_EQ(cycles, 12);
+    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFE);
+}
+
+TEST_F(OpcodesCPUTest, CALL_Z_ThroughStep_UsesOpcodeTableAndCalls)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    // addr = 0x5678
+    rom[0x100] = 0xCC;
+    rom[0x101] = 0x78;
+    rom[0x102] = 0x56;
+    ASSERT_TRUE(mmu.map_rom(rom));
+    cpu.set_pc(0x100);
+    cpu.set_sp(0xFFFE);
+    cpu.reg(ProcessingUnit::Register::F) = 0x80; // Z set
+    const int cycles = cpu.step(mmu);
+    EXPECT_EQ(cycles, 24);
+    EXPECT_EQ(cpu.get_pc(), 0x5678);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x03);
+}

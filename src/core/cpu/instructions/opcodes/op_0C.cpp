@@ -176,7 +176,27 @@ int op_cb_prefix(ProcessingUnit& cpu , MMU& mmu) // 0xCB
     return cbInstructionTable[cb_opcode](cpu, mmu);
 }
 
-DUMMY(op_call_z) // 0xCC
+int op_call_z(ProcessingUnit& cpu, MMU& mmu) // 0xCC
+{
+    const u8 lo = mmu.read(cpu.inc_pc());
+    const u8 hi = mmu.read(cpu.inc_pc());
+    const u16 addr = static_cast<u16>((hi << 8) | lo);
+
+    if (cpu.get_flag_z())
+    {
+        const u16 pc = cpu.get_pc();
+        const u16 sp = cpu.get_sp();
+
+        mmu.write(sp - 1, static_cast<u8>(pc >> 8));
+        mmu.write(sp - 2, static_cast<u8>(pc & 0xFF));
+        cpu.set_sp(sp - 2);
+        cpu.set_pc(addr);
+
+        return totalMachineCycles(6);
+    }
+    return totalMachineCycles(3);
+}
+
 DUMMY(op_call) // 0xCD
 DUMMY(op_adc_a_d8) // 0xCE
 DUMMY(op_rst_08) // 0xCF
