@@ -196,7 +196,7 @@ TEST_F(OpcodesCPUTest, RLA_RotatesAThroughCarry)
 TEST_F(OpcodesCPUTest, RLA_UsesCarryIn)
 {
     cpu.reg(ProcessingUnit::Register::A) = 0x42;
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_rla(cpu, mmu);
 
@@ -214,7 +214,7 @@ TEST_F(OpcodesCPUTest, JR_R8_JumpsForwardFromNextInstruction)
     rom[0x101] = 0x05;
     mmu.map_rom(rom);
 
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     const int cycles = op_jr_r8(cpu, mmu);
 
@@ -241,7 +241,7 @@ TEST_F(OpcodesCPUTest, ADD_HL_DE_AddsRegisterPairAndUpdatesFlags)
     cpu.reg(ProcessingUnit::Register::L) = 0x34;
     cpu.reg(ProcessingUnit::Register::D) = 0x11;
     cpu.reg(ProcessingUnit::Register::E) = 0x11;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     const int cycles = op_add_hl_de(cpu, mmu);
 
@@ -259,7 +259,7 @@ TEST_F(OpcodesCPUTest, ADD_HL_DE_SetsHalfCarryAndCarry)
     cpu.reg(ProcessingUnit::Register::L) = 0xFF;
     cpu.reg(ProcessingUnit::Register::D) = 0x00;
     cpu.reg(ProcessingUnit::Register::E) = 0x01;
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_add_hl_de(cpu, mmu);
 

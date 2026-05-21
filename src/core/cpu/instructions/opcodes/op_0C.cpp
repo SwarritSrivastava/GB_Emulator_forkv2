@@ -226,9 +226,21 @@ int op_adc_a_d8(ProcessingUnit& cpu, MMU& mmu) // 0xCE
     cpu.setFlag(ProcessingUnit::Flag::N, false);
     cpu.setFlag(ProcessingUnit::Flag::H, ((a & 0xF) + (d8 & 0xF) + c) > 0xF);
     cpu.setFlag(ProcessingUnit::Flag::C, result > 0xFF);
-    
+
     cpu.reg(ProcessingUnit::Register::A) = static_cast<u8>(result);
     return totalMachineCycles(2);
 }
 
-DUMMY(op_rst_08) // 0xCF
+int op_rst_08(ProcessingUnit& cpu, MMU& mmu) // 0xCF
+{
+    const u16 pc = cpu.get_pc();
+    const u16 sp = cpu.get_sp();
+
+    mmu.write(sp - 1, static_cast<u8>(pc >> 8));
+    mmu.write(sp - 2, static_cast<u8>(pc & 0xFF));
+    cpu.set_sp(sp - 2);
+
+    cpu.set_pc(0x0008);
+    
+    return totalMachineCycles(4);
+}

@@ -182,7 +182,7 @@ TEST_F(OpcodesCPUTest, SBC_A_E_NoCarryInBehavesLikeSUB)
 {
     cpu.reg(ProcessingUnit::Register::A) = 0x22;
     cpu.reg(ProcessingUnit::Register::E) = 0x11;
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_sbc_a_e(cpu, mmu);
 
@@ -214,7 +214,7 @@ TEST_F(OpcodesCPUTest, SBC_A_L_BorrowWithoutHalfBorrow)
 {
     cpu.reg(ProcessingUnit::Register::A) = 0x30;
     cpu.reg(ProcessingUnit::Register::L) = 0x40;
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_sbc_a_l(cpu, mmu);
 

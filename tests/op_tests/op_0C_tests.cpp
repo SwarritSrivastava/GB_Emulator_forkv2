@@ -52,7 +52,7 @@ TEST_F(OpcodesCPUTest, RET_NZ_ReturnsWhenZeroFlagClear)
 {
     cpu.set_pc(0x1234);
     cpu.set_sp(0xC100);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     mmu.write(0xC100, 0x78);
     mmu.write(0xC101, 0x56);
@@ -71,7 +71,7 @@ TEST_F(OpcodesCPUTest, JP_NZ_JumpsWhenZeroFlagClear)
     rom[0x101] = 0x12;
     ASSERT_TRUE(mmu.map_rom(rom));
 
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_jp_nz(cpu, mmu);
 
@@ -103,7 +103,7 @@ TEST_F(OpcodesCPUTest, JP_NZ_ThroughStep_UsesOpcodeTableAndJumps)
     ASSERT_TRUE(mmu.map_rom(rom));
 
     cpu.set_pc(0x100);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = cpu.step(mmu);
 
@@ -133,7 +133,7 @@ TEST_F(OpcodesCPUTest, JP_Z_DoesNotJumpWhenZeroFlagClear)
     rom[0x101] = 0x12;
     ASSERT_TRUE(mmu.map_rom(rom));
 
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_jp_z(cpu, mmu);
 
@@ -161,7 +161,7 @@ TEST_F(OpcodesCPUTest, POP_BC_LoadsLowByteIntoCAndHighByteIntoB)
 
 TEST_F(OpcodesCPUTest, POP_BC_DoesNotModifyFlags)
 {
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     cpu.set_sp(0xC120);
 
     mmu.write(0xC120, 0x00);
@@ -235,7 +235,7 @@ TEST_F(OpcodesCPUTest, JP_JumpsUnconditionally)
     rom[0x101] = 0x12;
     ASSERT_TRUE(mmu.map_rom(rom));
 
-    cpu.reg(ProcessingUnit::Register::F) = 0x00; // the flags are irrelevant,
+    cpu.clearFlags(); // the flags are irrelevant,
                                                  //use a non-zero value to confirm no flag check
     const int cycles = op_jp(cpu, mmu);
 
@@ -268,7 +268,7 @@ TEST_F(OpcodesCPUTest, CALL_NZ_CallsWhenZeroFlagClear)
     ASSERT_TRUE(mmu.map_rom(rom));
 
     cpu.set_sp(0xFFFE);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00; // Z clear
+    cpu.clearFlags(); // Z clear
 
     const int cycles = op_call_nz(cpu, mmu);
 
@@ -307,7 +307,7 @@ TEST_F(OpcodesCPUTest, CALL_NZ_ThroughStep_UsesOpcodeTableAndCalls)
 
     cpu.set_pc(0x100);
     cpu.set_sp(0xFFFE);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = cpu.step(mmu);
 
@@ -393,7 +393,7 @@ TEST_F(OpcodesCPUTest, RET_Z_SkipsWhenZeroFlagClear)
     ASSERT_TRUE(mmu.map_rom(rom));
 
     cpu.set_sp(0xFFFC);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00;
+    cpu.clearFlags();
 
     const int cycles = op_ret_z(cpu, mmu);
 
@@ -442,7 +442,7 @@ TEST_F(OpcodesCPUTest, CALL_Z_SkipsWhenZeroFlagClear)
     rom[0x101] = 0x20;
     ASSERT_TRUE(mmu.map_rom(rom));
     cpu.set_sp(0xFFFE);
-    cpu.reg(ProcessingUnit::Register::F) = 0x00; // Z clear
+    cpu.clearFlags(); // Z clear
     const int cycles = op_call_z(cpu, mmu);
     EXPECT_EQ(cycles, 12);
     EXPECT_EQ(cpu.get_pc(), 0x102);
@@ -466,4 +466,85 @@ TEST_F(OpcodesCPUTest, CALL_Z_ThroughStep_UsesOpcodeTableAndCalls)
     EXPECT_EQ(cpu.get_sp(), 0xFFFC);
     EXPECT_EQ(mmu.read(0xFFFD), 0x01);
     EXPECT_EQ(mmu.read(0xFFFC), 0x03);
+}
+
+TEST_F(OpcodesCPUTest, CALL_AlwaysCallsRegardlessOfFlags)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    // addr = 0x2000
+    rom[0x100] = 0x00; // low
+    rom[0x101] = 0x20; // hi
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_sp(0xFFFE);
+    cpu.reg(ProcessingUnit::Register::F) = 0xFF; // all flags set (not relevant)
+
+    const int cycles = op_call(cpu, mmu);
+    EXPECT_EQ(cycles, 24);
+    EXPECT_EQ(cpu.get_pc(), 0x2000);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    // return addr 0x102 pushed hi first
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x02);
+}
+
+TEST_F(OpcodesCPUTest, CALL_ThroughStep_UsesOpcodeTableAndCalls)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    // addr = 0x5678
+    rom[0x100] = 0xCD;
+    rom[0x101] = 0x78;
+    rom[0x102] = 0x56;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_pc(0x100);
+    cpu.set_sp(0xFFFE);
+    cpu.clearFlags();
+
+    const int cycles = cpu.step(mmu);
+    EXPECT_EQ(cycles, 24);
+
+    EXPECT_EQ(cpu.get_pc(), 0x5678);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01);
+    EXPECT_EQ(mmu.read(0xFFFC), 0x03);
+}
+
+TEST_F(OpcodesCPUTest, ADC_A_D8_AddsImmediateAndCarryToA)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x100] = 0x05; // d8
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.reg(ProcessingUnit::Register::A) = 0x10;
+    cpu.reg(ProcessingUnit::Register::F) = 0x10;
+
+    const int cycles = op_adc_a_d8(cpu, mmu);
+    EXPECT_EQ(cycles, 8);
+
+    EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x16); // 0x10 + 0x05 + 1
+
+    EXPECT_EQ(cpu.get_flag_z(), false);
+    EXPECT_EQ(cpu.get_flag_n(), false);
+    EXPECT_EQ(cpu.get_flag_h(), false);
+    EXPECT_EQ(cpu.get_flag_c(), false);
+}
+
+TEST_F(OpcodesCPUTest, RST_08_PushesReturnAddrAndJumpsTo0x0008)
+{
+    std::vector<u8> rom(0x8000, 0x00);
+    rom[0x100] = 0xCF;
+    ASSERT_TRUE(mmu.map_rom(rom));
+
+    cpu.set_pc(0x101);
+    cpu.set_sp(0xFFFE);
+
+    const int cycles = op_rst_08(cpu, mmu);
+    EXPECT_EQ(cycles, 16);
+    EXPECT_EQ(cpu.get_pc(), 0x0008);
+    EXPECT_EQ(cpu.get_sp(), 0xFFFC);
+    
+    // return addr 0x101 pushed hi first
+    EXPECT_EQ(mmu.read(0xFFFD), 0x01); // hi
+    EXPECT_EQ(mmu.read(0xFFFC), 0x01); // lo
 }

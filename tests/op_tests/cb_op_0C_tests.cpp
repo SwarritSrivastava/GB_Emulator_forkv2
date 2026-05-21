@@ -13,7 +13,7 @@ protected:
 // --- SET 0 ---
 TEST_F(CB_OpcodesCPUTest, SET_0_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_b(cpu, mmu);
 
@@ -24,7 +24,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_B) {
 
 TEST_F(CB_OpcodesCPUTest, SET_0_C) {
     cpu.reg(ProcessingUnit::Register::C) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_c(cpu, mmu);
 
@@ -35,7 +35,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_C) {
 
 TEST_F(CB_OpcodesCPUTest, SET_0_D) {
     cpu.reg(ProcessingUnit::Register::D) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_d(cpu, mmu);
 
@@ -46,7 +46,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_D) {
 
 TEST_F(CB_OpcodesCPUTest, SET_0_E) {
     cpu.reg(ProcessingUnit::Register::E) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_e(cpu, mmu);
 
@@ -57,7 +57,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_E) {
 
 TEST_F(CB_OpcodesCPUTest, SET_0_H) {
     cpu.reg(ProcessingUnit::Register::H) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_h(cpu, mmu);
 
@@ -68,7 +68,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_H) {
 
 TEST_F(CB_OpcodesCPUTest, SET_0_L) {
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_l(cpu, mmu);
 
@@ -82,7 +82,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_HL) {
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     mmu.write(addr, 0x00);
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_hl(cpu, mmu);
 
@@ -93,7 +93,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_HL) {
 
 TEST_F(CB_OpcodesCPUTest, SET_0_A) {
     cpu.reg(ProcessingUnit::Register::A) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_0_a(cpu, mmu);
 
@@ -105,7 +105,7 @@ TEST_F(CB_OpcodesCPUTest, SET_0_A) {
 // --- SET 1 ---
 TEST_F(CB_OpcodesCPUTest, SET_1_B) {
     cpu.reg(ProcessingUnit::Register::B) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_b(cpu, mmu);
 
@@ -116,7 +116,7 @@ TEST_F(CB_OpcodesCPUTest, SET_1_B) {
 
 TEST_F(CB_OpcodesCPUTest, SET_1_C) {
     cpu.reg(ProcessingUnit::Register::C) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_c(cpu, mmu);
 
@@ -127,7 +127,7 @@ TEST_F(CB_OpcodesCPUTest, SET_1_C) {
 
 TEST_F(CB_OpcodesCPUTest, SET_1_D) {
     cpu.reg(ProcessingUnit::Register::D) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_d(cpu, mmu);
 
@@ -138,7 +138,7 @@ TEST_F(CB_OpcodesCPUTest, SET_1_D) {
 
 TEST_F(CB_OpcodesCPUTest, SET_1_E) {
     cpu.reg(ProcessingUnit::Register::E) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_e(cpu, mmu);
 
@@ -149,7 +149,7 @@ TEST_F(CB_OpcodesCPUTest, SET_1_E) {
 
 TEST_F(CB_OpcodesCPUTest, SET_1_H) {
     cpu.reg(ProcessingUnit::Register::H) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_h(cpu, mmu);
 
@@ -160,7 +160,7 @@ TEST_F(CB_OpcodesCPUTest, SET_1_H) {
 
 TEST_F(CB_OpcodesCPUTest, SET_1_L) {
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_l(cpu, mmu);
 
@@ -174,7 +174,7 @@ TEST_F(CB_OpcodesCPUTest, SET_1_HL) {
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x00;
     mmu.write(addr, 0x00);
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_hl(cpu, mmu);
 
@@ -185,7 +185,7 @@ TEST_F(CB_OpcodesCPUTest, SET_1_HL) {
 
 TEST_F(CB_OpcodesCPUTest, SET_1_A) {
     cpu.reg(ProcessingUnit::Register::A) = 0x00;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     int cycles = op_set_1_a(cpu, mmu);
 

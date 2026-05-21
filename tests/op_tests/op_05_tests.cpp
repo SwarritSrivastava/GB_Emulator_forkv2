@@ -13,7 +13,7 @@ TEST_F(OpcodesCPUTest, LD_D_B_LoadsBIntoD)
 {
     cpu.reg(ProcessingUnit::Register::B) = 0x7A;
     cpu.reg(ProcessingUnit::Register::D) = 0x11;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     const int cycles = op_ld_d_b(cpu, mmu);
 
@@ -96,7 +96,7 @@ TEST_F(OpcodesCPUTest, LD_D_HL_LoadsMemoryIntoD)
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x88;
     cpu.reg(ProcessingUnit::Register::D) = 0x11;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
     mmu.write(0xC088, 0x9B);
 
     const int cycles = op_ld_d_hl(cpu, mmu);
@@ -223,7 +223,7 @@ TEST_F(OpcodesCPUTest, LD_E_A_LoadsAIntoE)
 {
     cpu.reg(ProcessingUnit::Register::A) = 0x77;
     cpu.reg(ProcessingUnit::Register::E) = 0x11;
-    cpu.reg(ProcessingUnit::Register::F) = 0xF0;
+    cpu.normalizeFlags();
 
     const int cycles = op_ld_e_a(cpu, mmu);
 
