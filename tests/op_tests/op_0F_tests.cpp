@@ -161,6 +161,67 @@ TEST_F(OpcodesCPUTest, LD_HL_SP_E8_AddsSignedOffsetAndUpdatesFlags)
     EXPECT_EQ(cycles, 12);
 }
 
+TEST_F(OpcodesCPUTest, LD_HL_SP_E8_Verification)
+{
+    u16 initial_sp = 0x1000;
+    u16 initial_pc = 0xD000;
+
+    cpu.set_sp(initial_sp);
+    cpu.set_pc(initial_pc);
+    mmu.write(initial_pc, 0x02);
+
+    int cycles = op_ld_hl_sp_e8(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_hl(), 0x1002);
+    EXPECT_EQ(cpu.get_pc(), initial_pc + 1);
+    EXPECT_EQ(cpu.get_sp(), initial_sp);
+    EXPECT_EQ(cpu.get_flag_z(), false);
+    EXPECT_EQ(cpu.get_flag_n(), false);
+    EXPECT_EQ(cpu.get_flag_h(), false);
+    EXPECT_EQ(cpu.get_flag_c(), false);
+    EXPECT_EQ(cycles, 12);
+
+    u16 initial_pc2 = 0xD100;
+    cpu.set_sp(initial_sp);
+    cpu.set_pc(initial_pc2);
+    mmu.write(initial_pc2, 0xFE);
+
+    int cycles2 = op_ld_hl_sp_e8(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_hl(), 0x0FFE);
+    EXPECT_EQ(cpu.get_pc(), initial_pc2 + 1);
+    EXPECT_EQ(cpu.get_sp(), initial_sp);
+    EXPECT_EQ(cpu.get_flag_z(), false);
+    EXPECT_EQ(cpu.get_flag_n(), false);
+    EXPECT_EQ(cpu.get_flag_h(), false);
+    EXPECT_EQ(cpu.get_flag_c(), false);
+    EXPECT_EQ(cycles2, 12);
+
+    u16 sp2 = 0x01FF; 
+    u16 pc2 = 0xC002;
+    cpu.set_sp(sp2);
+    cpu.set_pc(pc2);
+    mmu.write(pc2, 0x01);
+
+    op_ld_hl_sp_e8(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_hl(), 0x0200);
+    EXPECT_EQ(cpu.get_flag_h(), true);
+    EXPECT_EQ(cpu.get_flag_c(), true); 
+
+    u16 sp3 = 0x0100;
+    u16 pc3 = 0xC004;
+    cpu.set_sp(sp3);
+    cpu.set_pc(pc3);
+    mmu.write(pc3, 0xFF);
+
+    op_ld_hl_sp_e8(cpu, mmu);
+
+    EXPECT_EQ(cpu.get_hl(), 0x00FF);
+    EXPECT_EQ(cpu.get_flag_h(), false);
+    EXPECT_EQ(cpu.get_flag_c(), false);
+}
+
 TEST_F(OpcodesCPUTest, LD_SP_HL_CopiesRegisterPair)
 {
     u16 hl = 0xC123;

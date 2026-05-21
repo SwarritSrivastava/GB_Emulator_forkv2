@@ -139,7 +139,6 @@ int op_ei(ProcessingUnit& cpu, MMU& mmu) // 0xFB
     cpu.setIME(true);
     return totalMachineCycles(1);
 }
-
 int op_illegal_fc(ProcessingUnit& cpu, MMU& mmu) // 0xFC 
 {
     return totalMachineCycles(1);
