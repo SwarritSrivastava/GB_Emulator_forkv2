@@ -3,6 +3,8 @@
 #include "../include/readROM.hpp"
 #include "../include/ProcessingUnit.hpp"
 #include "../include/mmu.hpp"
+#include "../include/ppu.hpp"
+#include <SFML/System.hpp>
 #include <iostream>
 #include <cstring>
 #include <stdexcept>
@@ -32,13 +34,37 @@ int main(const int argc, char **argv)
         std::cout << "Initial State (Post-Reset):" << std::endl;
         cpu.printStatus();
         success();
-        int con = 0;
-        while (!cpu.isHalt())
+
+        rom_header header{};
+        std::memcpy(&header, &rom_data[0x100], sizeof(rom_header));
+        char title[17]{};
+        std::memcpy(title, header.title, 16);
+
+        PPU::RomInfo info{};
+        info.title = title;
+        info.type = header.type;
+        info.rom_size = header.rom_size;
+        info.ram_size = header.ram_size;
+
+        PPU ppu(cpu, mmu, info);
+
+        sf::Clock clock;
+        u64 cycles = 0;
+        while (ppu.isOpen() && !cpu.isHalt())
         {
-            con++;
-            cpu.step(mmu);
+            const float dt = clock.restart().asSeconds();
+            ppu.handleEvents();
+
+            const u16 pc_before = cpu.get_pc();
+            const u8 opcode = mmu.read(pc_before);
+            const int used = cpu.step(mmu);
+            cycles += static_cast<u64>(used);
+            ppu.recordOpcode(pc_before, opcode);
+
+            ppu.update(dt, cycles);
+            ppu.render();
         }
-        std::cout << std::dec << std::endl << con  << " instructions executed" << std::endl;
+        std::cout << std::dec << std::endl << cycles << " cycles executed" << std::endl;
     }
     catch (const std::exception &e)
     {

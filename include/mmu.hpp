@@ -10,6 +10,9 @@ class MMU {
         // 8KB wram chip init to 0
         std::array<u8, 0x2000> wram{}; // (0xC000 - 0xDFFF)
 
+        mutable u64 read_count{};
+        mutable u64 write_count{};
+
     public:
         MMU();
 
@@ -34,4 +37,10 @@ class MMU {
          * @param value The 8-bit value to store.
          */
         void write(u16 address, u8 value);
+
+        u64 get_read_count() const { return read_count; }
+        u64 get_write_count() const { return write_count; }
+
+        std::vector<u8> dump_memory() const;
+        bool load_memory(const std::vector<u8>& dump);
 };
