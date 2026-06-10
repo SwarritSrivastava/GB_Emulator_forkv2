@@ -52,7 +52,7 @@ int op_di(ProcessingUnit& cpu, MMU& mmu) // 0xF3
 
 int op_illegal_f4(ProcessingUnit& cpu, MMU& mmu) // 0xF4
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_push_af(ProcessingUnit& cpu, MMU& mmu) // 0xF5
@@ -141,12 +141,12 @@ int op_ei(ProcessingUnit& cpu, MMU& mmu) // 0xFB
 }
 int op_illegal_fc(ProcessingUnit& cpu, MMU& mmu) // 0xFC 
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_illegal_fd(ProcessingUnit& cpu, MMU& mmu) // 0xFD
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_cp_d8(ProcessingUnit& cpu, MMU& mmu) // 0xFE

@@ -67,7 +67,6 @@ int op_dec_b(ProcessingUnit& cpu, MMU& mmu) // 0x05
 
 int op_ld_b_d8(ProcessingUnit& cpu, MMU& mmu) // 0x06
 {
-    cpu.inc_pc();
     const u8 newValue = mmu.read(cpu.inc_pc());
 
     cpu.reg(ProcessingUnit::Register::B) = newValue;
@@ -107,10 +106,16 @@ int op_ld_a16_sp(ProcessingUnit& cpu, MMU& mmu) // 0x08
 
 int op_add_hl_bc(ProcessingUnit& cpu, MMU& mmu) // 0x09
 {
-    // a = a + b
-    const u16 sum = cpu.get_hl() + cpu.get_bc();
-    cpu.reg(ProcessingUnit::Register::H) = (sum >> 8) & 0xFF;
-    cpu.reg(ProcessingUnit::Register::L) = sum & 0xFF;
+    const u16 hl = cpu.get_hl();
+    const u16 bc = cpu.get_bc();
+    const u32 sum = static_cast<u32>(hl) + bc;
+
+    cpu.reg(ProcessingUnit::Register::H) = static_cast<u8>((sum >> 8) & 0xFF);
+    cpu.reg(ProcessingUnit::Register::L) = static_cast<u8>(sum & 0xFF);
+
+    cpu.setFlag(ProcessingUnit::Flag::N, false);
+    cpu.setFlag(ProcessingUnit::Flag::H, ((hl & 0x0FFF) + (bc & 0x0FFF)) > 0x0FFF);
+    cpu.setFlag(ProcessingUnit::Flag::C, sum > 0xFFFF);
 
     return totalMachineCycles(2);
 }

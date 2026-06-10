@@ -40,12 +40,12 @@ int op_ld_c_a_e2(ProcessingUnit& cpu, MMU& mmu) // 0xE2
 
 int op_illegal_e3(ProcessingUnit& cpu, MMU& mmu) // 0xE3
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_illegal_e4(ProcessingUnit& cpu, MMU& mmu) // 0xE4
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_push_hl(ProcessingUnit& cpu, MMU& mmu) // 0xE5
@@ -126,17 +126,17 @@ int op_ld_a16_a(ProcessingUnit& cpu, MMU& mmu) // 0xEA
 
 int op_illegal_eb(ProcessingUnit& cpu, MMU& mmu) // 0xEB
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_illegal_ec(ProcessingUnit& cpu, MMU& mmu) // 0xEC
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_illegal_ed(ProcessingUnit& cpu, MMU& mmu) // 0xED
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_xor_d8(ProcessingUnit& cpu, MMU& mmu) // 0xEE

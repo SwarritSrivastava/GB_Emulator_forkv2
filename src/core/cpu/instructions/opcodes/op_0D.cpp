@@ -53,7 +53,7 @@ int op_jp_nc(ProcessingUnit& cpu, MMU& mmu) // 0xD2
 
 int op_illegal_d3(ProcessingUnit& cpu, MMU& mmu) // 0xD3
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_call_nc(ProcessingUnit& cpu, MMU& mmu) // 0xD4
@@ -169,7 +169,7 @@ int op_jp_c(ProcessingUnit& cpu, MMU& mmu) // 0xDA
 
 int op_illegal_db(ProcessingUnit& cpu, MMU& mmu) // 0xDB
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_call_c(ProcessingUnit& cpu, MMU& mmu) // 0xDC
@@ -196,7 +196,7 @@ int op_call_c(ProcessingUnit& cpu, MMU& mmu) // 0xDC
 
 int op_illegal_dd(ProcessingUnit& cpu, MMU& mmu) // 0xDD
 {
-    return totalMachineCycles(1);
+    throw std::runtime_error("Unimplemented opcode at PC: 0x" + std::to_string(cpu.last_pc));
 }
 
 int op_sbc_a_d8(ProcessingUnit& cpu, MMU& mmu) // 0xDE

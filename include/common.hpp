@@ -18,3 +18,8 @@ typedef uint64_t u64;
 #define BETWEEN(a, b, c) ((a >= b) && (a <= c))
 
 void delay(u32 ms);
+
+struct JoypadState {
+    bool right = false, left = false, up = false, down = false;
+    bool a = false, b = false, select = false, start = false;
+};
