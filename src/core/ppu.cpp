@@ -170,19 +170,30 @@ void PPU::render_sprites() {
     if (!(lcdc & 0x02)) return;
     bool use8x16 = (lcdc & 0x04);
     for (int i = 0; i < 40; i++) {
-        u8 index = i * 4;
-        u8 y_pos = oam[index] - 16, x_pos = oam[index + 1] - 8, tile_num = oam[index + 2], flags = oam[index + 3];
-        if (ly >= y_pos && ly < (y_pos + (use8x16 ? 16 : 8))) {
-            u8 line = ly - y_pos;
-            if (flags & 0x40) line = (use8x16 ? 15 : 7) - line;
-            u16 tile_location = 0x8000 + (tile_num * 16) + (line * 2);
+        const int index = i * 4;
+        const int y_pos = static_cast<int>(oam[index]) - 16;
+        const int x_pos = static_cast<int>(oam[index + 1]) - 8;
+        u8 tile_num = oam[index + 2];
+        const u8 flags = oam[index + 3];
+        const int sprite_height = use8x16 ? 16 : 8;
+        if (static_cast<int>(ly) >= y_pos && static_cast<int>(ly) < (y_pos + sprite_height)) {
+            int line = static_cast<int>(ly) - y_pos;
+            if (flags & 0x40) line = (sprite_height - 1) - line;
+            u8 effective_tile = tile_num;
+            int effective_line = line;
+            if (use8x16) {
+                effective_tile &= 0xFE;
+                if (effective_line >= 8) { effective_tile += 1; effective_line -= 8; }
+            }
+            u16 tile_location = 0x8000 + (effective_tile * 16) + (effective_line * 2);
             u8 d1 = vram[tile_location - 0x8000], d2 = vram[tile_location + 1 - 0x8000];
             for (int tile_pixel = 7; tile_pixel >= 0; tile_pixel--) {
                 int bit = (flags & 0x20) ? 7 - tile_pixel : tile_pixel;
                 u8 color_id = (BIT(d2, bit) << 1) | BIT(d1, bit);
                 u16 palette = (flags & 0x10) ? 0xFF49 : 0xFF48;
-                if (color_id != 0 && (x_pos + (7 - tile_pixel)) < 160) {
-                    framebuffer[ly * 160 + x_pos + (7 - tile_pixel)] = get_color(color_id, palette);
+                const int screen_x = x_pos + (7 - tile_pixel);
+                if (color_id != 0 && screen_x >= 0 && screen_x < 160) {
+                    framebuffer[ly * 160 + screen_x] = get_color(color_id, palette);
                 }
             }
         }
