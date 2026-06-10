@@ -53,12 +53,17 @@ target_compile_features(emu_lib PUBLIC cxx_std_23)
 # Main Emulator Executable
 # ===============================
 
+find_package(SFML COMPONENTS Graphics Window System REQUIRED)
+
 add_executable(gb_emu
         src/main.cpp
 )
 
 target_link_libraries(gb_emu
         PRIVATE emu_lib
+        SFML::Graphics
+        SFML::Window
+        SFML::System
 )
 
 # ===============================

@@ -159,22 +159,15 @@ TEST_F(OpcodesCPUTest, LD_D_D8_LoadsImmediateIntoD)
     const u16 pc = cpu.get_pc();
     EXPECT_EQ(pc, 0x0100);
 
-    // Write immediate value 0x1234 (little endian)
-    std::vector<u8> rom(0x200); // small fake ROM
-    rom[0x100] = 0x00;
-    rom[0x101] = 0x12;
+    std::vector<u8> rom(0x200);
+    rom[0x100] = 0x12;
 
     mmu.map_rom(rom);
     const int cycles = op_ld_d_d8(cpu, mmu);
 
-    // Check returned cycle count
     EXPECT_EQ(cycles, 8);
-
-    // Check B register value
     EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::D)), 0x12);
-
-    // PC should advance by 2
-    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_pc(), 0x101);
 }
 
 TEST_F(OpcodesCPUTest, RLA_RotatesAThroughCarry)
@@ -211,7 +204,7 @@ TEST_F(OpcodesCPUTest, RLA_UsesCarryIn)
 TEST_F(OpcodesCPUTest, JR_R8_JumpsForwardFromNextInstruction)
 {
     std::vector<u8> rom(0x200);
-    rom[0x101] = 0x05;
+    rom[0x100] = 0x05;
     mmu.map_rom(rom);
 
     cpu.normalizeFlags();
@@ -219,20 +212,20 @@ TEST_F(OpcodesCPUTest, JR_R8_JumpsForwardFromNextInstruction)
     const int cycles = op_jr_r8(cpu, mmu);
 
     EXPECT_EQ(cycles, 12);
-    EXPECT_EQ(cpu.get_pc(), 0x107);
+    EXPECT_EQ(cpu.get_pc(), 0x106);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::F), 0xF0);
 }
 
 TEST_F(OpcodesCPUTest, JR_R8_JumpsBackwardFromNextInstruction)
 {
     std::vector<u8> rom(0x200);
-    rom[0x101] = 0xFB;
+    rom[0x100] = 0xFB;
     mmu.map_rom(rom);
 
     const int cycles = op_jr_r8(cpu, mmu);
 
     EXPECT_EQ(cycles, 12);
-    EXPECT_EQ(cpu.get_pc(), 0x0FD);
+    EXPECT_EQ(cpu.get_pc(), 0x0FC);
 }
 
 TEST_F(OpcodesCPUTest, ADD_HL_DE_AddsRegisterPairAndUpdatesFlags)
@@ -327,15 +320,14 @@ TEST_F(OpcodesCPUTest, DEC_E_UpdatesFlagsAndPreservesCarry)
 TEST_F(OpcodesCPUTest, LD_E_D8_LoadsImmediateIntoE)
 {
     std::vector<u8> rom(0x200);
-    rom[0x100] = 0x00;
-    rom[0x101] = 0x34;
+    rom[0x100] = 0x34;
     mmu.map_rom(rom);
 
     const int cycles = op_ld_e_d8(cpu, mmu);
 
     EXPECT_EQ(cycles, 8);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::E), 0x34);
-    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_pc(), 0x101);
 }
 
 TEST_F(OpcodesCPUTest, RRA_RotatesAThroughCarry)
