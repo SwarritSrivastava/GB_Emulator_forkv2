@@ -12,27 +12,27 @@ protected:
 TEST_F(OpcodesCPUTest, JR_NC_JumpsWhenCarryFlagIsClear)
 {
     std::vector<u8> rom(0x200);
-    rom[0x101] = 0x05;
+    rom[0x100] = 0x05;
     mmu.map_rom(rom);
     cpu.clearFlags();
 
     const int cycles = op_jr_nc(cpu, mmu);
 
     EXPECT_EQ(cycles, 12);
-    EXPECT_EQ(cpu.get_pc(), 0x107);
+    EXPECT_EQ(cpu.get_pc(), 0x106);
 }
 
 TEST_F(OpcodesCPUTest, JR_NC_DoesNotJumpWhenCarryFlagIsSet)
 {
     std::vector<u8> rom(0x200);
-    rom[0x101] = 0x05;
+    rom[0x100] = 0x05;
     mmu.map_rom(rom);
     cpu.reg(ProcessingUnit::Register::F) = 0x10;
 
     const int cycles = op_jr_nc(cpu, mmu);
 
     EXPECT_EQ(cycles, 8);
-    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_pc(), 0x101);
 }
 
 TEST_F(OpcodesCPUTest, LD_SP_D16_LoadsImmediateIntoSP)
@@ -111,15 +111,14 @@ TEST_F(OpcodesCPUTest, LD_HL_D8_StoresImmediateToMemory)
     cpu.reg(ProcessingUnit::Register::H) = 0xC0;
     cpu.reg(ProcessingUnit::Register::L) = 0x30;
     std::vector<u8> rom(0x200);
-    rom[0x100] = 0x00;
-    rom[0x101] = 0xAB;
+    rom[0x100] = 0xAB;
     mmu.map_rom(rom);
 
     const int cycles = op_ld_hl_d8(cpu, mmu);
 
     EXPECT_EQ(cycles, 12);
     EXPECT_EQ(mmu.read(0xC030), 0xAB);
-    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_pc(), 0x101);
 }
 
 TEST_F(OpcodesCPUTest, SCF_SetsCarryAndClearsNH)
@@ -138,27 +137,27 @@ TEST_F(OpcodesCPUTest, SCF_SetsCarryAndClearsNH)
 TEST_F(OpcodesCPUTest, JR_C_JumpsWhenCarryFlagIsSet)
 {
     std::vector<u8> rom(0x200);
-    rom[0x101] = 0xFB;
+    rom[0x100] = 0xFB;
     mmu.map_rom(rom);
     cpu.reg(ProcessingUnit::Register::F) = 0x10;
 
     const int cycles = op_jr_c(cpu, mmu);
 
     EXPECT_EQ(cycles, 12);
-    EXPECT_EQ(cpu.get_pc(), 0x0FD);
+    EXPECT_EQ(cpu.get_pc(), 0x0FC);
 }
 
 TEST_F(OpcodesCPUTest, JR_C_DoesNotJumpWhenCarryFlagIsClear)
 {
     std::vector<u8> rom(0x200);
-    rom[0x101] = 0x05;
+    rom[0x100] = 0x05;
     mmu.map_rom(rom);
     cpu.clearFlags();
 
     const int cycles = op_jr_c(cpu, mmu);
 
     EXPECT_EQ(cycles, 8);
-    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_pc(), 0x101);
 }
 
 TEST_F(OpcodesCPUTest, ADD_HL_SP_AddsAndUpdatesFlags)
@@ -234,15 +233,14 @@ TEST_F(OpcodesCPUTest, DEC_A_UpdatesFlagsAndPreservesCarry)
 TEST_F(OpcodesCPUTest, LD_A_D8_LoadsImmediateIntoA)
 {
     std::vector<u8> rom(0x200);
-    rom[0x100] = 0x00;
-    rom[0x101] = 0x7E;
+    rom[0x100] = 0x7E;
     mmu.map_rom(rom);
 
     const int cycles = op_ld_a_d8(cpu, mmu);
 
     EXPECT_EQ(cycles, 8);
     EXPECT_EQ(cpu.reg(ProcessingUnit::Register::A), 0x7E);
-    EXPECT_EQ(cpu.get_pc(), 0x102);
+    EXPECT_EQ(cpu.get_pc(), 0x101);
 }
 
 TEST_F(OpcodesCPUTest, CCF_ComplementsCarryAndClearsNH)

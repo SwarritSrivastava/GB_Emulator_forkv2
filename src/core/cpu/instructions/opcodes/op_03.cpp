@@ -9,7 +9,6 @@ constexpr int machine_cycles = 4;
 
 int op_jr_nc(ProcessingUnit& cpu, MMU& mmu) // 0x30
 {
-    cpu.inc_pc();
     const int8_t offset = static_cast<int8_t>(mmu.read(cpu.inc_pc()));
 
     if (!cpu.get_flag_c()) {
@@ -72,7 +71,6 @@ int op_dec_hl_ptr(ProcessingUnit& cpu, MMU& mmu) // 0x35
 }
 int op_ld_hl_d8(ProcessingUnit& cpu, MMU& mmu) // 0x36
 {
-    cpu.inc_pc();
     mmu.write(cpu.get_hl(), mmu.read(cpu.inc_pc()));
 
     return totalMachineCycles(3);
@@ -87,7 +85,6 @@ int op_scf(ProcessingUnit& cpu, MMU& mmu) // 0x37
 }
 int op_jr_c(ProcessingUnit& cpu, MMU& mmu) // 0x38
 {
-    cpu.inc_pc();
     const int8_t offset = static_cast<int8_t>(mmu.read(cpu.inc_pc()));
 
     if (cpu.get_flag_c()) {
@@ -155,7 +152,6 @@ int op_dec_a(ProcessingUnit& cpu, MMU& mmu) // 0x3D
 }
 int op_ld_a_d8(ProcessingUnit& cpu, MMU& mmu) // 0x3E
 {
-    cpu.inc_pc();
     cpu.reg(ProcessingUnit::Register::A) = mmu.read(cpu.inc_pc());
 
     return totalMachineCycles(2);

@@ -134,10 +134,8 @@ TEST_F(OpcodesCPUTest, LD_B_D8_LoadsImmediateIntoB)
     const u16 pc = cpu.get_pc();
     EXPECT_EQ(pc, 0x0100);
 
-    // Write immediate value 0x1234 (little endian)
     std::vector<u8> rom(0x200); // small fake ROM
-    rom[0x100] = 0x00;
-    rom[0x101] = 0x12;
+    rom[0x100] = 0x12;
 
     mmu.map_rom(rom);
     const int cycles = op_ld_b_d8(cpu, mmu);
@@ -148,8 +146,8 @@ TEST_F(OpcodesCPUTest, LD_B_D8_LoadsImmediateIntoB)
     // Check B register value
     EXPECT_EQ(static_cast<int>(cpu.reg(ProcessingUnit::Register::B)), 0x12);
 
-    // PC should advance by 2
-    EXPECT_EQ(cpu.get_pc(), 0x102);
+    // PC should advance by 1 (one immediate byte)
+    EXPECT_EQ(cpu.get_pc(), 0x101);
 }
 
 TEST_F(OpcodesCPUTest, RLCA_RotatesARegisterLeft)

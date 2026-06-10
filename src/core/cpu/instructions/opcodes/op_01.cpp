@@ -68,7 +68,6 @@ int op_dec_d(ProcessingUnit& cpu, MMU& mmu) // 0x15
 
 int op_ld_d_d8(ProcessingUnit& cpu, MMU& mmu) // 0x16
 {
-    cpu.inc_pc();
     const u8 newValue = mmu.read(cpu.inc_pc());
 
     cpu.reg(ProcessingUnit::Register::D) = newValue;
@@ -96,7 +95,6 @@ int op_rla(ProcessingUnit& cpu, MMU& mmu) // 0x17
 
 int op_jr_r8(ProcessingUnit& cpu, MMU& mmu) // 0x18
 {
-    cpu.inc_pc();
     const int8_t offset = static_cast<int8_t>(mmu.read(cpu.inc_pc()));
     const u16 target = static_cast<u16>(cpu.get_pc() + offset);
 
@@ -166,7 +164,6 @@ int op_dec_e(ProcessingUnit& cpu, MMU& mmu) // 0x1D
 
 int op_ld_e_d8(ProcessingUnit& cpu, MMU& mmu) // 0x1E
 {
-    cpu.inc_pc();
     cpu.reg(ProcessingUnit::Register::E) = mmu.read(cpu.inc_pc());
 
     return totalMachineCycles(2);

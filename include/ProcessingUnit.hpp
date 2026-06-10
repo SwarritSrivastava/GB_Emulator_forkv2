@@ -43,6 +43,12 @@ public:
 
     int step(MMU &mmu);
 
+    void check_interrupts(MMU &mmu);
+    void execute_interrupt(MMU &mmu, u16 address, int bit);
+
+    int last_instr_cycles = 0;
+    u16 last_pc = 0;
+
     void setHalt(bool newValue);
 
     [[nodiscard]] bool isHalt() const;
