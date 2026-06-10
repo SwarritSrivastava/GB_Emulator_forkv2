@@ -46,7 +46,9 @@ std::string mbcNameFromType(u8 type) {
 }
 }
 
-PPU::PPU() {
+PPU::PPU()
+    : screenSprite(screenTexture)
+{
     framebuffer.fill(0xFFFFFFFF);
     lcdc = 0x91;
     stat = 0x85;
