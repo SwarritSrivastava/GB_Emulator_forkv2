@@ -40,7 +40,7 @@ googletest-build/
 vcpkg-configuration.json
 
 # ROMs, large binaries
-/roms/
+# /roms/
 
 # Misc
 *.bak
