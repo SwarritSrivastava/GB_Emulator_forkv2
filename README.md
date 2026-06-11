@@ -22,12 +22,15 @@ graph TD
 ## The Hardware Subsystems
 
 ### Custom LR35902 CPU Core
+
 At the heart of the emulator lies our custom-built Sharp LR35902 CPU core. We have successfully implemented and exhaustively tested 100% of the base and CB-prefixed opcodes. This core accurately simulates register state, precise flag mutations (Zero, Subtraction, Half-Carry, Carry), and intricate jump branching behavior exactly as the physical silicon would.
 
 ### Advanced Memory Management Unit (MMU)
+
 The memory subsystem acts as the central nervous system of the emulator. It orchestrates all reads and writes between the CPU, the Cartridge, the High RAM (HRAM), Work RAM (WRAM), and the Memory-Mapped I/O registers. It includes sophisticated memory banking controllers that accurately mimic original hardware limitations and memory mirroring.
 
 ### Pixel Processing Unit (PPU) & SFML 3.0 Renderer
+
 Our graphical pipeline utilizes cutting-edge SFML 3.0 bindings to accurately render the state of the Game Boy display. The PPU faithfully translates Video RAM (VRAM) and Object Attribute Memory (OAM) into vivid pixels. We have gone a step further to introduce a fully scalable 16:9 pixel-perfect resolution pipeline.
 
 ## Capabilities and Controls
@@ -42,6 +45,7 @@ The emulator features two deeply integrated runtime modes: a seamless Standard M
 - External Save States: Press 'E' to Load, 'Shift + E' to Save (via Zenity File Picker).
 
 Gamepad Mappings:
+
 - Arrow Keys map to the D-Pad
 - 'Z' maps to the A Button
 - 'X' maps to the B Button
@@ -98,5 +102,6 @@ sequenceDiagram
 We maintain extremely high standards for codebase integrity. Please refer to our Contribution Guidelines (CONTRIBUTING.md) for branch naming conventions, rigorous coding style expectations, and pull request checklist requirements.
 
 Maintainers:
+
 - Jayesh Puri (@Jayesh-Dev21)
-- Swarit Srivastava (@Swarit,srivastava)
+- Swarit Srivastava (@swarritSrivastava)
