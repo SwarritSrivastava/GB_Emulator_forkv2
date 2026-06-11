@@ -1,15 +1,40 @@
 #pragma once
 
+#include "ProcessingUnit.hpp"
+#include "mmu.hpp"
 #include "common.hpp"
+#include "interrupt_controller.hpp"
+#include <SFML/Graphics.hpp>
 #include <array>
+#include <deque>
+#include <string>
+#include <vector>
+#include <memory>
 
 class MMU;
 
 class PPU {
 public:
+    struct RomInfo {
+        std::string title;
+        u8 type{};
+        u8 rom_size{};
+        u8 ram_size{};
+        std::string mbc_name;
+        std::vector<u8> rom_bytes;
+    };
+
+    struct OpcodeTrace {
+        u16 pc{};
+        u8 opcode{};
+    };
+
     PPU();
+    explicit PPU(InterruptController& ic);
 
     void set_mmu(MMU* m) { mmu = m; }
+    void set_cpu(ProcessingUnit* c) { cpu = c; }
+    void set_rom_info(const RomInfo& info) { romInfo = info; }
     void step(int cycles);
     u8 read(u16 address) const;
     void write(u16 address, u8 value);
@@ -18,7 +43,55 @@ public:
     bool is_frame_ready() const { return frame_ready; }
     void clear_frame_ready() { frame_ready = false; }
 
+    // Debug / Feature functions
+    void init_window(bool debug, const std::string& rom_title, bool fullscreen = false);
+    bool isOpen() const;
+    bool isPaused() const { return paused; }
+    void handleEvents(JoypadState& joypad);
+    void update(float dtSeconds, u64 cyclesExecuted);
+    void render();
+
+    void recordOpcode(u16 pc, u8 opcode);
+    void checkBreakpoint(u16 pc);
+
+    bool isStepRequested() const { return stepRequested; }
+    void clearStepRequest() { stepRequested = false; }
+
+    bool isTurbo() const { return turbo; }
+    void setTurbo(bool val) { turbo = val; }
+    int getActiveSlot() const { return activeSlot; }
+    void setActiveSlot(int slot) { activeSlot = slot; }
+    void reset();
+    bool isResetRequested() const { return resetRequested; }
+    void clearResetRequest() { resetRequested = false; }
+
 private:
+    bool saveStateSlot(int slot);
+    bool loadStateSlot(int slot);
+    bool saveStatePath(const std::string& filepath);
+    bool loadStatePath(const std::string& filepath);
+
+    void drawPanels();
+    void drawText(const sf::Vector2f& pos, const std::string& text, unsigned size, const sf::Color& color);
+    std::string toHex(u32 value, int width) const;
+
+    // Emulation components
+    std::unique_ptr<InterruptController> dummy_ic;
+    InterruptController& ic;
+    ProcessingUnit* cpu = nullptr;
+    MMU* mmu = nullptr;
+    RomInfo romInfo;
+
+    // Rendering / SFML Window components
+    sf::RenderWindow window;
+    sf::Font font;
+    bool fontLoaded{false};
+    bool debugMode{false};
+
+    sf::Texture screenTexture;
+    sf::Sprite screenSprite;
+
+    // Emulation state
     std::array<u8, 0x2000> vram{};
     std::array<u8, 160> oam{};
 
@@ -55,5 +128,25 @@ private:
     void render_sprites();
     u32 get_color(u8 color_id, u16 palette_address) const;
 
-    MMU* mmu = nullptr;
+    // Debugging state
+    std::deque<OpcodeTrace> opcodeLog;
+    std::vector<u16> breakpoints;
+    bool paused{false};
+    bool stepRequested{false};
+    bool turbo{false};
+    int activeSlot{0};
+    bool resetRequested{false};
+    std::string externalStatePath;
+    JoypadState clickableJoypad{};
+    JoypadState physicalJoypad{};
+    JoypadState currentJoypadState{};
+
+    float timeAccumulator{0.0f};
+    u64 lastCycles{0};
+    u64 lastReads{0};
+    u64 lastWrites{0};
+
+    std::string statusMessage;
+    float statusTimer{0.0f};
+    u32 frameCounter{0};
 };

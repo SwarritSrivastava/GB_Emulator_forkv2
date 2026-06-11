@@ -1,60 +1,64 @@
 #pragma once
 #include "common.hpp"
-#include "timer.hpp"
 #include <array>
 #include <vector>
+#include <memory>
 
+class Cartridge;
 class PPU;
+class Timer;
+class InterruptController;
 
 class MMU {
-    private:
-        std::vector<u8> full_rom_data;
-        u8 current_rom_bank = 1;
+private:
+    // Ownership pointers for default constructor fallbacks
+    std::unique_ptr<Cartridge> dummy_cartridge;
+    std::unique_ptr<InterruptController> dummy_ic;
+    std::unique_ptr<Timer> dummy_timer;
+    std::unique_ptr<PPU> dummy_ppu;
 
-        std::array<u8, 0x2000> wram{}; // (0xC000 - 0xDFFF)
-        std::array<u8, 0x2000> eram{}; // (0xA000 - 0xBFFF) External RAM
-        std::array<u8, 0x2000> vram_fallback{}; // VRAM fallback when no PPU
-        std::array<u8, 0xA0> oam_fallback{}; // OAM fallback when no PPU
-        std::array<u8, 0x0C> ppu_reg_fallback{}; // PPU register fallback (FF40-FF4B)
-        std::array<u8, 0x7F> hram{}; // (0xFF80 - 0xFFFE)
-        std::array<u8, 0x80> io_regs{}; // (0xFF00 - 0xFF7F)
-        
-        u8 joypad_select = 0x30;
-        u8 action_buttons = 0x0F;
-        u8 direction_buttons = 0x0F;
-        u8 interrupt_flag = 0xE1;
-        u8 interrupt_enable = 0x00;
+    // References used for routing
+    Cartridge* cartridge = nullptr;
+    PPU* ppu = nullptr;
+    Timer* timer = nullptr;
+    InterruptController* ic = nullptr;
 
-        PPU* ppu = nullptr;
-        Timer timer;
+    std::array<u8, 0x2000> wram{}; // Work RAM (0xC000 - 0xDFFF)
+    std::array<u8, 0x7F> hram{};   // High RAM (0xFF80 - 0xFFFE)
+    std::array<u8, 0x80> io_regs{}; // Other IO registers (0xFF00 - 0xFF7F)
+    
+    u8 joypad_select = 0x30;
+    u8 action_buttons = 0x0F;
+    u8 direction_buttons = 0x0F;
 
-        void perform_dma(u8 value);
+    mutable u64 read_count = 0;
+    mutable u64 write_count = 0;
 
-    public:
-        MMU();
+    void perform_dma(u8 value);
 
-        void set_ppu(PPU* p) { ppu = p; }
-        void step_timer(int cycles) { timer.step(cycles, *this); }
+public:
+    MMU();
+    MMU(Cartridge& cartridge, PPU& ppu, Timer& timer, InterruptController& ic);
+    ~MMU();
 
-        bool map_rom(const std::vector<u8>& rom_data);
-        u8 read(u16 address) const;
-        void write(u16 address, u8 value);
-        
-        u8 get_joypad_state() const {
-            u8 state = 0x0F;
-            if (!(joypad_select & 0x10)) state &= direction_buttons;
-            if (!(joypad_select & 0x20)) state &= action_buttons;
-            return 0xC0 | joypad_select | state;
-        }
+    u8 read(u16 address) const;
+    void write(u16 address, u8 value);
 
-        void set_joypad_state(u8 action, u8 direction) {
-            u8 old_state = get_joypad_state();
-            action_buttons = action;
-            direction_buttons = direction;
-            u8 new_state = get_joypad_state();
-            // Interrupt requested if any button line goes from 1 (unpressed) to 0 (pressed)
-            if ((old_state & ~new_state) & 0x0F) {
-                interrupt_flag |= 0x10;
-            }
-        }
+    bool map_rom(const std::vector<u8>& rom_data);
+    void reset();
+
+    void step_timer(int cycles);
+
+    // Joypad state interface
+    void set_joypad_state(u8 action, u8 direction);
+    u8 get_joypad_state() const;
+
+    // Statistics
+    u64 get_read_count() const { return read_count; }
+    u64 get_write_count() const { return write_count; }
+    u8 get_current_rom_bank() const;
+
+    // Serialization
+    std::vector<u8> dump_memory() const;
+    bool load_memory(const std::vector<u8>& dump);
 };

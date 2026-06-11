@@ -1,16 +1,56 @@
 #include "../../../include/mmu.hpp"
+#include "../../../include/cartridge.hpp"
 #include "../../../include/ppu.hpp"
+#include "../../../include/timer.hpp"
+#include "../../../include/interrupt_controller.hpp"
 #include <algorithm>
 #include <iterator>
 
 MMU::MMU() {
+    dummy_ic = std::make_unique<InterruptController>();
+    dummy_cartridge = std::make_unique<Cartridge>();
+    dummy_timer = std::make_unique<Timer>(*dummy_ic);
+    dummy_ppu = std::make_unique<PPU>(*dummy_ic);
+
+    cartridge = dummy_cartridge.get();
+    ic = dummy_ic.get();
+    timer = dummy_timer.get();
+    ppu = dummy_ppu.get();
+
     io_regs.fill(0);
     hram.fill(0);
     wram.fill(0);
-    eram.fill(0);
-    vram_fallback.fill(0);
-    oam_fallback.fill(0);
-    ppu_reg_fallback.fill(0);
+
+    // Post-boot defaults
+    write(0xFF00, 0xCF); // Joypad
+    write(0xFF04, 0xAB); // DIV
+    write(0xFF05, 0x00); // TIMA
+    write(0xFF06, 0x00); // TMA
+    write(0xFF07, 0xF8); // TAC
+    write(0xFF0F, 0xE1); // IF
+    write(0xFF40, 0x91); // LCDC
+    write(0xFF41, 0x85); // STAT
+    write(0xFF42, 0x00); // SCY
+    write(0xFF43, 0x00); // SCX
+    write(0xFF44, 0x00); // LY
+    write(0xFF45, 0x00); // LYC
+    write(0xFF47, 0xFC); // BGP
+    write(0xFF48, 0xFF); // OBP0
+    write(0xFF49, 0xFF); // OBP1
+    write(0xFF4A, 0x00); // WY
+    write(0xFF4B, 0x00); // WX
+    write(0xFFFF, 0x00); // IE
+}
+
+MMU::MMU(Cartridge& cartRef, PPU& ppuRef, Timer& timerRef, InterruptController& icRef)
+    : cartridge(&cartRef)
+    , ppu(&ppuRef)
+    , timer(&timerRef)
+    , ic(&icRef)
+{
+    io_regs.fill(0);
+    hram.fill(0);
+    wram.fill(0);
 
     // Post-boot defaults
     write(0xFF00, 0xCF); // Joypad
@@ -34,24 +74,19 @@ MMU::MMU() {
 }
 
 u8 MMU::read(const u16 address) const {
-    // ROM Bank 0 (0x0000 - 0x3FFF)
-    if (address <= 0x3FFF) {
-        if (address < full_rom_data.size()) return full_rom_data[address];
-        return 0x00;
-    }
-    // ROM Bank N (0x4000 - 0x7FFF)
+    read_count++;
+    
+    // ROM (0x0000 - 0x7FFF)
     if (address <= 0x7FFF) {
-        u32 banked_address = (address - 0x4000) + (current_rom_bank * 0x4000);
-        if (banked_address < full_rom_data.size()) return full_rom_data[banked_address];
-        return 0x00;
+        return cartridge->read(address);
     }
     // VRAM (0x8000 - 0x9FFF)
     if (address <= 0x9FFF) {
-        return ppu ? ppu->read(address) : vram_fallback[address - 0x8000];
+        return ppu->read(address);
     }
     // External RAM (0xA000 - 0xBFFF)
     if (address <= 0xBFFF) {
-        return eram[address - 0xA000];
+        return cartridge->read(address);
     }
     // WRAM (0xC000 - 0xDFFF)
     if (address <= 0xDFFF) {
@@ -63,7 +98,7 @@ u8 MMU::read(const u16 address) const {
     }
     // OAM (0xFE00 - 0xFE9F)
     if (address <= 0xFE9F) {
-        return ppu ? ppu->read(address) : oam_fallback[address - 0xFE00];
+        return ppu->read(address);
     }
     // Unusable (0xFEA0 - 0xFEFF)
     if (address <= 0xFEFF) {
@@ -71,52 +106,36 @@ u8 MMU::read(const u16 address) const {
     }
     // I/O Registers (0xFF00 - 0xFF7F)
     if (address == 0xFF00) return get_joypad_state();
-    if (address >= 0xFF04 && address <= 0xFF07) return timer.read(address);
-    if (address == 0xFF0F) return interrupt_flag;
-    if (address >= 0xFF40 && address <= 0xFF4B) {
-        return ppu ? ppu->read(address) : ppu_reg_fallback[address - 0xFF40];
-    }
+    if (address >= 0xFF04 && address <= 0xFF07) return timer->read(address);
+    if (address == 0xFF0F) return ic->read(address);
+    if (address >= 0xFF40 && address <= 0xFF4B) return ppu->read(address);
     if (address >= 0xFF00 && address <= 0xFF7F) return io_regs[address - 0xFF00];
+    
     // HRAM (0xFF80 - 0xFFFE)
     if (address <= 0xFFFE) return hram[address - 0xFF80];
+    
     // IE (0xFFFF)
-    if (address == 0xFFFF) return interrupt_enable;
+    if (address == 0xFFFF) return ic->read(address);
 
     return 0xFF;
 }
 
 void MMU::write(const u16 address, u8 value) {
-    // MBC1: RAM Enable (0x0000 - 0x1FFF)
-    if (address <= 0x1FFF) {
-        // RAM enable/disable — ignored for now (no battery save)
-        return;
-    }
-    // MBC1/MBC3: ROM Bank Number (0x2000 - 0x3FFF)
-    if (address <= 0x3FFF) {
-        u8 bank = value & 0x7F; // 0x7F supports up to 2MB ROMs (MBC3 or large MBC1)
-        if (bank == 0) bank = 1;
-        current_rom_bank = bank;
-        return;
-    }
-    // MBC1: RAM Bank / Upper ROM Bank (0x4000 - 0x5FFF)
-    if (address <= 0x5FFF) {
-        // For simple MBC1 with <=512KB ROM, ignored
-        return;
-    }
-    // MBC1: Banking Mode (0x6000 - 0x7FFF)
+    write_count++;
+    
+    // ROM / MBC (0x0000 - 0x7FFF)
     if (address <= 0x7FFF) {
-        // Banking mode select — ignored for simple MBC1
+        cartridge->write(address, value);
         return;
     }
     // VRAM (0x8000 - 0x9FFF)
     if (address <= 0x9FFF) {
-        if (ppu) ppu->write(address, value);
-        else vram_fallback[address - 0x8000] = value;
+        ppu->write(address, value);
         return;
     }
     // External RAM (0xA000 - 0xBFFF)
     if (address <= 0xBFFF) {
-        eram[address - 0xA000] = value;
+        cartridge->write(address, value);
         return;
     }
     // WRAM (0xC000 - 0xDFFF)
@@ -131,8 +150,7 @@ void MMU::write(const u16 address, u8 value) {
     }
     // OAM (0xFE00 - 0xFE9F)
     if (address <= 0xFE9F) {
-        if (ppu) ppu->write(address, value);
-        else oam_fallback[address - 0xFE00] = value;
+        ppu->write(address, value);
         return;
     }
     // Unusable (0xFEA0 - 0xFEFF)
@@ -141,25 +159,29 @@ void MMU::write(const u16 address, u8 value) {
     }
     // I/O Registers
     if (address == 0xFF00) { joypad_select = value & 0x30; return; }
-    if (address >= 0xFF04 && address <= 0xFF07) { timer.write(address, value); return; }
-    if (address == 0xFF0F) { interrupt_flag = value; return; }
-    if (address == 0xFF46) { perform_dma(value); if (ppu) ppu->write(address, value); return; }
-    if (address >= 0xFF40 && address <= 0xFF4B) {
-        if (ppu) ppu->write(address, value);
-        else ppu_reg_fallback[address - 0xFF40] = value;
-        return;
-    }
+    if (address >= 0xFF04 && address <= 0xFF07) { timer->write(address, value); return; }
+    if (address == 0xFF0F) { ic->write(address, value); return; }
+    if (address == 0xFF46) { perform_dma(value); ppu->write(address, value); return; }
+    if (address >= 0xFF40 && address <= 0xFF4B) { ppu->write(address, value); return; }
     if (address >= 0xFF00 && address <= 0xFF7F) { io_regs[address - 0xFF00] = value; return; }
+    
     // HRAM (0xFF80 - 0xFFFE)
     if (address <= 0xFFFE) { hram[address - 0xFF80] = value; return; }
+    
     // IE (0xFFFF)
-    if (address == 0xFFFF) { interrupt_enable = value; return; }
+    if (address == 0xFFFF) { ic->write(address, value); return; }
+}
+
+u8 MMU::get_current_rom_bank() const {
+    return cartridge->get_current_rom_bank();
+}
+
+void MMU::step_timer(int cycles) {
+    timer->step(cycles);
 }
 
 bool MMU::map_rom(const std::vector<u8>& rom_data) {
-    if(rom_data.empty()) return false;
-    full_rom_data = rom_data;
-    return true;
+    return cartridge->load_rom(rom_data);
 }
 
 void MMU::perform_dma(u8 value) {
@@ -167,4 +189,127 @@ void MMU::perform_dma(u8 value) {
     for (u16 i = 0; i < 0xA0; i++) {
         write(0xFE00 + i, read(source_address + i));
     }
+}
+
+u8 MMU::get_joypad_state() const {
+    u8 state = 0x0F;
+    if (!(joypad_select & 0x10)) state &= direction_buttons;
+    if (!(joypad_select & 0x20)) state &= action_buttons;
+    return 0xC0 | joypad_select | state;
+}
+
+void MMU::set_joypad_state(u8 action, u8 direction) {
+    u8 old_state = get_joypad_state();
+    action_buttons = action;
+    direction_buttons = direction;
+    u8 new_state = get_joypad_state();
+    // Interrupt requested if any button line goes from 1 (unpressed) to 0 (pressed)
+    if ((old_state & ~new_state) & 0x0F) {
+        ic->request_interrupt(InterruptType::Joypad);
+    }
+}
+
+std::vector<u8> MMU::dump_memory() const {
+    std::vector<u8> dump(0x10000, 0);
+    
+    // Copy main arrays
+    std::copy(wram.begin(), wram.end(), dump.begin() + 0xC000);
+    std::copy(hram.begin(), hram.end(), dump.begin() + 0xFF80);
+    std::copy(io_regs.begin(), io_regs.end(), dump.begin() + 0xFF00);
+    
+    // Copy cartridge & ppu data via read
+    for (u16 addr = 0x8000; addr <= 0x9FFF; ++addr) {
+        dump[addr] = read(addr);
+    }
+    for (u16 addr = 0xA000; addr <= 0xBFFF; ++addr) {
+        dump[addr] = read(addr);
+    }
+    for (u16 addr = 0xFE00; addr <= 0xFE9F; ++addr) {
+        dump[addr] = read(addr);
+    }
+    for (u16 addr = 0xFF40; addr <= 0xFF4B; ++addr) {
+        dump[addr] = read(addr);
+    }
+
+    // Save metadata
+    dump[0x00] = cartridge->get_current_rom_bank();
+    dump[0x01] = joypad_select;
+    dump[0x02] = action_buttons;
+    dump[0x03] = direction_buttons;
+    dump[0x04] = ic->get_if();
+    dump[0x05] = ic->get_ie();
+    
+    return dump;
+}
+
+bool MMU::load_memory(const std::vector<u8>& dump) {
+    if (dump.size() != 0x10000) {
+        return false;
+    }
+    
+    std::copy(dump.begin() + 0xC000, dump.begin() + 0xE000, wram.begin());
+    std::copy(dump.begin() + 0xFF80, dump.begin() + 0xFFFF, hram.begin());
+    std::copy(dump.begin() + 0xFF00, dump.begin() + 0xFF80, io_regs.begin());
+    
+    cartridge->set_current_rom_bank(dump[0x00]);
+    joypad_select = dump[0x01];
+    action_buttons = dump[0x02];
+    direction_buttons = dump[0x03];
+    ic->set_if(dump[0x04]);
+    ic->set_ie(dump[0x05]);
+    
+    // Restore state of VRAM, OAM, ERAM and registers
+    for (u16 addr = 0x8000; addr <= 0x9FFF; ++addr) {
+        write(addr, dump[addr]);
+    }
+    for (u16 addr = 0xA000; addr <= 0xBFFF; ++addr) {
+        write(addr, dump[addr]);
+    }
+    for (u16 addr = 0xFE00; addr <= 0xFE9F; ++addr) {
+        write(addr, dump[addr]);
+    }
+    for (u16 addr = 0xFF40; addr <= 0xFF4B; ++addr) {
+        write(addr, dump[addr]);
+    }
+    
+    return true;
+}
+
+MMU::~MMU() = default;
+
+void MMU::reset() {
+    wram.fill(0);
+    hram.fill(0);
+    io_regs.fill(0);
+    
+    joypad_select = 0x30;
+    action_buttons = 0x0F;
+    direction_buttons = 0x0F;
+    read_count = 0;
+    write_count = 0;
+
+    if (cartridge) cartridge->reset();
+    if (timer) timer->reset();
+    if (ic) ic->reset();
+    if (ppu) ppu->reset();
+
+    // Post-boot register defaults
+    write(0xFF00, 0xCF); // Joypad
+    write(0xFF04, 0xAB); // DIV
+    write(0xFF05, 0x00); // TIMA
+    write(0xFF06, 0x00); // TMA
+    write(0xFF07, 0xF8); // TAC
+    write(0xFF0F, 0xE1); // IF
+    write(0xFF40, 0x91); // LCDC
+    write(0xFF41, 0x85); // STAT
+    write(0xFF42, 0x00); // SCY
+    write(0xFF43, 0x00); // SCX
+    write(0xFF44, 0x00); // LY
+    write(0xFF45, 0x00); // LYC
+    write(0xFF47, 0xFC); // BGP
+    write(0xFF48, 0xFF); // OBP0
+    write(0xFF49, 0xFF); // OBP1
+    write(0xFF4A, 0x00); // WY
+    write(0xFF4B, 0x00); // WX
+    write(0xFFFF, 0x00); // IE
 }

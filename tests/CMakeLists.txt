@@ -17,9 +17,9 @@ target_include_directories(emu_tests
 )
 
 if(TARGET emu_lib)
-    target_link_libraries(emu_tests PRIVATE emu_lib gtest_main)
+    target_link_libraries(emu_tests PRIVATE emu_lib gtest_main SFML::Graphics SFML::Window SFML::System)
 else()
-    target_link_libraries(emu_tests PRIVATE gtest_main)
+    target_link_libraries(emu_tests PRIVATE gtest_main SFML::Graphics SFML::Window SFML::System)
 endif()
 
 include(GoogleTest)

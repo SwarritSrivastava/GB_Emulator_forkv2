@@ -34,7 +34,7 @@ int ProcessingUnit::step(MMU &mmu) {
 void ProcessingUnit::check_interrupts(MMU &mmu) {
     u8 if_reg = mmu.read(0xFF0F);
     u8 ie_reg = mmu.read(0xFFFF);
-    u8 pending = if_reg & ie_reg;
+    u8 pending = if_reg & ie_reg & 0x1F;
 
     if (pending > 0) {
         halt = false;

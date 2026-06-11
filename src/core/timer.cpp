@@ -1,7 +1,12 @@
 #include "../../include/timer.hpp"
-#include "../../include/mmu.hpp"
+#include "../../include/interrupt_controller.hpp"
 
-void Timer::step(int cycles, MMU& mmu) {
+Timer::Timer(InterruptController& interrupt_controller)
+    : ic(interrupt_controller)
+{
+}
+
+void Timer::step(int cycles) {
     div_counter += cycles;
     
     if (tac & 0x04) { // Timer enabled
@@ -19,8 +24,7 @@ void Timer::step(int cycles, MMU& mmu) {
             if (tima == 0xFF) {
                 tima = tma;
                 // Request Timer Interrupt
-                u8 if_reg = mmu.read(0xFF0F);
-                mmu.write(0xFF0F, if_reg | 0x04);
+                ic.request_interrupt(InterruptType::Timer);
             } else {
                 tima++;
             }
@@ -45,4 +49,12 @@ void Timer::write(u16 address, u8 value) {
         case 0xFF06: tma = value; break;
         case 0xFF07: tac = value; break;
     }
+}
+
+void Timer::reset() {
+    div_counter = 0;
+    tima = 0;
+    tma = 0;
+    tac = 0;
+    tima_counter = 0;
 }
