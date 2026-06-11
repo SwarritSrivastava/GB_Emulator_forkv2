@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <string_view>
 #include "common.hpp"
 
 typedef struct {            // Memory Map
@@ -28,24 +29,24 @@ public:
 
     bool load_rom(const std::vector<u8>& rom_data);
     
-    u8 read(u16 address) const;
+    [[nodiscard]] u8 read(u16 address) const;
     void write(u16 address, u8 value);
     void reset();
 
-    std::string get_title() const { return title; }
-    u8 get_mbc_type() const { return header.type; }
-    u8 get_rom_size_code() const { return header.rom_size; }
-    u8 get_ram_size_code() const { return header.ram_size; }
-    const std::vector<u8>& get_rom_bytes() const { return rom; }
+    [[nodiscard]] std::string_view get_title() const { return title; }
+    [[nodiscard]] u8 get_mbc_type() const { return header.type; }
+    [[nodiscard]] u8 get_rom_size_code() const { return header.rom_size; }
+    [[nodiscard]] u8 get_ram_size_code() const { return header.ram_size; }
+    [[nodiscard]] const std::vector<u8>& get_rom_bytes() const { return rom; }
     
-    u8 get_current_rom_bank() const { return current_rom_bank; }
+    [[nodiscard]] u8 get_current_rom_bank() const { return current_rom_bank; }
     void set_current_rom_bank(u8 bank) { current_rom_bank = bank; }
 
-    const std::vector<u8>& get_ram_bytes() const { return ram; }
-    std::vector<u8>& get_ram_bytes_mutable() { return ram; }
+    [[nodiscard]] const std::vector<u8>& get_ram_bytes() const { return ram; }
+    [[nodiscard]] std::vector<u8>& get_ram_bytes_mutable() { return ram; }
     void set_ram_bytes(const std::vector<u8>& ram_data) { ram = ram_data; }
     
-    bool is_ram_enabled() const { return ram_enabled; }
+    [[nodiscard]] bool is_ram_enabled() const { return ram_enabled; }
     void set_ram_enabled(bool enabled) { ram_enabled = enabled; }
 
 private:

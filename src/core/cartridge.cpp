@@ -21,6 +21,13 @@ bool Cartridge::load_rom(const std::vector<u8>& rom_data) {
     }
 
     rom = rom_data;
+
+    // A hardware compliant Game Boy ROM must at least contain the base 32KB banking area.
+    // If a testing array or malformed ROM is passed, we securely zero-pad it to prevent segfaults.
+    if (rom.size() < 0x8000) {
+        rom.resize(0x8000, 0);
+    }
+
     mbc_type = MBCType::None;
 
     if (rom.size() >= 0x150) {
