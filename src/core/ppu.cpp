@@ -271,7 +271,7 @@ u32 PPU::get_color(u8 color_id, u16 palette_address) const {
 // Debug / UI Features
 // ----------------------------------------------------
 
-void PPU::init_window(bool debug, const std::string& rom_title, bool fullscreen) {
+void PPU::init_window(bool debug, std::string_view rom_title, bool fullscreen) {
     debugMode = debug;
     sf::State state = fullscreen ? sf::State::Fullscreen : sf::State::Windowed;
 
@@ -572,14 +572,14 @@ void PPU::reset() {
     framebuffer.fill(0xFFFFFFFF);
 }
 
-bool PPU::saveStatePath(const std::string& filepath) {
+bool PPU::saveStatePath(std::string_view filepath) {
     if (!cpu || !mmu) return false;
 
     try {
         std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
     } catch (...) {}
 
-    std::ofstream out(filepath, std::ios::binary);
+    std::ofstream out(std::string(filepath), std::ios::binary);
     if (!out) {
         return false;
     }
@@ -633,10 +633,10 @@ bool PPU::saveStateSlot(const int slot) {
     return saveStatePath(path.str());
 }
 
-bool PPU::loadStatePath(const std::string& filepath) {
+bool PPU::loadStatePath(std::string_view filepath) {
     if (!cpu || !mmu) return false;
 
-    std::ifstream in(filepath, std::ios::binary);
+    std::ifstream in(std::string(filepath), std::ios::binary);
     if (!in) {
         return false;
     }
@@ -884,11 +884,11 @@ void PPU::drawPanels() {
     drawText(sf::Vector2f(col3X, cpY + 56.0f), "Space: Pause | N: Step", 13, highlightColor);
 }
 
-void PPU::drawText(const sf::Vector2f& pos, const std::string& text, const unsigned size, const sf::Color& color) {
+void PPU::drawText(const sf::Vector2f& pos, std::string_view text, const unsigned size, const sf::Color& color) {
     if (!fontLoaded) {
         return;
     }
-    sf::Text txt(font, text, size);
+    sf::Text txt(font, std::string(text), size);
     txt.setFillColor(color);
     txt.setPosition(pos);
     window.draw(txt);

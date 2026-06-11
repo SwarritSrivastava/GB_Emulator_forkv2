@@ -41,7 +41,7 @@ public:
     MMU(Cartridge& cartridge, PPU& ppu, Timer& timer, InterruptController& ic);
     ~MMU();
 
-    u8 read(u16 address) const;
+    [[nodiscard]] u8 read(u16 address) const;
     void write(u16 address, u8 value);
 
     bool map_rom(const std::vector<u8>& rom_data);
@@ -51,12 +51,12 @@ public:
 
     // Joypad state interface
     void set_joypad_state(u8 action, u8 direction);
-    u8 get_joypad_state() const;
+    [[nodiscard]] u8 get_joypad_state() const;
 
     // Statistics
-    u64 get_read_count() const { return read_count; }
-    u64 get_write_count() const { return write_count; }
-    u8 get_current_rom_bank() const;
+    [[nodiscard]] u64 get_read_count() const { return read_count; }
+    [[nodiscard]] u64 get_write_count() const { return write_count; }
+    [[nodiscard]] u8 get_current_rom_bank() const;
 
     // Serialization
     std::vector<u8> dump_memory() const;

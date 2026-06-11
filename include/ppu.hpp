@@ -8,6 +8,7 @@
 #include <array>
 #include <deque>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <memory>
 
@@ -39,14 +40,14 @@ public:
     u8 read(u16 address) const;
     void write(u16 address, u8 value);
 
-    const u32* get_framebuffer() const { return framebuffer.data(); }
-    bool is_frame_ready() const { return frame_ready; }
+    [[nodiscard]] const u32* get_framebuffer() const { return framebuffer.data(); }
+    [[nodiscard]] bool is_frame_ready() const { return frame_ready; }
     void clear_frame_ready() { frame_ready = false; }
 
     // Debug / Feature functions
-    void init_window(bool debug, const std::string& rom_title, bool fullscreen = false);
-    bool isOpen() const;
-    bool isPaused() const { return paused; }
+    void init_window(bool debug, std::string_view rom_title, bool fullscreen = false);
+    [[nodiscard]] bool isOpen() const;
+    [[nodiscard]] bool isPaused() const { return paused; }
     void handleEvents(JoypadState& joypad);
     void update(float dtSeconds, u64 cyclesExecuted);
     void render();
@@ -54,26 +55,26 @@ public:
     void recordOpcode(u16 pc, u8 opcode);
     void checkBreakpoint(u16 pc);
 
-    bool isStepRequested() const { return stepRequested; }
+    [[nodiscard]] bool isStepRequested() const { return stepRequested; }
     void clearStepRequest() { stepRequested = false; }
 
-    bool isTurbo() const { return turbo; }
+    [[nodiscard]] bool isTurbo() const { return turbo; }
     void setTurbo(bool val) { turbo = val; }
-    int getActiveSlot() const { return activeSlot; }
+    [[nodiscard]] int getActiveSlot() const { return activeSlot; }
     void setActiveSlot(int slot) { activeSlot = slot; }
     void reset();
-    bool isResetRequested() const { return resetRequested; }
+    [[nodiscard]] bool isResetRequested() const { return resetRequested; }
     void clearResetRequest() { resetRequested = false; }
 
 private:
     bool saveStateSlot(int slot);
     bool loadStateSlot(int slot);
-    bool saveStatePath(const std::string& filepath);
-    bool loadStatePath(const std::string& filepath);
+    bool saveStatePath(std::string_view filepath);
+    bool loadStatePath(std::string_view filepath);
 
     void drawPanels();
-    void drawText(const sf::Vector2f& pos, const std::string& text, unsigned size, const sf::Color& color);
-    std::string toHex(u32 value, int width) const;
+    void drawText(const sf::Vector2f& pos, std::string_view text, unsigned size, const sf::Color& color);
+    [[nodiscard]] std::string toHex(u32 value, int width) const;
 
     // Emulation components
     std::unique_ptr<InterruptController> dummy_ic;

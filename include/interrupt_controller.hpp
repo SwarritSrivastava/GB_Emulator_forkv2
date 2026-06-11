@@ -14,7 +14,7 @@ public:
     InterruptController() = default;
     ~InterruptController() = default;
 
-    u8 read(u16 address) const {
+    [[nodiscard]] u8 read(u16 address) const {
         if (address == 0xFF0F) return interrupt_flag | 0xE0;
         if (address == 0xFFFF) return interrupt_enable;
         return 0xFF;
@@ -36,12 +36,12 @@ public:
         interrupt_flag &= ~static_cast<u8>(type);
     }
 
-    bool has_pending_interrupts() const {
+    [[nodiscard]] bool has_pending_interrupts() const {
         return (interrupt_flag & interrupt_enable & 0x1F) != 0;
     }
     
-    u8 get_if() const { return interrupt_flag; }
-    u8 get_ie() const { return interrupt_enable; }
+    [[nodiscard]] u8 get_if() const { return interrupt_flag; }
+    [[nodiscard]] u8 get_ie() const { return interrupt_enable; }
 
     void set_if(u8 value) { interrupt_flag = value | 0xE0; }
     void set_ie(u8 value) { interrupt_enable = value; }

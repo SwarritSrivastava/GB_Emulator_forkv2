@@ -10,16 +10,16 @@ public:
     ~Timer() = default;
 
     void step(int cycles);
-    u8 read(u16 address) const;
+    [[nodiscard]] u8 read(u16 address) const;
     void write(u16 address, u8 value);
     void reset();
 
     // Serialization support
-    u16 get_div_counter() const { return div_counter; }
-    u8 get_tima() const { return tima; }
-    u8 get_tma() const { return tma; }
-    u8 get_tac() const { return tac; }
-    int get_tima_counter() const { return tima_counter; }
+    [[nodiscard]] u16 get_div_counter() const { return div_counter; }
+    [[nodiscard]] u8 get_tima() const { return tima; }
+    [[nodiscard]] u8 get_tma() const { return tma; }
+    [[nodiscard]] u8 get_tac() const { return tac; }
+    [[nodiscard]] int get_tima_counter() const { return tima_counter; }
 
     void set_div_counter(u16 value) { div_counter = value; }
     void set_tima(u8 value) { tima = value; }
