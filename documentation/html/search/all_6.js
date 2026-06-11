@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['extended_20automation_20setup_0',['Extended Automation Setup',['../index.html#autotoc_md8',1,'']]]
+  ['fidelity_20game_20boy_20dmg_2001_20architecture_20simulation_0',['GB_Emulator: A High-Fidelity Game Boy (DMG-01) Architecture Simulation',['../index.html',1,'']]]
 ];

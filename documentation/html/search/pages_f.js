@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['workflow_0',['Workflow',['../index.html#autotoc_md6',1,'1) TIRP CI Workflow'],['../index.html#autotoc_md7',1,'2) Pages Deploy Workflow']]],
-  ['workflow_20and_20pipeline_1',['Workflow and Pipeline',['../index.html#autotoc_md5',1,'']]]
+  ['the_20hardware_20subsystems_0',['The Hardware Subsystems',['../index.html#autotoc_md2',1,'']]],
+  ['the_20tirp_20continuous_20integration_20protocol_1',['The TIRP Continuous Integration Protocol',['../index.html#autotoc_md9',1,'']]],
+  ['tirp_20continuous_20integration_20protocol_2',['The TIRP Continuous Integration Protocol',['../index.html#autotoc_md9',1,'']]]
 ];

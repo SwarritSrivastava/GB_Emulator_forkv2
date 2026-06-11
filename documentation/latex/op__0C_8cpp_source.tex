@@ -19,8 +19,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00015}00015\ \ \ \ \ \}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00016}00016\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00017}00017\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00018}00018\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp);}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00019}00019\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp\ +\ 1);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00018}00018\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(sp);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00019}00019\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(sp\ +\ 1);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00020}00020\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00021}00021\ \ \ \ \ cpu.set\_sp(sp\ +\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00022}00022\ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo));}
@@ -31,8 +31,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00027}00027\ \textcolor{keywordtype}{int}\ op\_pop\_bc(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xC1}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00028}00028\ \{}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00029}00029\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00030}00030\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp);}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00031}00031\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp\ +\ 1);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00030}00030\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(sp);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00031}00031\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(sp\ +\ 1);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00032}00032\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00033}00033\ \ \ \ \ cpu.reg(ProcessingUnit::Register::C)\ =\ lo;}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00034}00034\ \ \ \ \ cpu.reg(ProcessingUnit::Register::B)\ =\ hi;}
@@ -44,8 +44,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00040}00040\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00041}00041\ \textcolor{keywordtype}{int}\ op\_jp\_nz(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xC2}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00042}00042\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00043}00043\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00044}00044\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00043}00043\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00044}00044\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00045}00045\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ \textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00046}00046\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu.get\_flag\_z())}
@@ -59,8 +59,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00055}00055\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00056}00056\ \textcolor{keywordtype}{int}\ op\_jp(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xC3}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00057}00057\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00058}00058\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00059}00059\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00058}00058\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00059}00059\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00060}00060\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00061}00061\ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo));}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00062}00062\ }
@@ -69,8 +69,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00065}00065\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00066}00066\ \textcolor{keywordtype}{int}\ op\_call\_nz(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xC4}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00067}00067\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00068}00068\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00069}00069\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00068}00068\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00069}00069\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00070}00070\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ \textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00071}00071\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00072}00072\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu.get\_flag\_z())}
@@ -78,8 +78,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00074}00074\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u16\ pc\ =\ cpu.get\_pc();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00075}00075\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00076}00076\ }
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00077}00077\ \ \ \ \ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00077}00077\ \ \ \ \ \ \ \ \ mmu.write(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ mmu.write(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00079}00079\ \ \ \ \ \ \ \ \ cpu.set\_sp(sp\ -\/\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00080}00080\ \ \ \ \ \ \ \ \ cpu.set\_pc(addr);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00081}00081\ }
@@ -94,8 +94,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00090}00090\ \ \ \ \ \textcolor{keyword}{const}\ u8\ c\ =\ cpu.reg(ProcessingUnit::Register::C);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00091}00091\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00092}00092\ }
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00093}00093\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 1,\ b);}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00094}00094\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 2,\ c);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00093}00093\ \ \ \ \ mmu.write(sp\ -\/\ 1,\ b);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00094}00094\ \ \ \ \ mmu.write(sp\ -\/\ 2,\ c);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00095}00095\ \ \ \ \ cpu.set\_sp(sp\ -\/\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00096}00096\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00097}00097\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(4);}
@@ -104,7 +104,7 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00100}00100\ \textcolor{keywordtype}{int}\ op\_add\_a\_d8(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xC6}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00101}00101\ \{}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00102}00102\ \ \ \ \ \textcolor{keyword}{const}\ u8\ a\ =\ cpu.reg(ProcessingUnit::Register::A);}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00103}00103\ \ \ \ \ \textcolor{keyword}{const}\ u8\ d8\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00103}00103\ \ \ \ \ \textcolor{keyword}{const}\ u8\ d8\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00104}00104\ \ \ \ \ \textcolor{keyword}{const}\ u16\ result\ =\ \textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}(a)\ +\ \textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}(d8);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00105}00105\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00106}00106\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ (result\ \&\ 0xFF)\ ==\ 0);}
@@ -122,8 +122,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00118}00118\ \ \ \ \ \textcolor{keyword}{const}\ u16\ pc\ =\ cpu.get\_pc();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00119}00119\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00120}00120\ }
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00121}00121\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00122}00122\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00121}00121\ \ \ \ \ mmu.write(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00122}00122\ \ \ \ \ mmu.write(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00123}00123\ \ \ \ \ cpu.set\_sp(sp\ -\/\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00124}00124\ \ \ \ \ cpu.set\_pc(0x0000);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00125}00125\ }
@@ -137,8 +137,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00133}00133\ \ \ \ \ \}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00134}00134\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00135}00135\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00136}00136\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp);}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00137}00137\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp\ +\ 1);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00136}00136\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(sp);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00137}00137\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(sp\ +\ 1);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00138}00138\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00139}00139\ \ \ \ \ cpu.set\_sp(sp\ +\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00140}00140\ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo));}
@@ -149,8 +149,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00145}00145\ \textcolor{keywordtype}{int}\ op\_ret(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xC9}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00146}00146\ \{}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00147}00147\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00148}00148\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp);}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00149}00149\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(sp\ +\ 1);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00148}00148\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(sp);}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00149}00149\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(sp\ +\ 1);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00150}00150\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00151}00151\ \ \ \ \ cpu.set\_sp(sp\ +\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00152}00152\ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo));}
@@ -160,8 +160,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00156}00156\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00157}00157\ \textcolor{keywordtype}{int}\ op\_jp\_z(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xCA}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00158}00158\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00159}00159\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00160}00160\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00159}00159\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00160}00160\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00161}00161\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ \textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00162}00162\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00163}00163\ \ \ \ \ \textcolor{keywordflow}{if}\ (cpu.get\_flag\_z())}
@@ -175,15 +175,15 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00171}00171\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00172}00172\ \textcolor{keywordtype}{int}\ op\_cb\_prefix(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu\ ,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xCB}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00173}00173\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00174}00174\ \ \ \ \ \textcolor{keyword}{const}\ u8\ cb\_opcode\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00174}00174\ \ \ \ \ \textcolor{keyword}{const}\ u8\ cb\_opcode\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00175}00175\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00176}00176\ \ \ \ \ \textcolor{keywordflow}{return}\ cbInstructionTable[cb\_opcode](cpu,\ mmu);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00177}00177\ \}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00178}00178\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00179}00179\ \textcolor{keywordtype}{int}\ op\_call\_z(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xCC}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00180}00180\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00181}00181\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00182}00182\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00181}00181\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00182}00182\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00183}00183\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ \textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00184}00184\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00185}00185\ \ \ \ \ \textcolor{keywordflow}{if}\ (cpu.get\_flag\_z())}
@@ -191,8 +191,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00187}00187\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u16\ pc\ =\ cpu.get\_pc();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00188}00188\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00189}00189\ }
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00190}00190\ \ \ \ \ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00191}00191\ \ \ \ \ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00190}00190\ \ \ \ \ \ \ \ \ mmu.write(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00191}00191\ \ \ \ \ \ \ \ \ mmu.write(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00192}00192\ \ \ \ \ \ \ \ \ cpu.set\_sp(sp\ -\/\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00193}00193\ \ \ \ \ \ \ \ \ cpu.set\_pc(addr);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00194}00194\ }
@@ -203,15 +203,15 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00199}00199\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00200}00200\ \textcolor{keywordtype}{int}\ op\_call(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xCD}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00201}00201\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00202}00202\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00203}00203\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00202}00202\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00203}00203\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00204}00204\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ \textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00205}00205\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00206}00206\ \ \ \ \ \textcolor{keyword}{const}\ u16\ pc\ =\ cpu.get\_pc();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00207}00207\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00208}00208\ }
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00209}00209\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00210}00210\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00209}00209\ \ \ \ \ mmu.write(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00210}00210\ \ \ \ \ mmu.write(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00211}00211\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00212}00212\ \ \ \ \ cpu.set\_sp(sp\ -\/\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00213}00213\ \ \ \ \ cpu.set\_pc(addr);}
@@ -221,7 +221,7 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00217}00217\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00218}00218\ \textcolor{keywordtype}{int}\ op\_adc\_a\_d8(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xCE}}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00219}00219\ \{}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00220}00220\ \ \ \ \ \textcolor{keyword}{const}\ u8\ d8\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00220}00220\ \ \ \ \ \textcolor{keyword}{const}\ u8\ d8\ =\ mmu.read(cpu.inc\_pc());}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00221}00221\ \ \ \ \ \textcolor{keyword}{const}\ u8\ a\ =\ cpu.reg(ProcessingUnit::Register::A);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00222}00222\ \ \ \ \ \textcolor{keyword}{const}\ u8\ c\ =\ cpu.get\_flag\_c()\ ?\ 1\ :\ 0;}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00223}00223\ \ \ \ \ \textcolor{keyword}{const}\ u16\ result\ =\ a\ +\ d8\ +\ c;}
@@ -240,8 +240,8 @@
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00236}00236\ \ \ \ \ \textcolor{keyword}{const}\ u16\ pc\ =\ cpu.get\_pc();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00237}00237\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00238}00238\ }
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00239}00239\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
-\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00240}00240\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00239}00239\ \ \ \ \ mmu.write(sp\ -\/\ 1,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ >>\ 8));}
+\DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00240}00240\ \ \ \ \ mmu.write(sp\ -\/\ 2,\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pc\ \&\ 0xFF));}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00241}00241\ \ \ \ \ cpu.set\_sp(sp\ -\/\ 2);}
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00242}00242\ }
 \DoxyCodeLine{\Hypertarget{op__0C_8cpp_source_l00243}00243\ \ \ \ \ cpu.set\_pc(0x0008);}

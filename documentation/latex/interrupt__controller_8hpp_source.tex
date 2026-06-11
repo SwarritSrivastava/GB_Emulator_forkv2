@@ -1,0 +1,63 @@
+\doxysection{interrupt\+\_\+controller.\+hpp}
+\hypertarget{interrupt__controller_8hpp_source}{}\label{interrupt__controller_8hpp_source}\index{include/interrupt\_controller.hpp@{include/interrupt\_controller.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00004}00004\ \textcolor{keyword}{enum\ class}\ InterruptType\ :\ u8\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00005}00005\ \ \ \ \ VBlank\ \ \ =\ 0x01,}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00006}00006\ \ \ \ \ LCDStat\ \ =\ 0x02,}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00007}00007\ \ \ \ \ \doxymbox{\hyperlink{classTimer}{Timer}}\ \ \ \ =\ 0x04,}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00008}00008\ \ \ \ \ Serial\ \ \ =\ 0x08,}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00009}00009\ \ \ \ \ Joypad\ \ \ =\ 0x10}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00010}00010\ \};}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00012}\doxymbox{\hyperlink{classInterruptController}{00012}}\ \textcolor{keyword}{class\ }InterruptController\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00013}00013\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00014}00014\ \ \ \ \ InterruptController()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00015}00015\ \ \ \ \ \string~InterruptController()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00017}00017\ \ \ \ \ u8\ read(u16\ address)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ ==\ 0xFF0F)\ \textcolor{keywordflow}{return}\ interrupt\_flag\ |\ 0xE0;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00019}00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ ==\ 0xFFFF)\ \textcolor{keywordflow}{return}\ interrupt\_enable;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00020}00020\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00021}00021\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00023}00023\ \ \ \ \ \textcolor{keywordtype}{void}\ write(u16\ address,\ u8\ value)\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00024}00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ ==\ 0xFF0F)\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00025}00025\ \ \ \ \ \ \ \ \ \ \ \ \ interrupt\_flag\ =\ value\ |\ 0xE0;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00026}00026\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (address\ ==\ 0xFFFF)\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ interrupt\_enable\ =\ value;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00028}00028\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00029}00029\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00030}00030\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00031}00031\ \ \ \ \ \textcolor{keywordtype}{void}\ request\_interrupt(InterruptType\ type)\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00032}00032\ \ \ \ \ \ \ \ \ interrupt\_flag\ |=\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(type);}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00033}00033\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00035}00035\ \ \ \ \ \textcolor{keywordtype}{void}\ clear\_interrupt\_flag(InterruptType\ type)\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00036}00036\ \ \ \ \ \ \ \ \ interrupt\_flag\ \&=\ \string~static\_cast<u8>(type);}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00037}00037\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00038}00038\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00039}00039\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_pending\_interrupts()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (interrupt\_flag\ \&\ interrupt\_enable\ \&\ 0x1F)\ !=\ 0;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00041}00041\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00042}00042\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00043}00043\ \ \ \ \ u8\ get\_if()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ interrupt\_flag;\ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00044}00044\ \ \ \ \ u8\ get\_ie()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ interrupt\_enable;\ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_if(u8\ value)\ \{\ interrupt\_flag\ =\ value\ |\ 0xE0;\ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_ie(u8\ value)\ \{\ interrupt\_enable\ =\ value;\ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00049}00049\ \ \ \ \ \textcolor{keywordtype}{void}\ reset()\ \{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00050}00050\ \ \ \ \ \ \ \ \ interrupt\_flag\ =\ 0xE1;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00051}00051\ \ \ \ \ \ \ \ \ interrupt\_enable\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00052}00052\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00054}00054\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00055}00055\ \ \ \ \ u8\ interrupt\_flag\ =\ 0xE1;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00056}00056\ \ \ \ \ u8\ interrupt\_enable\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00057}00057\ \};}
+
+\end{DoxyCode}

@@ -79,7 +79,7 @@
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00075}00075\ }
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00076}00076\ \textcolor{keywordtype}{int}\ op\_bit\_0\_hl(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xCB46}}
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00077}00077\ \{}
-\DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00078}00078\ \ \ \ \ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.get\_hl());}
+\DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00078}00078\ \ \ \ \ u8\ value\ =\ mmu.read(cpu.get\_hl());}
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00079}00079\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\ =\ (value\ \&\ 0x01)\ !=\ 0;}
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00080}00080\ }
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00081}00081\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ !set);}
@@ -168,7 +168,7 @@
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00164}00164\ }
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00165}00165\ \textcolor{keywordtype}{int}\ op\_bit\_1\_hl(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xCB4E}}
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00166}00166\ \{}
-\DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00167}00167\ \ \ \ \ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.get\_hl());}
+\DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00167}00167\ \ \ \ \ u8\ value\ =\ mmu.read(cpu.get\_hl());}
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00168}00168\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\ =\ (value\ \&\ 0x02)\ !=\ 0;}
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00169}00169\ }
 \DoxyCodeLine{\Hypertarget{cb__op__04_8cpp_source_l00170}00170\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ !set);}

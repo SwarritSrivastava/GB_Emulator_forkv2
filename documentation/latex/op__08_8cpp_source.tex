@@ -116,7 +116,7 @@
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00112}00112\ \{}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00113}00113\ \ \ \ \ \textcolor{keyword}{const}\ u8\ a\ =\ cpu.reg(ProcessingUnit::Register::A);}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00114}00114\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
-\DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00115}00115\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(hl);}
+\DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00115}00115\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.read(hl);}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00116}00116\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sum\ =\ a\ +\ value;}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00117}00117\ }
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00118}00118\ \ \ \ \ \textcolor{keyword}{const}\ u8\ result\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(sum\ \&\ 0xFF);}
@@ -258,7 +258,7 @@
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00254}00254\ \{}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00255}00255\ \ \ \ \ \textcolor{keyword}{const}\ u8\ a\ =\ cpu.reg(ProcessingUnit::Register::A);}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00256}00256\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
-\DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00257}00257\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(hl);}
+\DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00257}00257\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.read(hl);}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00258}00258\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ carry\ =\ cpu.get\_flag\_c();}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00259}00259\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sum\ =\ a\ +\ value\ +\ carry;}
 \DoxyCodeLine{\Hypertarget{op__08_8cpp_source_l00260}00260\ }

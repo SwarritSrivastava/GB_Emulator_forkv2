@@ -95,41 +95,83 @@ $(function(){initNavTree('cartridge_8hpp_source.html','',''); });
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="structrom__header.html">    6</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{            <span class="comment">// Memory Map</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>  u8 entry[4];              <span class="comment">// 0x0100-0x0103</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>  u8 nintendo_logo[0x30];   <span class="comment">// 0x0104-0x0133</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">/*-----------------------------------------*/</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>  <span class="keywordtype">char</span> title[11];           <span class="comment">// 0x0134-0x013E</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>  u8 manufacturer_code[4];  <span class="comment">// 0x013F-0x0142 - part of title (in older versions)</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  u8 cgb_flag;              <span class="comment">// 0x0143 - part of title</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/*-------------------------------------------</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"># 0134-0143 — Title</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">These bytes contain the title of the game in upper case ASCII. If the title is less than 16 characters long, the remaining bytes should be padded with $00s.</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">Parts of this area actually have a different meaning on later cartridges, reducing the actual title size to 15 ($0134–$0142) or 11 ($0134–$013E) characters; see below.</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"># 013F-0142 — Manufacturer code</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">In older cartridges these bytes were part of the Title (see above). In newer cartridges they contain a 4-character manufacturer code (in uppercase ASCII). The purpose of the manufacturer code is unknown.</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">-------------------------------------------*/</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  u16 new_lic_code;         <span class="comment">// 0x0144-0x0145</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  u8 sgb_flag;              <span class="comment">// 0x0146</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  u8 type;                  <span class="comment">// 0x0147</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  u8 rom_size;              <span class="comment">// 0x0148</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  u8 ram_size;              <span class="comment">// 0x0149</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  u8 dest_code;             <span class="comment">// 0x014A</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  u8 old_lic_code;          <span class="comment">// 0x014B</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  u8 version;               <span class="comment">// 0x014C</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  u8 checksum;              <span class="comment">// 0x014D</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  u16 global_checksum;      <span class="comment">// 0x014E-0x014F</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>} <a class="code hl_struct" href="structrom__header.html">rom_header</a>;</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
+<div class="foldopen" id="foldopen00007" data-start="{" data-end="};">
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="structrom__header.html">    7</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{            <span class="comment">// Memory Map</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>  u8 entry[4];              <span class="comment">// 0x0100-0x0103</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>  u8 nintendo_logo[0x30];   <span class="comment">// 0x0104-0x0133</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>  <span class="keywordtype">char</span> title[16];           <span class="comment">// 0x0134-0x0143</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>  u16 new_lic_code;         <span class="comment">// 0x0144-0x0145</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  u8 sgb_flag;              <span class="comment">// 0x0146</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>  u8 type;                  <span class="comment">// 0x0147</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  u8 rom_size;              <span class="comment">// 0x0148</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  u8 ram_size;              <span class="comment">// 0x0149</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  u8 dest_code;             <span class="comment">// 0x014A</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  u8 old_lic_code;          <span class="comment">// 0x014B</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  u8 version;               <span class="comment">// 0x014C</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  u8 checksum;              <span class="comment">// 0x014D</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  u16 global_checksum;      <span class="comment">// 0x014E-0x014F</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>} <a class="code hl_struct" href="structrom__header.html">rom_header</a>;</div>
 </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>std::vector&lt;u8&gt; cart_load(<span class="keywordtype">char</span> *cart);</div>
-<div class="ttc" id="astructrom__header_html"><div class="ttname"><a href="structrom__header.html">rom_header</a></div><div class="ttdef"><b>Definition</b> <a href="#l00006">cartridge.hpp:6</a></div></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="foldopen" id="foldopen00023" data-start="{" data-end="};">
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="classCartridge.html">   23</a></span><span class="keyword">class </span>Cartridge {</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    Cartridge();</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keyword">explicit</span> Cartridge(<span class="keyword">const</span> std::vector&lt;u8&gt;&amp; rom_data);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    ~Cartridge() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordtype">bool</span> load_rom(<span class="keyword">const</span> std::vector&lt;u8&gt;&amp; rom_data);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    u8 read(u16 address) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordtype">void</span> write(u16 address, u8 value);</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordtype">void</span> reset();</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    std::string get_title()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> title; }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    u8 get_mbc_type()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> header.type; }</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    u8 get_rom_size_code()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> header.rom_size; }</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    u8 get_ram_size_code()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> header.ram_size; }</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keyword">const</span> std::vector&lt;u8&gt;&amp; get_rom_bytes()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> rom; }</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    u8 get_current_rom_bank()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> current_rom_bank; }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">void</span> set_current_rom_bank(u8 bank) { current_rom_bank = bank; }</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keyword">const</span> std::vector&lt;u8&gt;&amp; get_ram_bytes()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> ram; }</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    std::vector&lt;u8&gt;&amp; get_ram_bytes_mutable() { <span class="keywordflow">return</span> ram; }</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">void</span> set_ram_bytes(<span class="keyword">const</span> std::vector&lt;u8&gt;&amp; ram_data) { ram = ram_data; }</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordtype">bool</span> is_ram_enabled()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> ram_enabled; }</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordtype">void</span> set_ram_enabled(<span class="keywordtype">bool</span> enabled) { ram_enabled = enabled; }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">enum class</span> MBCType {</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        None,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        MBC1,</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        MBC3,</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        MBC5</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    };</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    MBCType mbc_type = MBCType::None;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    std::vector&lt;u8&gt; rom;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    std::vector&lt;u8&gt; ram;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <a class="code hl_struct" href="structrom__header.html">rom_header</a> header{};</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    std::string title;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    u8 current_rom_bank = 1;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    u8 current_ram_bank = 0;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordtype">bool</span> ram_enabled = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    u8 banking_mode = 0;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    u8 rom_bank_low = 1;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    u8 rom_bank_high = 0;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>};</div>
+</div>
+<div class="ttc" id="astructrom__header_html"><div class="ttname"><a href="structrom__header.html">rom_header</a></div><div class="ttdef"><b>Definition</b> <a href="#l00007">cartridge.hpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->
+<!-- HTML footer for doxygen 1.16.1-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
@@ -137,5 +179,32 @@ $(function(){initNavTree('cartridge_8hpp_source.html','',''); });
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
   </ul>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark'
+  });
+  window.addEventListener('load', function() {
+    var fragments = document.querySelectorAll('.fragment');
+    fragments.forEach(function(fragment) {
+      var lines = fragment.querySelectorAll('.line');
+      if (lines.length > 0) {
+        var firstLineText = lines[0].textContent.replace(/\u00A0/g, ' ').trim();
+        if (firstLineText.startsWith('graph') || firstLineText.startsWith('sequenceDiagram') || firstLineText.startsWith('stateDiagram') || firstLineText.startsWith('classDiagram')) {
+          var mermaidText = '';
+          lines.forEach(function(line) {
+            mermaidText += line.textContent.replace(/\u00A0/g, ' ') + '\n';
+          });
+          var mermaidDiv = document.createElement('div');
+          mermaidDiv.className = 'mermaid';
+          mermaidDiv.innerText = mermaidText;
+          fragment.parentNode.replaceChild(mermaidDiv, fragment);
+        }
+      }
+    });
+    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+  });
+</script>
 </body>
 </html>

@@ -91,7 +91,7 @@
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00087}00087\ }
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00088}00088\ \textcolor{keywordtype}{int}\ op\_and\_hl(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xA6}}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00089}00089\ \{}
-\DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00090}00090\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.get\_hl());}
+\DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00090}00090\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.read(cpu.get\_hl());}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00091}00091\ \ \ \ \ \textcolor{keyword}{const}\ u8\ result\ =\ cpu.reg(ProcessingUnit::Register::A)\ \&\ value;}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00092}00092\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ result;}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00093}00093\ }
@@ -196,7 +196,7 @@
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00192}00192\ }
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00193}00193\ \textcolor{keywordtype}{int}\ op\_xor\_hl(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0xAE}}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00194}00194\ \{}
-\DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00195}00195\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.get\_hl());}
+\DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00195}00195\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.read(cpu.get\_hl());}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00196}00196\ \ \ \ \ \textcolor{keyword}{const}\ u8\ result\ =\ cpu.reg(ProcessingUnit::Register::A)\ \string^\ value;}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00197}00197\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ result;}
 \DoxyCodeLine{\Hypertarget{op__0A_8cpp_source_l00198}00198\ }

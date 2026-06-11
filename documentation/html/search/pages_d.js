@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['setup_0',['Extended Automation Setup',['../index.html#autotoc_md8',1,'']]],
-  ['structure_1',['Current Code Structure',['../index.html#autotoc_md2',1,'']]]
+  ['renderer_0',['Pixel Processing Unit (PPU) &amp;amp; SFML 3.0 Renderer',['../index.html#autotoc_md5',1,'']]]
 ];

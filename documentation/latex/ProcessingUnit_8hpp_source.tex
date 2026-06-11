@@ -47,55 +47,61 @@
 \DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00043}00043\ }
 \DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00044}00044\ \ \ \ \ \textcolor{keywordtype}{int}\ step(\doxymbox{\hyperlink{classMMU}{MMU}}\ \&mmu);}
 \DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00045}00045\ }
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{void}\ setHalt(\textcolor{keywordtype}{bool}\ newValue);}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00047}00047\ }
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00048}00048\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ isHalt()\ \textcolor{keyword}{const};}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00049}00049\ }
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00050}00050\ \ \ \ \ \textcolor{keywordtype}{void}\ setIME(\textcolor{keywordtype}{bool}\ newValue);}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00051}00051\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ getIME()\ \textcolor{keyword}{const};}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00052}00052\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00053}00053\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ Register\ Identifiers\ \ \ \ \ \ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00054}00054\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00055}00055\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Register\ \{}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00056}00056\ \ \ \ \ \ \ \ \ B,\ C,\ D,\ E,\ H,\ L,\ A,\ F}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00057}00057\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{void}\ check\_interrupts(\doxymbox{\hyperlink{classMMU}{MMU}}\ \&mmu);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{void}\ execute\_interrupt(\doxymbox{\hyperlink{classMMU}{MMU}}\ \&mmu,\ u16\ address,\ \textcolor{keywordtype}{int}\ bit);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00049}00049\ \ \ \ \ \textcolor{keywordtype}{int}\ last\_instr\_cycles\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00050}00050\ \ \ \ \ u16\ last\_pc\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00052}00052\ \ \ \ \ \textcolor{keywordtype}{void}\ setHalt(\textcolor{keywordtype}{bool}\ newValue);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00054}00054\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ isHalt()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00055}00055\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00056}00056\ \ \ \ \ \textcolor{keywordtype}{void}\ setIME(\textcolor{keywordtype}{bool}\ newValue);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00057}00057\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ getIME()\ \textcolor{keyword}{const};}
 \DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00058}00058\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00059}00059\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ Flags\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00059}00059\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ Register\ Identifiers\ \ \ \ \ \ */}}
 \DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00060}00060\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00061}00061\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Flag\ \{}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00062}00062\ \ \ \ \ \ \ \ \ Z\ =\ 7,}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00063}00063\ \ \ \ \ \ \ \ \ N\ =\ 6,}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00064}00064\ \ \ \ \ \ \ \ \ H\ =\ 5,}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00065}00065\ \ \ \ \ \ \ \ \ C\ =\ 4}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00066}00066\ \ \ \ \ \};}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00067}00067\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00068}00068\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ Register\ Access\ \ \ \ \ \ \ \ \ \ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00069}00069\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00070}00070\ \ \ \ \ u8\&\ reg(Register\ r);}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00071}00071\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ u8\&\ reg(Register\ r)\ \textcolor{keyword}{const};}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00072}00072\ }
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00073}00073\ \ \ \ \ u16\ inc\_pc();}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00074}00074\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00075}00075\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ FLAGS\ Access\ \ \ \ \ \ \ \ \ \ \ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00076}00076\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00077}00077\ \ \ \ \ \textcolor{keywordtype}{void}\ clearFlags()\ \{}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00078}00078\ \ \ \ \ \ \ \ \ F\ =\ 0;}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00079}00079\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00080}00080\ \ \ \ \ \textcolor{keywordtype}{void}\ normalizeFlags()}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00081}00081\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00082}00082\ \ \ \ \ \ \ \ \ F\ =\ 0xF0;}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00083}00083\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00084}00084\ \ \ \ \ \textcolor{keywordtype}{void}\ setFlag(Flag\ flag,\ \textcolor{keywordtype}{bool}\ value)}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00085}00085\ \ \ \ \ \{}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u8\ mask\ =\ 1\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(flag);}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00087}00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (value)\ F\ |=\ mask;\ \ \ \textcolor{comment}{//\ set\ bit}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00088}00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ F\ \&=\ \string~mask;\ \ \textcolor{comment}{//\ clear\ bit}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00061}00061\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Register\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00062}00062\ \ \ \ \ \ \ \ \ B,\ C,\ D,\ E,\ H,\ L,\ A,\ F}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00063}00063\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00064}00064\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00065}00065\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ \ \ \ Flags\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00066}00066\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00067}00067\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Flag\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00068}00068\ \ \ \ \ \ \ \ \ Z\ =\ 7,}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00069}00069\ \ \ \ \ \ \ \ \ N\ =\ 6,}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00070}00070\ \ \ \ \ \ \ \ \ H\ =\ 5,}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00071}00071\ \ \ \ \ \ \ \ \ C\ =\ 4}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00072}00072\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00073}00073\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00074}00074\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ Register\ Access\ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00075}00075\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00076}00076\ \ \ \ \ u8\&\ reg(Register\ r);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00077}00077\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ u8\&\ reg(Register\ r)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00078}00078\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00079}00079\ \ \ \ \ u16\ inc\_pc();}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00080}00080\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00081}00081\ \textcolor{comment}{/*\ \ \ \ \ \ \ \ \ \ \ FLAGS\ Access\ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00082}00082\ \textcolor{comment}{/*\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ */}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00083}00083\ \ \ \ \ \textcolor{keywordtype}{void}\ clearFlags()\ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00084}00084\ \ \ \ \ \ \ \ \ F\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00085}00085\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00086}00086\ \ \ \ \ \textcolor{keywordtype}{void}\ normalizeFlags()}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00087}00087\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00088}00088\ \ \ \ \ \ \ \ \ F\ =\ 0xF0;}
 \DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00089}00089\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00090}00090\ }
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00091}00091\ \ \ \ \ \textcolor{keywordtype}{bool}\ stop\{\};}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00092}00092\ }
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00093}00093\ \ \ \ \ \textcolor{keywordtype}{void}\ setStop(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ value)\ \{\ stop\ =\ value;\ \}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00094}00094\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ isStop()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ stop;\ \}}
-\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00095}00095\ \};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00090}00090\ \ \ \ \ \textcolor{keywordtype}{void}\ setFlag(Flag\ flag,\ \textcolor{keywordtype}{bool}\ value)}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00091}00091\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u8\ mask\ =\ 1\ <<\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(flag);}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00093}00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (value)\ F\ |=\ mask;\ \ \ \textcolor{comment}{//\ set\ bit}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00094}00094\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ F\ \&=\ \string~mask;\ \ \textcolor{comment}{//\ clear\ bit}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00095}00095\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00097}00097\ \ \ \ \ \textcolor{keywordtype}{bool}\ stop\{\};}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00099}00099\ \ \ \ \ \textcolor{keywordtype}{void}\ setStop(\textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ value)\ \{\ stop\ =\ value;\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00100}00100\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ isStop()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ stop;\ \}}
+\DoxyCodeLine{\Hypertarget{ProcessingUnit_8hpp_source_l00101}00101\ \};}
 
 \end{DoxyCode}

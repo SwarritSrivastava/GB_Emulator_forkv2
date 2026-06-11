@@ -110,7 +110,7 @@
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00106}00106\ \textcolor{keywordtype}{int}\ op\_sub\_hl(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\ \&cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\ \&mmu)\ \textcolor{comment}{//\ 0x96}}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00107}00107\ \{}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00108}00108\ \ \ \ \ \textcolor{keyword}{const}\ u8\ a\ =\ cpu.reg(ProcessingUnit::Register::A);}
-\DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00109}00109\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.get\_hl());}
+\DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00109}00109\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.read(cpu.get\_hl());}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00110}00110\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ result\ =\ a\ -\/\ value;}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00111}00111\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ half\_carry\ =\ (a\ \&\ 0x0F)\ -\/\ (value\ \&\ 0x0F);}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00112}00112\ }
@@ -243,7 +243,7 @@
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00239}00239\ \textcolor{keywordtype}{int}\ op\_sbc\_a\_hl(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\ \&cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\ \&mmu)\ \textcolor{comment}{//\ 0x9E}}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00240}00240\ \{}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00241}00241\ \ \ \ \ \textcolor{keyword}{const}\ u8\ a\ =\ cpu.reg(ProcessingUnit::Register::A);}
-\DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00242}00242\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.get\_hl());}
+\DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00242}00242\ \ \ \ \ \textcolor{keyword}{const}\ u8\ value\ =\ mmu.read(cpu.get\_hl());}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00243}00243\ \ \ \ \ \textcolor{keyword}{const}\ u8\ carry\ =\ cpu.get\_flag\_c()\ ?\ 1\ :\ 0;}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00244}00244\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ result\ =\ a\ -\/\ value\ -\/\ carry;}
 \DoxyCodeLine{\Hypertarget{op__09_8cpp_source_l00245}00245\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ half\_carry\ =\ (a\ \&\ 0x0F)\ -\/\ (value\ \&\ 0x0F)\ -\/\ carry;}

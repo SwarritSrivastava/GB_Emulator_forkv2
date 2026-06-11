@@ -1,0 +1,907 @@
+\doxysection{ppu.\+cpp}
+\hypertarget{ppu_8cpp_source}{}\label{ppu_8cpp_source}\index{src/core/ppu.cpp@{src/core/ppu.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}../../include/ppu.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}../../include/mmu.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}../../include/cartridge.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <filesystem>}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ <iomanip>}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00007}00007\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00011}00011\ \textcolor{keyword}{namespace\ }\{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00012}00012\ \textcolor{keyword}{constexpr}\ u32\ screen\_width\ =\ 160;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00013}00013\ \textcolor{keyword}{constexpr}\ u32\ screen\_height\ =\ 144;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00014}00014\ \textcolor{keyword}{constexpr}\ u32\ ui\_width\ =\ 600;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00015}00015\ \textcolor{keyword}{constexpr}\ u32\ ui\_height\ =\ 420;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00016}00016\ \textcolor{keyword}{constexpr}\ u32\ window\_width\ =\ 1600;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00017}00017\ \textcolor{keyword}{constexpr}\ u32\ window\_height\ =\ 900;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00018}00018\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ opcode\_log\_size\ =\ 28;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00019}00019\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{float}\ status\_display\_seconds\ =\ 2.5f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00020}00020\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ rom\_bytes\_per\_row\ =\ 8;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00021}00021\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ rom\_rows\_visible\ =\ 8;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00023}00023\ std::string\ mbcNameFromType(u8\ type)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00024}00024\ \ \ \ \ \textcolor{keywordflow}{switch}\ (type)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00025}00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x00:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ROM\ ONLY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00026}00026\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x01:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC1"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00027}00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x02:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC1+RAM"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00028}00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x03:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC1+RAM+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00029}00029\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x05:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC2"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00030}00030\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x06:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC2+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00031}00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x08:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ROM+RAM"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00032}00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x09:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}ROM+RAM+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00033}00033\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x0F:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC3+TIMER+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00034}00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x10:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC3+TIMER+RAM+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00035}00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x11:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC3"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00036}00036\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x12:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC3+RAM"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x13:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC3+RAM+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00038}00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x19:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC5"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00039}00039\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x1A:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC5+RAM"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x1B:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC5+RAM+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00041}00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x1C:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC5+RUMBLE"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00042}00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x1D:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC5+RUMBLE+RAM"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00043}00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0x1E:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}MBC5+RUMBLE+RAM+BATTERY"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00044}00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Unknown"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00045}00045\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00046}00046\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00047}00047\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00049}00049\ PPU::PPU()}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00050}00050\ \ \ \ \ :\ dummy\_ic(std::make\_unique<\doxymbox{\hyperlink{classInterruptController}{InterruptController}}>())}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00051}00051\ \ \ \ \ ,\ ic(*dummy\_ic)}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00052}00052\ \ \ \ \ ,\ screenSprite(screenTexture)}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00053}00053\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00054}00054\ \ \ \ \ framebuffer.fill(0xFFFFFFFF);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00055}00055\ \ \ \ \ lcdc\ =\ 0x91;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00056}00056\ \ \ \ \ stat\ =\ 0x85;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00057}00057\ \ \ \ \ bgp\ =\ 0xFC;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00058}00058\ \ \ \ \ obp0\ =\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00059}00059\ \ \ \ \ obp1\ =\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00060}00060\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00061}00061\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00062}00062\ PPU::PPU(\doxymbox{\hyperlink{classInterruptController}{InterruptController}}\&\ interrupt\_controller)}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00063}00063\ \ \ \ \ :\ ic(interrupt\_controller)}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00064}00064\ \ \ \ \ ,\ screenSprite(screenTexture)}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00065}00065\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00066}00066\ \ \ \ \ framebuffer.fill(0xFFFFFFFF);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00067}00067\ \ \ \ \ lcdc\ =\ 0x91;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00068}00068\ \ \ \ \ stat\ =\ 0x85;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00069}00069\ \ \ \ \ bgp\ =\ 0xFC;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00070}00070\ \ \ \ \ obp0\ =\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00071}00071\ \ \ \ \ obp1\ =\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00072}00072\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00073}00073\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00074}00074\ \textcolor{keywordtype}{void}\ PPU::step(\textcolor{keywordtype}{int}\ cycles)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00075}00075\ \ \ \ \ \textcolor{keywordflow}{if}\ (!(lcdc\ \&\ 0x80))\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00076}00076\ \ \ \ \ \ \ \ \ ly\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00077}00077\ \ \ \ \ \ \ \ \ window\_line\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00078}00078\ \ \ \ \ \ \ \ \ mode\_clock\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00079}00079\ \ \ \ \ \ \ \ \ set\_mode(Mode::HBlank);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00080}00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00081}00081\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00083}00083\ \ \ \ \ mode\_clock\ +=\ cycles;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00085}00085\ \ \ \ \ \textcolor{keywordflow}{switch}\ (get\_mode())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Mode::OAMSearch:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00087}00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\_clock\ >=\ 80)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00088}00088\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mode\_clock\ -\/=\ 80;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00089}00089\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_mode(Mode::PixelTransfer);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00090}00090\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00091}00091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Mode::PixelTransfer:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\_clock\ >=\ 172)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mode\_clock\ -\/=\ 172;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00095}00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_mode(Mode::HBlank);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00096}00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ render\_scanline();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00097}00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ render\_sprites();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00098}00098\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00099}00099\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00100}00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Mode::HBlank:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\_clock\ >=\ 204)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mode\_clock\ -\/=\ 204;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00103}00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ly++;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00104}00104\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ly\ ==\ 144)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00105}00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_mode(Mode::VBlank);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ frame\_ready\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00108}00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_mode(Mode::OAMSearch);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00109}00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ update\_stat();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00113}00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ Mode::VBlank:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00114}00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\_clock\ >=\ 456)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ mode\_clock\ -\/=\ 456;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00116}00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ly++;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00117}00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ly\ >\ 153)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00118}00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ly\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00119}00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window\_line\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ set\_mode(Mode::OAMSearch);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00121}00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00122}00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ update\_stat();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00125}00125\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00126}00126\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00127}00127\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00128}00128\ u8\ PPU::read(u16\ address)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00129}00129\ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ >=\ 0x8000\ \&\&\ address\ <=\ 0x9FFF)\ \textcolor{keywordflow}{return}\ vram[address\ -\/\ 0x8000];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00130}00130\ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ >=\ 0xFE00\ \&\&\ address\ <=\ 0xFE9F)\ \textcolor{keywordflow}{return}\ oam[address\ -\/\ 0xFE00];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00131}00131\ \ \ \ \ \textcolor{keywordflow}{switch}\ (address)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00132}00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF40:\ \textcolor{keywordflow}{return}\ lcdc;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00133}00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF41:\ \textcolor{keywordflow}{return}\ stat;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00134}00134\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF42:\ \textcolor{keywordflow}{return}\ scy;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00135}00135\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF43:\ \textcolor{keywordflow}{return}\ scx;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00136}00136\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF44:\ \textcolor{keywordflow}{return}\ ly;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00137}00137\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF45:\ \textcolor{keywordflow}{return}\ lyc;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00138}00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF46:\ \textcolor{keywordflow}{return}\ dma;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00139}00139\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF47:\ \textcolor{keywordflow}{return}\ bgp;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00140}00140\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF48:\ \textcolor{keywordflow}{return}\ obp0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00141}00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF49:\ \textcolor{keywordflow}{return}\ obp1;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00142}00142\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF4A:\ \textcolor{keywordflow}{return}\ wy;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00143}00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF4B:\ \textcolor{keywordflow}{return}\ wx;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00144}00144\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00145}00145\ \ \ \ \ \textcolor{keywordflow}{return}\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00146}00146\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00147}00147\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00148}00148\ \textcolor{keywordtype}{void}\ PPU::write(u16\ address,\ u8\ value)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00149}00149\ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ >=\ 0x8000\ \&\&\ address\ <=\ 0x9FFF)\ \{\ vram[address\ -\/\ 0x8000]\ =\ value;\ \textcolor{keywordflow}{return};\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00150}00150\ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ >=\ 0xFE00\ \&\&\ address\ <=\ 0xFE9F)\ \{\ oam[address\ -\/\ 0xFE00]\ =\ value;\ \textcolor{keywordflow}{return};\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00151}00151\ \ \ \ \ \textcolor{keywordflow}{switch}\ (address)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00152}00152\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF40:\ lcdc\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00153}00153\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF41:\ stat\ =\ (stat\ \&\ 0x07)\ |\ (value\ \&\ 0xF8);\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00154}00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF42:\ scy\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00155}00155\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF43:\ scx\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00156}00156\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF44:\ ly\ =\ 0;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00157}00157\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF45:\ lyc\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00158}00158\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF46:\ dma\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00159}00159\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF47:\ bgp\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00160}00160\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF48:\ obp0\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00161}00161\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF49:\ obp1\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00162}00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF4A:\ wy\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00163}00163\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF4B:\ wx\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00164}00164\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00165}00165\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00166}00166\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00167}00167\ \textcolor{keywordtype}{void}\ PPU::set\_mode(Mode\ mode)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00168}00168\ \ \ \ \ stat\ =\ (stat\ \&\ \string~0x03)\ |\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(mode);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00169}00169\ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\ ==\ Mode::VBlank)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00170}00170\ \ \ \ \ \ \ \ \ ic.request\_interrupt(InterruptType::VBlank);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00171}00171\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00172}00172\ \ \ \ \ \textcolor{keywordtype}{bool}\ interrupt\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00173}00173\ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\ ==\ Mode::HBlank\ \&\&\ (stat\ \&\ 0x08))\ interrupt\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00174}00174\ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\ ==\ Mode::VBlank\ \&\&\ (stat\ \&\ 0x10))\ interrupt\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00175}00175\ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\ ==\ Mode::OAMSearch\ \&\&\ (stat\ \&\ 0x20))\ interrupt\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00176}00176\ \ \ \ \ \textcolor{keywordflow}{if}\ (interrupt)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00177}00177\ \ \ \ \ \ \ \ \ ic.request\_interrupt(InterruptType::LCDStat);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00178}00178\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00179}00179\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00180}00180\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00181}00181\ \textcolor{keywordtype}{void}\ PPU::update\_stat()\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00182}00182\ \ \ \ \ \textcolor{keywordflow}{if}\ (ly\ ==\ lyc)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00183}00183\ \ \ \ \ \ \ \ \ stat\ |=\ 0x04;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00184}00184\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (stat\ \&\ 0x40)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00185}00185\ \ \ \ \ \ \ \ \ \ \ \ \ ic.request\_interrupt(InterruptType::LCDStat);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00186}00186\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00187}00187\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00188}00188\ \ \ \ \ \ \ \ \ stat\ \&=\ \string~0x04;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00189}00189\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00190}00190\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00191}00191\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00192}00192\ \textcolor{keywordtype}{void}\ PPU::render\_scanline()\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00193}00193\ \ \ \ \ \textcolor{keywordtype}{bool}\ bg\_enabled\ =\ (lcdc\ \&\ 0x01);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00194}00194\ \ \ \ \ \textcolor{keywordtype}{bool}\ window\_enabled\ =\ (lcdc\ \&\ 0x20)\ \&\&\ (ly\ >=\ wy);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00195}00195\ \ \ \ \ \textcolor{keywordflow}{if}\ (!bg\_enabled\ \&\&\ !window\_enabled)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00196}00196\ \ \ \ \ u16\ tile\_data\ =\ (lcdc\ \&\ 0x10)\ ?\ 0x8000\ :\ 0x8800;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00197}00197\ \ \ \ \ \textcolor{keywordtype}{bool}\ unsigned\_addressing\ =\ (lcdc\ \&\ 0x10);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00198}00198\ \ \ \ \ u16\ bg\_map\ =\ (lcdc\ \&\ 0x08)\ ?\ 0x9C00\ :\ 0x9800;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00199}00199\ \ \ \ \ u16\ win\_map\ =\ (lcdc\ \&\ 0x40)\ ?\ 0x9C00\ :\ 0x9800;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00200}00200\ \ \ \ \ \textcolor{keywordtype}{bool}\ window\_drawn\_this\_line\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00201}00201\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ pixel\ =\ 0;\ pixel\ <\ 160;\ pixel++)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00202}00202\ \ \ \ \ \ \ \ \ u16\ current\_map;\ u8\ x\_pos,\ y\_pos;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00203}00203\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_window\ =\ window\_enabled\ \&\&\ (pixel\ +\ 7\ >=\ wx);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00204}00204\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_window)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00205}00205\ \ \ \ \ \ \ \ \ \ \ \ \ current\_map\ =\ win\_map;\ x\_pos\ =\ pixel\ +\ 7\ -\/\ wx;\ y\_pos\ =\ window\_line\_counter;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00206}00206\ \ \ \ \ \ \ \ \ \ \ \ \ window\_drawn\_this\_line\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00207}00207\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (bg\_enabled)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00208}00208\ \ \ \ \ \ \ \ \ \ \ \ \ current\_map\ =\ bg\_map;\ x\_pos\ =\ pixel\ +\ scx;\ y\_pos\ =\ ly\ +\ scy;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00209}00209\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00210}00210\ \ \ \ \ \ \ \ \ u16\ tile\_row\ =\ (u16)(y\_pos\ /\ 8)\ *\ 32;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00211}00211\ \ \ \ \ \ \ \ \ u16\ tile\_col\ =\ (x\_pos\ /\ 8);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00212}00212\ \ \ \ \ \ \ \ \ u16\ tile\_address\ =\ current\_map\ +\ tile\_row\ +\ tile\_col;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00213}00213\ \ \ \ \ \ \ \ \ int16\_t\ tile\_num\ =\ unsigned\_addressing\ ?\ vram[tile\_address\ -\/\ 0x8000]\ :\ (int8\_t)vram[tile\_address\ -\/\ 0x8000];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00214}00214\ \ \ \ \ \ \ \ \ u16\ tile\_location\ =\ tile\_data\ +\ (unsigned\_addressing\ ?\ (tile\_num\ *\ 16)\ :\ ((tile\_num\ +\ 128)\ *\ 16));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00215}00215\ \ \ \ \ \ \ \ \ u8\ line\ =\ (y\_pos\ \%\ 8)\ *\ 2;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00216}00216\ \ \ \ \ \ \ \ \ u8\ d1\ =\ vram[tile\_location\ +\ line\ -\/\ 0x8000],\ d2\ =\ vram[tile\_location\ +\ line\ +\ 1\ -\/\ 0x8000];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00217}00217\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bit\ =\ 7\ -\/\ (x\_pos\ \%\ 8);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00218}00218\ \ \ \ \ \ \ \ \ u8\ color\_id\ =\ (BIT(d2,\ bit)\ <<\ 1)\ |\ BIT(d1,\ bit);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00219}00219\ \ \ \ \ \ \ \ \ framebuffer[ly\ *\ 160\ +\ pixel]\ =\ get\_color(color\_id,\ 0xFF47);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00220}00220\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00221}00221\ \ \ \ \ \textcolor{keywordflow}{if}\ (window\_drawn\_this\_line)\ window\_line\_counter++;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00222}00222\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00223}00223\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00224}00224\ \textcolor{keywordtype}{void}\ PPU::render\_sprites()\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00225}00225\ \ \ \ \ \textcolor{keywordflow}{if}\ (!(lcdc\ \&\ 0x02))\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00226}00226\ \ \ \ \ \textcolor{keywordtype}{bool}\ use8x16\ =\ (lcdc\ \&\ 0x04);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00227}00227\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 40;\ i++)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00228}00228\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ index\ =\ i\ *\ 4;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00229}00229\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ y\_pos\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(oam[index])\ -\/\ 16;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00230}00230\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ x\_pos\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(oam[index\ +\ 1])\ -\/\ 8;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00231}00231\ \ \ \ \ \ \ \ \ u8\ tile\_num\ =\ oam[index\ +\ 2];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00232}00232\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ u8\ flags\ =\ oam[index\ +\ 3];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00233}00233\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ sprite\_height\ =\ use8x16\ ?\ 16\ :\ 8;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00234}00234\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ly)\ >=\ y\_pos\ \&\&\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ly)\ <\ (y\_pos\ +\ sprite\_height))\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00235}00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ line\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(ly)\ -\/\ y\_pos;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00236}00236\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (flags\ \&\ 0x40)\ line\ =\ (sprite\_height\ -\/\ 1)\ -\/\ line;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00237}00237\ \ \ \ \ \ \ \ \ \ \ \ \ u8\ effective\_tile\ =\ tile\_num;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00238}00238\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ effective\_line\ =\ line;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00239}00239\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (use8x16)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00240}00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ effective\_tile\ \&=\ 0xFE;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00241}00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (effective\_line\ >=\ 8)\ \{\ effective\_tile\ +=\ 1;\ effective\_line\ -\/=\ 8;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00242}00242\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00243}00243\ \ \ \ \ \ \ \ \ \ \ \ \ u16\ tile\_location\ =\ 0x8000\ +\ (effective\_tile\ *\ 16)\ +\ (effective\_line\ *\ 2);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00244}00244\ \ \ \ \ \ \ \ \ \ \ \ \ u8\ d1\ =\ vram[tile\_location\ -\/\ 0x8000],\ d2\ =\ vram[tile\_location\ +\ 1\ -\/\ 0x8000];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00245}00245\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ tile\_pixel\ =\ 7;\ tile\_pixel\ >=\ 0;\ tile\_pixel-\/-\/)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00246}00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ bit\ =\ (flags\ \&\ 0x20)\ ?\ 7\ -\/\ tile\_pixel\ :\ tile\_pixel;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00247}00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u8\ color\_id\ =\ (BIT(d2,\ bit)\ <<\ 1)\ |\ BIT(d1,\ bit);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00248}00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u16\ palette\ =\ (flags\ \&\ 0x10)\ ?\ 0xFF49\ :\ 0xFF48;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00249}00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ screen\_x\ =\ x\_pos\ +\ (7\ -\/\ tile\_pixel);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00250}00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (color\_id\ !=\ 0\ \&\&\ screen\_x\ >=\ 0\ \&\&\ screen\_x\ <\ 160)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00251}00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ framebuffer[ly\ *\ 160\ +\ screen\_x]\ =\ get\_color(color\_id,\ palette);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00252}00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00253}00253\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00254}00254\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00255}00255\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00256}00256\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00257}00257\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00258}00258\ u32\ PPU::get\_color(u8\ color\_id,\ u16\ palette\_address)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00259}00259\ \ \ \ \ u8\ p\ =\ read(palette\_address);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00260}00260\ \ \ \ \ u8\ color\ =\ (BIT(p,\ color\_id\ *\ 2\ +\ 1)\ <<\ 1)\ |\ BIT(p,\ color\_id\ *\ 2);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00261}00261\ \ \ \ \ \textcolor{keywordflow}{switch}\ (color)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00262}00262\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:\ \textcolor{keywordflow}{return}\ 0xFFFFFFFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00263}00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:\ \textcolor{keywordflow}{return}\ 0xFF969696;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00264}00264\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:\ \textcolor{keywordflow}{return}\ 0xFF555555;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00265}00265\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 3:\ \textcolor{keywordflow}{return}\ 0xFF000000;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00266}00266\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00267}00267\ \ \ \ \ \textcolor{keywordflow}{return}\ 0xFFFFFFFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00268}00268\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00269}00269\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00270}00270\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00271}00271\ \textcolor{comment}{//\ Debug\ /\ UI\ Features}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00272}00272\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00273}00273\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00274}00274\ \textcolor{keywordtype}{void}\ PPU::init\_window(\textcolor{keywordtype}{bool}\ debug,\ \textcolor{keyword}{const}\ std::string\&\ rom\_title,\ \textcolor{keywordtype}{bool}\ fullscreen)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00275}00275\ \ \ \ \ debugMode\ =\ debug;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00276}00276\ \ \ \ \ sf::State\ state\ =\ fullscreen\ ?\ sf::State::Fullscreen\ :\ sf::State::Windowed;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00277}00277\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00278}00278\ \ \ \ \ \textcolor{keywordflow}{if}\ (debugMode)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00279}00279\ \ \ \ \ \ \ \ \ sf::VideoMode\ mode\ =\ fullscreen\ ?\ sf::VideoMode(\{1920,\ 1080\})\ :\ sf::VideoMode(\{window\_width,\ window\_height\});}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00280}00280\ \ \ \ \ \ \ \ \ window.create(mode,\ \textcolor{stringliteral}{"{}GB\ Emulator\ -\/\ Debug\ View"{}},\ state);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00281}00281\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00282}00282\ \ \ \ \ \ \ \ \ sf::View\ view(sf::FloatRect(\{0.0f,\ 0.0f\},\ \{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(window\_width),\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(window\_height)\}));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00283}00283\ \ \ \ \ \ \ \ \ window.setView(view);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00284}00284\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00285}00285\ \ \ \ \ \ \ \ \ screenSprite.setPosition(sf::Vector2f(32.0f,\ 32.0f));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00286}00286\ \ \ \ \ \ \ \ \ screenSprite.setScale(sf::Vector2f(5.0f,\ 5.0f));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00287}00287\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00288}00288\ \ \ \ \ \ \ \ \ sf::VideoMode\ mode\ =\ fullscreen\ ?\ sf::VideoMode(\{1920,\ 1080\})\ :\ sf::VideoMode(\{screen\_width\ *\ 4,\ screen\_height\ *\ 4\});}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00289}00289\ \ \ \ \ \ \ \ \ window.create(mode,\ \textcolor{stringliteral}{"{}GB\ Emulator"{}},\ state);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00290}00290\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00291}00291\ \ \ \ \ \ \ \ \ sf::View\ view(sf::FloatRect(\{0.0f,\ 0.0f\},\ \{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(screen\_width),\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(screen\_height)\}));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00292}00292\ \ \ \ \ \ \ \ \ window.setView(view);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00293}00293\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00294}00294\ \ \ \ \ \ \ \ \ screenSprite.setPosition(sf::Vector2f(0.0f,\ 0.0f));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00295}00295\ \ \ \ \ \ \ \ \ screenSprite.setScale(sf::Vector2f(1.0f,\ 1.0f));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00296}00296\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00297}00297\ \ \ \ \ window.setFramerateLimit(60);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00298}00298\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00299}00299\ \ \ \ \ (void)screenTexture.resize(\{screen\_width,\ screen\_height\});}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00300}00300\ \ \ \ \ screenSprite.setTexture(screenTexture);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00301}00301\ \ \ \ \ screenSprite.setTextureRect(sf::IntRect(\{0,\ 0\},\ \{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(screen\_width),\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(screen\_height)\}));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00302}00302\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00303}00303\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<std::string>\ fontPaths\ =\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00304}00304\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"{}},}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00305}00305\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/usr/share/fonts/liberation/LiberationMono-\/Regular.ttf"{}},}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00306}00306\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/usr/share/fonts/liberation-\/fonts/LiberationMono-\/Regular.ttf"{}},}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00307}00307\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}/usr/share/fonts/Adwaita/AdwaitaMono-\/Regular.ttf"{}},}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00308}00308\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}DejaVuSansMono.ttf"{}},}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00309}00309\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}LiberationMono-\/Regular.ttf"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00310}00310\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00311}00311\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00312}00312\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ path\ :\ fontPaths)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00313}00313\ \ \ \ \ \ \ \ \ fontLoaded\ =\ font.openFromFile(path);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00314}00314\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fontLoaded)\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00315}00315\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00316}00316\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00317}00317\ \ \ \ \ \textcolor{keywordflow}{if}\ (!fontLoaded\ \&\&\ debugMode)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00318}00318\ \ \ \ \ \ \ \ \ statusMessage\ =\ \textcolor{stringliteral}{"{}Missing\ monospace\ font.\ Debug\ text\ won't\ render."{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00319}00319\ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00320}00320\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00321}00321\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00322}00322\ \ \ \ \ romInfo.mbc\_name\ =\ mbcNameFromType(romInfo.type);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00323}00323\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00324}00324\ \ \ \ \ std::ifstream\ bpFile(\textcolor{stringliteral}{"{}utility\_scripts/breakpoints.txt"{}});}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00325}00325\ \ \ \ \ \textcolor{keywordflow}{if}\ (bpFile)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00326}00326\ \ \ \ \ \ \ \ \ std::string\ line;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00327}00327\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (std::getline(bpFile,\ line))\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00328}00328\ \ \ \ \ \ \ \ \ \ \ \ \ std::stringstream\ ss(line);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00329}00329\ \ \ \ \ \ \ \ \ \ \ \ \ u32\ value\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00330}00330\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (line.rfind(\textcolor{stringliteral}{"{}0x"{}},\ 0)\ ==\ 0\ ||\ line.rfind(\textcolor{stringliteral}{"{}0X"{}},\ 0)\ ==\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00331}00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ss\ >>\ std::hex\ >>\ value;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00332}00332\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00333}00333\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ss\ >>\ std::hex\ >>\ value;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00334}00334\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00335}00335\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ss\ \&\&\ value\ <=\ 0xFFFF)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00336}00336\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ breakpoints.push\_back(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}(value));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00337}00337\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00338}00338\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00339}00339\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00340}00340\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00341}00341\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00342}00342\ \textcolor{keywordtype}{bool}\ PPU::isOpen()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00343}00343\ \ \ \ \ \textcolor{keywordflow}{return}\ window.isOpen();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00344}00344\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00345}00345\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00346}00346\ \textcolor{keywordtype}{void}\ PPU::handleEvents(\doxymbox{\hyperlink{structJoypadState}{JoypadState}}\&\ joypad)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00347}00347\ \ \ \ \ \textcolor{keywordflow}{while}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ event\ =\ window.pollEvent())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00348}00348\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (event-\/>is<sf::Event::Closed>())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00349}00349\ \ \ \ \ \ \ \ \ \ \ \ \ window.close();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00350}00350\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00351}00351\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00352}00352\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}*\ keyPressed\ =\ event-\/>getIf<sf::Event::KeyPressed>())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00353}00353\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (keyPressed-\/>code)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00354}00354\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Right:\ physicalJoypad.right\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00355}00355\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Left:\ \ physicalJoypad.left\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00356}00356\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Up:\ \ \ \ physicalJoypad.up\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00357}00357\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Down:\ \ physicalJoypad.down\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00358}00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Z:\ \ \ \ \ physicalJoypad.a\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00359}00359\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::X:\ \ \ \ \ physicalJoypad.b\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00360}00360\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Enter:\ physicalJoypad.start\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00361}00361\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::RShift:\ physicalJoypad.select\ =\ \textcolor{keyword}{true};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00362}00362\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Escape:\ window.close();\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00363}00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00364}00364\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Debug\ actions}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00365}00365\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Space:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00366}00366\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ paused\ =\ !paused;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00367}00367\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ paused\ ?\ \textcolor{stringliteral}{"{}Paused"{}}\ :\ \textcolor{stringliteral}{"{}Running"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00368}00368\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00369}00369\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00370}00370\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::N:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00371}00371\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (paused)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00372}00372\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stepRequested\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00373}00373\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ \textcolor{stringliteral}{"{}Step"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00374}00374\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00375}00375\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00376}00376\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00377}00377\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::T:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00378}00378\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ turbo\ =\ !turbo;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00379}00379\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ turbo\ ?\ \textcolor{stringliteral}{"{}Turbo\ Mode\ 2x"{}}\ :\ \textcolor{stringliteral}{"{}Normal\ Mode\ 1x"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00380}00380\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00381}00381\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00382}00382\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::R:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00383}00383\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ resetRequested\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00384}00384\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ \textcolor{stringliteral}{"{}Reset\ requested"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00385}00385\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00386}00386\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00387}00387\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::E:\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00388}00388\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ activeSlot\ =\ -\/1;\ \textcolor{comment}{//\ -\/1\ represents\ 'e'}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00389}00389\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ ok\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00390}00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (keyPressed-\/>shift\ ||\ keyPressed-\/>control)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00391}00391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ filepath\ =\ \textcolor{stringliteral}{"{}savestates/external.bin"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00392}00392\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILE*\ f\ =\ popen(\textcolor{stringliteral}{"{}zenity\ -\/-\/file-\/selection\ -\/-\/save\ -\/-\/confirm-\/overwrite\ -\/-\/file-\/filter='Save\ States\ (*.bin)\ |\ *.bin'\ 2>/dev/null"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00393}00393\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00394}00394\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ buf[1024];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00395}00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fgets(buf,\ \textcolor{keyword}{sizeof}(buf),\ f))\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00396}00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ s(buf);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00397}00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!s.empty()\ \&\&\ s.back()\ ==\ \textcolor{charliteral}{'\(\backslash\)n'})\ s.pop\_back();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00398}00398\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!s.empty())\ filepath\ =\ s;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00399}00399\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00400}00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pclose(f);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00401}00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00402}00402\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ externalStatePath\ =\ filepath;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00403}00403\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ =\ saveStatePath(filepath);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00404}00404\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ filename\ =\ std::filesystem::path(filepath).filename().string();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00405}00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ ok\ ?\ \textcolor{stringliteral}{"{}Saved:\ "{}}\ +\ filename\ :\ \textcolor{stringliteral}{"{}Save\ failed"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00406}00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00407}00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ filepath\ =\ \textcolor{stringliteral}{"{}savestates/external.bin"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00408}00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ FILE*\ f\ =\ popen(\textcolor{stringliteral}{"{}zenity\ -\/-\/file-\/selection\ -\/-\/file-\/filter='Save\ States\ (*.bin)\ |\ *.bin'\ 2>/dev/null"{}},\ \textcolor{stringliteral}{"{}r"{}});}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00409}00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (f)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00410}00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ buf[1024];}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00411}00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (fgets(buf,\ \textcolor{keyword}{sizeof}(buf),\ f))\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00412}00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ s(buf);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00413}00413\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!s.empty()\ \&\&\ s.back()\ ==\ \textcolor{charliteral}{'\(\backslash\)n'})\ s.pop\_back();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00414}00414\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!s.empty())\ filepath\ =\ s;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00415}00415\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00416}00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pclose(f);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00417}00417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00418}00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ externalStatePath\ =\ filepath;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00419}00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ =\ loadStatePath(filepath);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00420}00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ filename\ =\ std::filesystem::path(filepath).filename().string();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00421}00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ ok\ ?\ \textcolor{stringliteral}{"{}Loaded:\ "{}}\ +\ filename\ :\ \textcolor{stringliteral}{"{}Load\ failed"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00422}00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00423}00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00424}00424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00425}00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00426}00426\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00427}00427\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (keyPressed-\/>code\ >=\ sf::Keyboard::Key::Num0\ \&\&\ keyPressed-\/>code\ <=\ sf::Keyboard::Key::Num9)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00428}00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ slot\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(keyPressed-\/>code)\ -\/\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(sf::Keyboard::Key::Num0);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00429}00429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ activeSlot\ =\ slot;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00430}00430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ ok\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00431}00431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (keyPressed-\/>shift\ ||\ keyPressed-\/>control)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00432}00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ =\ saveStateSlot(slot);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00433}00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ ok\ ?\ \textcolor{stringliteral}{"{}Saved\ state\ to\ slot\ "{}}\ +\ std::to\_string(slot)}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00434}00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}Failed\ to\ save\ slot\ "{}}\ +\ std::to\_string(slot);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00435}00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00436}00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ok\ =\ loadStateSlot(slot);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00437}00437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ ok\ ?\ \textcolor{stringliteral}{"{}Loaded\ state\ from\ slot\ "{}}\ +\ std::to\_string(slot)}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00438}00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}Failed\ to\ load\ slot\ "{}}\ +\ std::to\_string(slot);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00439}00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00440}00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00441}00441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00442}00442\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00443}00443\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00444}00444\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00445}00445\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00446}00446\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}*\ keyReleased\ =\ event-\/>getIf<sf::Event::KeyReleased>())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00447}00447\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (keyReleased-\/>code)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00448}00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Right:\ physicalJoypad.right\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00449}00449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Left:\ \ physicalJoypad.left\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00450}00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Up:\ \ \ \ physicalJoypad.up\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00451}00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Down:\ \ physicalJoypad.down\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00452}00452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Z:\ \ \ \ \ physicalJoypad.a\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00453}00453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::X:\ \ \ \ \ physicalJoypad.b\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00454}00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::Enter:\ physicalJoypad.start\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00455}00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ sf::Keyboard::Key::RShift:\ physicalJoypad.select\ =\ \textcolor{keyword}{false};\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00456}00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00457}00457\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00458}00458\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00459}00459\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00460}00460\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}*\ mousePressed\ =\ event-\/>getIf<sf::Event::MouseButtonPressed>())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00461}00461\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mousePressed-\/>button\ ==\ sf::Mouse::Button::Left)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00462}00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Vector2f\ mPos\ =\ window.mapPixelToCoords(mousePressed-\/>position);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00463}00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp2X\ =\ 1238.0f;\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00464}00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp2W\ =\ window\_width\ -\/\ rp2X\ -\/\ 32.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00465}00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ gpX\ =\ rp2X\ +\ (rp2W\ -\/\ 220.0f)\ /\ 2.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00466}00466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ gpY\ =\ 32.0f\ +\ 60.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00467}00467\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00468}00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ rectContains\ =\ [](\textcolor{keywordtype}{float}\ rx,\ \textcolor{keywordtype}{float}\ ry,\ \textcolor{keywordtype}{float}\ rw,\ \textcolor{keywordtype}{float}\ rh,\ \textcolor{keywordtype}{float}\ px,\ \textcolor{keywordtype}{float}\ py)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00469}00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ px\ >=\ rx\ \&\&\ px\ <=\ rx\ +\ rw\ \&\&\ py\ >=\ ry\ \&\&\ py\ <=\ ry\ +\ rh;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00470}00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00471}00471\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00472}00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 40.0f,\ gpY\ +\ 0.0f,\ 30.0f,\ 30.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.up\ =\ !clickableJoypad.up;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00473}00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 40.0f,\ gpY\ +\ 80.0f,\ 30.0f,\ 30.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.down\ =\ !clickableJoypad.down;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00474}00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 0.0f,\ gpY\ +\ 40.0f,\ 30.0f,\ 30.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.left\ =\ !clickableJoypad.left;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00475}00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 80.0f,\ gpY\ +\ 40.0f,\ 30.0f,\ 30.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.right\ =\ !clickableJoypad.right;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00476}00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 185.0f,\ gpY\ +\ 20.0f,\ 34.0f,\ 34.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.a\ =\ !clickableJoypad.a;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00477}00477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 140.0f,\ gpY\ +\ 50.0f,\ 34.0f,\ 34.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.b\ =\ !clickableJoypad.b;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00478}00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 30.0f,\ gpY\ +\ 140.0f,\ 70.0f,\ 24.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.select\ =\ !clickableJoypad.select;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00479}00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rectContains(gpX\ +\ 120.0f,\ gpY\ +\ 140.0f,\ 70.0f,\ 24.0f,\ mPos.x,\ mPos.y))\ \{\ clickableJoypad.start\ =\ !clickableJoypad.start;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00480}00480\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00481}00481\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00482}00482\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00483}00483\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00484}00484\ \ \ \ \ joypad.up\ =\ physicalJoypad.up\ ||\ clickableJoypad.up;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00485}00485\ \ \ \ \ joypad.down\ =\ physicalJoypad.down\ ||\ clickableJoypad.down;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00486}00486\ \ \ \ \ joypad.left\ =\ physicalJoypad.left\ ||\ clickableJoypad.left;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00487}00487\ \ \ \ \ joypad.right\ =\ physicalJoypad.right\ ||\ clickableJoypad.right;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00488}00488\ \ \ \ \ joypad.a\ =\ physicalJoypad.a\ ||\ clickableJoypad.a;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00489}00489\ \ \ \ \ joypad.b\ =\ physicalJoypad.b\ ||\ clickableJoypad.b;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00490}00490\ \ \ \ \ joypad.select\ =\ physicalJoypad.select\ ||\ clickableJoypad.select;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00491}00491\ \ \ \ \ joypad.start\ =\ physicalJoypad.start\ ||\ clickableJoypad.start;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00492}00492\ \ \ \ \ currentJoypadState\ =\ joypad;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00493}00493\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00494}00494\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00495}00495\ \textcolor{keywordtype}{void}\ PPU::update(\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ dtSeconds,\ \textcolor{keyword}{const}\ u64\ cyclesExecuted)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00496}00496\ \ \ \ \ \textcolor{keywordflow}{if}\ (!debugMode)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00497}00497\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00498}00498\ \ \ \ \ timeAccumulator\ +=\ dtSeconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00499}00499\ \ \ \ \ \textcolor{keywordflow}{if}\ (statusTimer\ >\ 0.0f)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00500}00500\ \ \ \ \ \ \ \ \ statusTimer\ -\/=\ dtSeconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00501}00501\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (statusTimer\ <=\ 0.0f)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00502}00502\ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage.clear();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00503}00503\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00504}00504\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00505}00505\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00506}00506\ \ \ \ \ \textcolor{keywordflow}{if}\ (timeAccumulator\ >=\ 0.5f)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00507}00507\ \ \ \ \ \ \ \ \ timeAccumulator\ =\ 0.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00508}00508\ \ \ \ \ \ \ \ \ lastCycles\ =\ cyclesExecuted;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00509}00509\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mmu)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00510}00510\ \ \ \ \ \ \ \ \ \ \ \ \ lastReads\ =\ mmu-\/>get\_read\_count();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00511}00511\ \ \ \ \ \ \ \ \ \ \ \ \ lastWrites\ =\ mmu-\/>get\_write\_count();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00512}00512\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00513}00513\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00514}00514\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00515}00515\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00516}00516\ \textcolor{keywordtype}{void}\ PPU::render()\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00517}00517\ \ \ \ \ \textcolor{keywordflow}{if}\ (debugMode)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00518}00518\ \ \ \ \ \ \ \ \ window.clear(sf::Color(0,\ 0,\ 0));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00519}00519\ \ \ \ \ \ \ \ \ screenTexture.update(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }uint8\_t*\textcolor{keyword}{>}(framebuffer.data()));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00520}00520\ \ \ \ \ \ \ \ \ window.draw(screenSprite);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00521}00521\ \ \ \ \ \ \ \ \ drawPanels();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00522}00522\ \ \ \ \ \ \ \ \ window.display();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00523}00523\ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00524}00524\ \ \ \ \ \ \ \ \ window.clear();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00525}00525\ \ \ \ \ \ \ \ \ screenTexture.update(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }uint8\_t*\textcolor{keyword}{>}(framebuffer.data()));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00526}00526\ \ \ \ \ \ \ \ \ window.draw(screenSprite);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00527}00527\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!statusMessage.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00528}00528\ \ \ \ \ \ \ \ \ \ \ \ \ window.setView(window.getDefaultView());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00529}00529\ \ \ \ \ \ \ \ \ \ \ \ \ drawText(sf::Vector2f(20.0f,\ 20.0f),\ statusMessage,\ 28,\ sf::Color(255,\ 50,\ 50));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00530}00530\ \ \ \ \ \ \ \ \ \ \ \ \ sf::View\ view(sf::FloatRect(\{0.0f,\ 0.0f\},\ \{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(screen\_width),\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(screen\_height)\}));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00531}00531\ \ \ \ \ \ \ \ \ \ \ \ \ window.setView(view);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00532}00532\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00533}00533\ \ \ \ \ \ \ \ \ window.display();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00534}00534\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00535}00535\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00536}00536\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00537}00537\ \textcolor{keywordtype}{void}\ PPU::recordOpcode(u16\ pc,\ u8\ opcode)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00538}00538\ \ \ \ \ opcodeLog.push\_front(\{pc,\ opcode\});}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00539}00539\ \ \ \ \ \textcolor{keywordflow}{if}\ (opcodeLog.size()\ >\ opcode\_log\_size)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00540}00540\ \ \ \ \ \ \ \ \ opcodeLog.pop\_back();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00541}00541\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00542}00542\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00543}00543\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00544}00544\ \textcolor{keywordtype}{void}\ PPU::checkBreakpoint(\textcolor{keyword}{const}\ u16\ pc)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00545}00545\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ bp\ :\ breakpoints)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00546}00546\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bp\ ==\ pc)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00547}00547\ \ \ \ \ \ \ \ \ \ \ \ \ paused\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00548}00548\ \ \ \ \ \ \ \ \ \ \ \ \ statusMessage\ =\ \textcolor{stringliteral}{"{}Breakpoint\ hit:\ "{}}\ +\ toHex(pc,\ 4);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00549}00549\ \ \ \ \ \ \ \ \ \ \ \ \ statusTimer\ =\ status\_display\_seconds;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00550}00550\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00551}00551\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00552}00552\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00553}00553\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00554}00554\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00555}00555\ \textcolor{keywordtype}{void}\ PPU::reset()\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00556}00556\ \ \ \ \ vram.fill(0);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00557}00557\ \ \ \ \ oam.fill(0);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00558}00558\ \ \ \ \ lcdc\ =\ 0x91;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00559}00559\ \ \ \ \ stat\ =\ 0x85;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00560}00560\ \ \ \ \ bgp\ =\ 0xFC;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00561}00561\ \ \ \ \ obp0\ =\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00562}00562\ \ \ \ \ obp1\ =\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00563}00563\ \ \ \ \ scy\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00564}00564\ \ \ \ \ scx\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00565}00565\ \ \ \ \ ly\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00566}00566\ \ \ \ \ lyc\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00567}00567\ \ \ \ \ wy\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00568}00568\ \ \ \ \ wx\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00569}00569\ \ \ \ \ mode\_clock\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00570}00570\ \ \ \ \ window\_line\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00571}00571\ \ \ \ \ frame\_ready\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00572}00572\ \ \ \ \ framebuffer.fill(0xFFFFFFFF);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00573}00573\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00574}00574\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00575}00575\ \textcolor{keywordtype}{bool}\ PPU::saveStatePath(\textcolor{keyword}{const}\ std::string\&\ filepath)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00576}00576\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu\ ||\ !mmu)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00577}00577\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00578}00578\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00579}00579\ \ \ \ \ \ \ \ \ std::filesystem::create\_directories(std::filesystem::path(filepath).parent\_path());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00580}00580\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (...)\ \{\}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00581}00581\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00582}00582\ \ \ \ \ std::ofstream\ out(filepath,\ std::ios::binary);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00583}00583\ \ \ \ \ \textcolor{keywordflow}{if}\ (!out)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00584}00584\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00585}00585\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00586}00586\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00587}00587\ \ \ \ \ \textcolor{keyword}{const}\ u16\ pc\ =\ cpu-\/>get\_pc();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00588}00588\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu-\/>get\_sp();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00589}00589\ \ \ \ \ \textcolor{keyword}{const}\ u16\ af\ =\ cpu-\/>get\_af();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00590}00590\ \ \ \ \ \textcolor{keyword}{const}\ u16\ bc\ =\ cpu-\/>get\_bc();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00591}00591\ \ \ \ \ \textcolor{keyword}{const}\ u16\ de\ =\ cpu-\/>get\_de();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00592}00592\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu-\/>get\_hl();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00593}00593\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{bool}\ ime\ =\ cpu-\/>getIME();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00594}00594\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00595}00595\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&pc),\ \textcolor{keyword}{sizeof}(pc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00596}00596\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&sp),\ \textcolor{keyword}{sizeof}(sp));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00597}00597\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&af),\ \textcolor{keyword}{sizeof}(af));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00598}00598\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&bc),\ \textcolor{keyword}{sizeof}(bc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00599}00599\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&de),\ \textcolor{keyword}{sizeof}(de));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00600}00600\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&hl),\ \textcolor{keyword}{sizeof}(hl));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00601}00601\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&ime),\ \textcolor{keyword}{sizeof}(ime));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00602}00602\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00603}00603\ \ \ \ \ \textcolor{comment}{//\ Save\ PPU\ state}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00604}00604\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(vram.data()),\ vram.size());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00605}00605\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(oam.data()),\ oam.size());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00606}00606\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&lcdc),\ \textcolor{keyword}{sizeof}(lcdc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00607}00607\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&stat),\ \textcolor{keyword}{sizeof}(stat));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00608}00608\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&scy),\ \textcolor{keyword}{sizeof}(scy));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00609}00609\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&scx),\ \textcolor{keyword}{sizeof}(scx));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00610}00610\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&ly),\ \textcolor{keyword}{sizeof}(ly));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00611}00611\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&lyc),\ \textcolor{keyword}{sizeof}(lyc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00612}00612\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&dma),\ \textcolor{keyword}{sizeof}(dma));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00613}00613\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&bgp),\ \textcolor{keyword}{sizeof}(bgp));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00614}00614\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&obp0),\ \textcolor{keyword}{sizeof}(obp0));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00615}00615\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&obp1),\ \textcolor{keyword}{sizeof}(obp1));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00616}00616\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&wy),\ \textcolor{keyword}{sizeof}(wy));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00617}00617\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&wx),\ \textcolor{keyword}{sizeof}(wx));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00618}00618\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&mode\_clock),\ \textcolor{keyword}{sizeof}(mode\_clock));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00619}00619\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&window\_line\_counter),\ \textcolor{keyword}{sizeof}(window\_line\_counter));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00620}00620\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&frame\_ready),\ \textcolor{keyword}{sizeof}(frame\_ready));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00621}00621\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00622}00622\ \ \ \ \ \textcolor{keyword}{auto}\ dump\ =\ mmu-\/>dump\_memory();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00623}00623\ \ \ \ \ \textcolor{keyword}{const}\ u32\ size\ =\ \textcolor{keyword}{static\_cast<}u32\textcolor{keyword}{>}(dump.size());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00624}00624\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size),\ \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00625}00625\ \ \ \ \ out.write(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(dump.data()),\ \textcolor{keyword}{static\_cast<}std::streamsize\textcolor{keyword}{>}(dump.size()));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00626}00626\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00627}00627\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00628}00628\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00629}00629\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00630}00630\ \textcolor{keywordtype}{bool}\ PPU::saveStateSlot(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ slot)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00631}00631\ \ \ \ \ std::ostringstream\ path;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00632}00632\ \ \ \ \ path\ <<\ \textcolor{stringliteral}{"{}savestates/slot\_"{}}\ <<\ slot\ <<\ \textcolor{stringliteral}{"{}.bin"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00633}00633\ \ \ \ \ \textcolor{keywordflow}{return}\ saveStatePath(path.str());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00634}00634\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00635}00635\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00636}00636\ \textcolor{keywordtype}{bool}\ PPU::loadStatePath(\textcolor{keyword}{const}\ std::string\&\ filepath)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00637}00637\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu\ ||\ !mmu)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00638}00638\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00639}00639\ \ \ \ \ std::ifstream\ in(filepath,\ std::ios::binary);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00640}00640\ \ \ \ \ \textcolor{keywordflow}{if}\ (!in)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00641}00641\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00642}00642\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00643}00643\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00644}00644\ \ \ \ \ u16\ pc\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00645}00645\ \ \ \ \ u16\ sp\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00646}00646\ \ \ \ \ u16\ af\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00647}00647\ \ \ \ \ u16\ bc\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00648}00648\ \ \ \ \ u16\ de\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00649}00649\ \ \ \ \ u16\ hl\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00650}00650\ \ \ \ \ \textcolor{keywordtype}{bool}\ ime\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00651}00651\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00652}00652\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&pc),\ \textcolor{keyword}{sizeof}(pc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00653}00653\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&sp),\ \textcolor{keyword}{sizeof}(sp));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00654}00654\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&af),\ \textcolor{keyword}{sizeof}(af));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00655}00655\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&bc),\ \textcolor{keyword}{sizeof}(bc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00656}00656\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&de),\ \textcolor{keyword}{sizeof}(de));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00657}00657\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&hl),\ \textcolor{keyword}{sizeof}(hl));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00658}00658\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&ime),\ \textcolor{keyword}{sizeof}(ime));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00659}00659\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00660}00660\ \ \ \ \ cpu-\/>set\_pc(pc);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00661}00661\ \ \ \ \ cpu-\/>set\_sp(sp);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00662}00662\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::A)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(af\ >>\ 8);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00663}00663\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::F)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(af\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00664}00664\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::B)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(bc\ >>\ 8);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00665}00665\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::C)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(bc\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00666}00666\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::D)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(de\ >>\ 8);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00667}00667\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::E)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(de\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00668}00668\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::H)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(hl\ >>\ 8);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00669}00669\ \ \ \ \ cpu-\/>reg(ProcessingUnit::Register::L)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(hl\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00670}00670\ \ \ \ \ cpu-\/>setIME(ime);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00671}00671\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00672}00672\ \ \ \ \ \textcolor{comment}{//\ Restore\ PPU\ state}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00673}00673\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(vram.data()),\ vram.size());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00674}00674\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(oam.data()),\ oam.size());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00675}00675\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&lcdc),\ \textcolor{keyword}{sizeof}(lcdc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00676}00676\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&stat),\ \textcolor{keyword}{sizeof}(stat));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00677}00677\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&scy),\ \textcolor{keyword}{sizeof}(scy));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00678}00678\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&scx),\ \textcolor{keyword}{sizeof}(scx));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00679}00679\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&ly),\ \textcolor{keyword}{sizeof}(ly));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00680}00680\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&lyc),\ \textcolor{keyword}{sizeof}(lyc));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00681}00681\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&dma),\ \textcolor{keyword}{sizeof}(dma));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00682}00682\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&bgp),\ \textcolor{keyword}{sizeof}(bgp));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00683}00683\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&obp0),\ \textcolor{keyword}{sizeof}(obp0));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00684}00684\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&obp1),\ \textcolor{keyword}{sizeof}(obp1));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00685}00685\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&wy),\ \textcolor{keyword}{sizeof}(wy));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00686}00686\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&wx),\ \textcolor{keyword}{sizeof}(wx));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00687}00687\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&mode\_clock),\ \textcolor{keyword}{sizeof}(mode\_clock));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00688}00688\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&window\_line\_counter),\ \textcolor{keyword}{sizeof}(window\_line\_counter));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00689}00689\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&frame\_ready),\ \textcolor{keyword}{sizeof}(frame\_ready));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00690}00690\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00691}00691\ \ \ \ \ u32\ size\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00692}00692\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(\&size),\ \textcolor{keyword}{sizeof}(size));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00693}00693\ \ \ \ \ std::vector<u8>\ dump(size);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00694}00694\ \ \ \ \ in.read(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(dump.data()),\ size);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00695}00695\ \ \ \ \ mmu-\/>load\_memory(dump);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00696}00696\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00697}00697\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00698}00698\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00699}00699\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00700}00700\ \textcolor{keywordtype}{bool}\ PPU::loadStateSlot(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ slot)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00701}00701\ \ \ \ \ std::ostringstream\ path;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00702}00702\ path\ <<\ \textcolor{stringliteral}{"{}savestates/slot\_"{}}\ <<\ slot\ <<\ \textcolor{stringliteral}{"{}.bin"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00703}00703\ \ \ \ \ \textcolor{keywordflow}{return}\ loadStatePath(path.str());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00704}00704\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00705}00705\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00706}00706\ \textcolor{keywordtype}{void}\ PPU::drawPanels()\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00707}00707\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00708}00708\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00709}00709\ \ \ \ \ \textcolor{keyword}{const}\ sf::Color\ panelBgColor(12,\ 12,\ 15);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00710}00710\ \ \ \ \ \textcolor{keyword}{const}\ sf::Color\ panelBorderColor(40,\ 40,\ 50);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00711}00711\ \ \ \ \ \textcolor{keyword}{const}\ sf::Color\ titleColor(0,\ 255,\ 128);\ \textcolor{comment}{//\ Neon\ Green}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00712}00712\ \ \ \ \ \textcolor{keyword}{const}\ sf::Color\ textColor(200,\ 200,\ 200);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00713}00713\ \ \ \ \ \textcolor{keyword}{const}\ sf::Color\ highlightColor(0,\ 200,\ 255);\ \textcolor{comment}{//\ Neon\ Blue}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00714}00714\ \ \ \ \ \textcolor{keyword}{const}\ sf::Color\ errorColor(255,\ 50,\ 50);\ \textcolor{comment}{//\ Neon\ Red}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00715}00715\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00716}00716\ \ \ \ \ \textcolor{comment}{//\ Right\ Panel\ 1\ (CPU,\ ROM,\ Memory,\ Trace)}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00717}00717\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp1X\ =\ 32.0f\ +\ 800.0f\ +\ 32.0f;\ \textcolor{comment}{//\ 864.0f}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00718}00718\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp1Y\ =\ 32.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00719}00719\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp1W\ =\ 350.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00720}00720\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp1H\ =\ window\_height\ -\/\ 64.0f;\ \textcolor{comment}{//\ 836.0f}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00721}00721\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00722}00722\ \ \ \ \ sf::RectangleShape\ rp1Bg(sf::Vector2f(rp1W,\ rp1H));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00723}00723\ \ \ \ \ rp1Bg.setPosition(sf::Vector2f(rp1X,\ rp1Y));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00724}00724\ \ \ \ \ rp1Bg.setFillColor(panelBgColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00725}00725\ \ \ \ \ rp1Bg.setOutlineColor(panelBorderColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00726}00726\ \ \ \ \ rp1Bg.setOutlineThickness(1.0f);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00727}00727\ \ \ \ \ window.draw(rp1Bg);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00728}00728\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00729}00729\ \ \ \ \ \textcolor{keywordtype}{float}\ cursorY\ =\ rp1Y\ +\ 16.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00730}00730\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}CPU\ Registers"{}},\ 18,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00731}00731\ \ \ \ \ cursorY\ +=\ 28.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00732}00732\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00733}00733\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}AF:\ "{}}\ +\ toHex(cpu-\/>get\_af(),\ 4),\ 14,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00734}00734\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00735}00735\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}BC:\ "{}}\ +\ toHex(cpu-\/>get\_bc(),\ 4),\ 14,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00736}00736\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00737}00737\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}DE:\ "{}}\ +\ toHex(cpu-\/>get\_de(),\ 4),\ 14,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00738}00738\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00739}00739\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}HL:\ "{}}\ +\ toHex(cpu-\/>get\_hl(),\ 4),\ 14,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00740}00740\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00741}00741\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}SP:\ "{}}\ +\ toHex(cpu-\/>get\_sp(),\ 4)\ +\ \textcolor{stringliteral}{"{}\ \ PC:\ "{}}\ +\ toHex(cpu-\/>get\_pc(),\ 4),\ 14,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00742}00742\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00743}00743\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00744}00744\ \ \ \ \ std::string\ flags\ =\ \textcolor{stringliteral}{"{}Z="{}}\ +\ std::to\_string(cpu-\/>get\_flag\_z())\ +}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00745}00745\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ N="{}}\ +\ std::to\_string(cpu-\/>get\_flag\_n())\ +}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00746}00746\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ H="{}}\ +\ std::to\_string(cpu-\/>get\_flag\_h())\ +}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00747}00747\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ C="{}}\ +\ std::to\_string(cpu-\/>get\_flag\_c());}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00748}00748\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}Flags:\ "{}}\ +\ flags,\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00749}00749\ \ \ \ \ cursorY\ +=\ 28.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00750}00750\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00751}00751\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}ROM\ Info"{}},\ 18,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00752}00752\ \ \ \ \ cursorY\ +=\ 28.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00753}00753\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}Title:\ "{}}\ +\ romInfo.title,\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00754}00754\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00755}00755\ \ \ \ \ std::string\ shortMbc\ =\ mbcNameFromType(romInfo.type);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00756}00756\ \ \ \ \ \textcolor{keywordflow}{if}\ (shortMbc.length()\ >\ 15)\ shortMbc\ =\ shortMbc.substr(0,\ 12)\ +\ \textcolor{stringliteral}{"{}..."{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00757}00757\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}Type:\ 0x"{}}\ +\ toHex(romInfo.type,\ 2)\ +\ \textcolor{stringliteral}{"{}\ ("{}}\ +\ shortMbc\ +\ \textcolor{stringliteral}{"{})"{}},\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00758}00758\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00759}00759\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}ROM:\ 0x"{}}\ +\ toHex(romInfo.rom\_size,\ 2)\ +\ \textcolor{stringliteral}{"{}\ \ RAM:\ 0x"{}}\ +\ toHex(romInfo.ram\_size,\ 2),\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00760}00760\ \ \ \ \ cursorY\ +=\ 28.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00761}00761\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00762}00762\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}Memory/Bus"{}},\ 18,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00763}00763\ \ \ \ \ cursorY\ +=\ 28.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00764}00764\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}Rds:\ "{}}\ +\ std::to\_string(lastReads)\ +\ \textcolor{stringliteral}{"{}\ \ Wrs:\ "{}}\ +\ std::to\_string(lastWrites),\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00765}00765\ \ \ \ \ cursorY\ +=\ 20.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00766}00766\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}Cycles:\ "{}}\ +\ std::to\_string(lastCycles),\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00767}00767\ \ \ \ \ cursorY\ +=\ 28.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00768}00768\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00769}00769\ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ \textcolor{stringliteral}{"{}Opcode\ Trace"{}},\ 18,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00770}00770\ \ \ \ \ cursorY\ +=\ 26.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00771}00771\ \ \ \ \ \textcolor{keywordtype}{int}\ shown\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00772}00772\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ trace\ :\ opcodeLog)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00773}00773\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (shown++\ >=\ 14)\ \textcolor{keywordflow}{break};\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00774}00774\ \ \ \ \ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ cursorY),\ toHex(trace.pc,\ 4)\ +\ \textcolor{stringliteral}{"{}:\ "{}}\ +\ toHex(trace.opcode,\ 2),\ 14,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00775}00775\ \ \ \ \ \ \ \ \ cursorY\ +=\ 18.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00776}00776\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00777}00777\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00778}00778\ \ \ \ \ \textcolor{keywordflow}{if}\ (!statusMessage.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00779}00779\ \ \ \ \ \ \ \ \ drawText(sf::Vector2f(rp1X\ +\ 16.0f,\ rp1Y\ +\ rp1H\ -\/\ 24.0f),\ statusMessage,\ 14,\ errorColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00780}00780\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00781}00781\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00782}00782\ \ \ \ \ \textcolor{comment}{//\ Right\ Panel\ 2\ (Gamepad,\ ROM\ Bytes)}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00783}00783\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp2X\ =\ rp1X\ +\ rp1W\ +\ 24.0f;\ \textcolor{comment}{//\ 1238.0f}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00784}00784\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp2Y\ =\ 32.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00785}00785\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp2W\ =\ window\_width\ -\/\ rp2X\ -\/\ 32.0f;\ \textcolor{comment}{//\ 330.0f}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00786}00786\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ rp2H\ =\ window\_height\ -\/\ 64.0f;\ \textcolor{comment}{//\ 836.0f}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00787}00787\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00788}00788\ \ \ \ \ sf::RectangleShape\ rp2Bg(sf::Vector2f(rp2W,\ rp2H));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00789}00789\ \ \ \ \ rp2Bg.setPosition(sf::Vector2f(rp2X,\ rp2Y));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00790}00790\ \ \ \ \ rp2Bg.setFillColor(panelBgColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00791}00791\ \ \ \ \ rp2Bg.setOutlineColor(panelBorderColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00792}00792\ \ \ \ \ rp2Bg.setOutlineThickness(1.0f);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00793}00793\ \ \ \ \ window.draw(rp2Bg);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00794}00794\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00795}00795\ \ \ \ \ drawText(sf::Vector2f(rp2X\ +\ 16.0f,\ rp2Y\ +\ 16.0f),\ \textcolor{stringliteral}{"{}Virtual\ Gamepad"{}},\ 18,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00796}00796\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00797}00797\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ gpX\ =\ rp2X\ +\ (rp2W\ -\/\ 220.0f)\ /\ 2.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00798}00798\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ gpY\ =\ rp2Y\ +\ 60.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00799}00799\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00800}00800\ \ \ \ \ \textcolor{keyword}{auto}\ drawButton\ =\ [\&](\textcolor{keywordtype}{float}\ x,\ \textcolor{keywordtype}{float}\ y,\ \textcolor{keywordtype}{float}\ w,\ \textcolor{keywordtype}{float}\ h,\ \textcolor{keyword}{const}\ std::string\&\ label,\ \textcolor{keywordtype}{bool}\ isActive)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00801}00801\ \ \ \ \ \ \ \ \ sf::RectangleShape\ btn(sf::Vector2f(w,\ h));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00802}00802\ \ \ \ \ \ \ \ \ btn.setPosition(sf::Vector2f(x,\ y));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00803}00803\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isActive)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00804}00804\ \ \ \ \ \ \ \ \ \ \ \ \ btn.setFillColor(titleColor);\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00805}00805\ \ \ \ \ \ \ \ \ \ \ \ \ btn.setOutlineColor(sf::Color(255,\ 255,\ 255));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00806}00806\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00807}00807\ \ \ \ \ \ \ \ \ \ \ \ \ btn.setFillColor(sf::Color(20,\ 20,\ 25));\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00808}00808\ \ \ \ \ \ \ \ \ \ \ \ \ btn.setOutlineColor(highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00809}00809\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00810}00810\ \ \ \ \ \ \ \ \ btn.setOutlineThickness(1.0f);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00811}00811\ \ \ \ \ \ \ \ \ window.draw(btn);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00812}00812\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00813}00813\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ textX\ =\ x\ +\ (w\ -\/\ label.length()\ *\ 7.5f)\ /\ 2.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00814}00814\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ textY\ =\ y\ +\ (h\ -\/\ 14.0f)\ /\ 2.0f\ -\/\ 1.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00815}00815\ \ \ \ \ \ \ \ \ drawText(sf::Vector2f(textX,\ textY),\ label,\ 12,\ isActive\ ?\ sf::Color(0,\ 0,\ 0)\ :\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00816}00816\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00817}00817\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00818}00818\ \ \ \ \ \textcolor{comment}{//\ D-\/Pad}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00819}00819\ \ \ \ \ drawButton(gpX\ +\ 40.0f,\ gpY\ +\ 0.0f,\ 30.0f,\ 30.0f,\ \textcolor{stringliteral}{"{}U"{}},\ currentJoypadState.up);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00820}00820\ \ \ \ \ drawButton(gpX\ +\ 0.0f,\ gpY\ +\ 40.0f,\ 30.0f,\ 30.0f,\ \textcolor{stringliteral}{"{}L"{}},\ currentJoypadState.left);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00821}00821\ \ \ \ \ drawButton(gpX\ +\ 80.0f,\ gpY\ +\ 40.0f,\ 30.0f,\ 30.0f,\ \textcolor{stringliteral}{"{}R"{}},\ currentJoypadState.right);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00822}00822\ \ \ \ \ drawButton(gpX\ +\ 40.0f,\ gpY\ +\ 80.0f,\ 30.0f,\ 30.0f,\ \textcolor{stringliteral}{"{}D"{}},\ currentJoypadState.down);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00823}00823\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00824}00824\ \ \ \ \ \textcolor{comment}{//\ Action}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00825}00825\ \ \ \ \ drawButton(gpX\ +\ 140.0f,\ gpY\ +\ 50.0f,\ 34.0f,\ 34.0f,\ \textcolor{stringliteral}{"{}B"{}},\ currentJoypadState.b);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00826}00826\ \ \ \ \ drawButton(gpX\ +\ 185.0f,\ gpY\ +\ 20.0f,\ 34.0f,\ 34.0f,\ \textcolor{stringliteral}{"{}A"{}},\ currentJoypadState.a);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00827}00827\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00828}00828\ \ \ \ \ \textcolor{comment}{//\ Select/Start}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00829}00829\ \ \ \ \ drawButton(gpX\ +\ 30.0f,\ gpY\ +\ 140.0f,\ 70.0f,\ 24.0f,\ \textcolor{stringliteral}{"{}SELECT"{}},\ currentJoypadState.select);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00830}00830\ \ \ \ \ drawButton(gpX\ +\ 120.0f,\ gpY\ +\ 140.0f,\ 70.0f,\ 24.0f,\ \textcolor{stringliteral}{"{}START"{}},\ currentJoypadState.start);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00831}00831\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00832}00832\ \ \ \ \ \textcolor{comment}{//\ ROM\ Bytes}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00833}00833\ \ \ \ \ \textcolor{keywordtype}{float}\ romY\ =\ gpY\ +\ 200.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00834}00834\ \ \ \ \ drawText(sf::Vector2f(rp2X\ +\ 16.0f,\ romY),\ \textcolor{stringliteral}{"{}ROM\ Bytes"{}},\ 18,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00835}00835\ \ \ \ \ romY\ +=\ 28.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00836}00836\ \ \ \ \ \textcolor{keywordflow}{if}\ (!romInfo.rom\_bytes.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00837}00837\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ maxRows\ =\ std::min(rom\_rows\_visible\ *\ 3,\ romInfo.rom\_bytes.size()\ /\ rom\_bytes\_per\_row\ +\ 1);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00838}00838\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ row\ =\ 0;\ row\ <\ maxRows;\ ++row)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00839}00839\ \ \ \ \ \ \ \ \ \ \ \ \ std::ostringstream\ line;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00840}00840\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{size\_t}\ offset\ =\ row\ *\ rom\_bytes\_per\_row;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00841}00841\ \ \ \ \ \ \ \ \ \ \ \ \ line\ <<\ toHex(static\_cast<u32>(offset),\ 4)\ <<\ \textcolor{stringliteral}{"{}:\ "{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00842}00842\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ 0;\ i\ <\ rom\_bytes\_per\_row\ \&\&\ offset\ +\ i\ <\ romInfo.rom\_bytes.size();\ ++i)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00843}00843\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\ <<\ toHex(romInfo.rom\_bytes[offset\ +\ i],\ 2)\ <<\ \textcolor{stringliteral}{"{}\ "{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00844}00844\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00845}00845\ \ \ \ \ \ \ \ \ \ \ \ \ drawText(sf::Vector2f(rp2X\ +\ 16.0f,\ romY),\ line.str(),\ 14,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00846}00846\ \ \ \ \ \ \ \ \ \ \ \ \ romY\ +=\ 18.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00847}00847\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00848}00848\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00849}00849\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00850}00850\ \ \ \ \ \textcolor{comment}{//\ Emulator\ Control\ Panel\ (Below\ Game\ Screen)}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00851}00851\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ cpX\ =\ 32.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00852}00852\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ cpY\ =\ 32.0f\ +\ 720.0f\ +\ 24.0f;\ \textcolor{comment}{//\ 776.0f}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00853}00853\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ cpW\ =\ 800.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00854}00854\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\ cpH\ =\ window\_height\ -\/\ cpY\ -\/\ 32.0f;\ \textcolor{comment}{//\ 92.0f}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00855}00855\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00856}00856\ \ \ \ \ sf::RectangleShape\ cpBg(sf::Vector2f(cpW,\ cpH));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00857}00857\ \ \ \ \ cpBg.setPosition(sf::Vector2f(cpX,\ cpY));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00858}00858\ \ \ \ \ cpBg.setFillColor(panelBgColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00859}00859\ \ \ \ \ cpBg.setOutlineColor(panelBorderColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00860}00860\ \ \ \ \ cpBg.setOutlineThickness(1.0f);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00861}00861\ \ \ \ \ window.draw(cpBg);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00862}00862\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00863}00863\ \ \ \ \ \textcolor{keywordtype}{float}\ col1X\ =\ cpX\ +\ 16.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00864}00864\ \ \ \ \ drawText(sf::Vector2f(col1X,\ cpY\ +\ 12.0f),\ \textcolor{stringliteral}{"{}Emulator\ Status"{}},\ 16,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00865}00865\ \ \ \ \ std::string\ speedStr\ =\ turbo\ ?\ \textcolor{stringliteral}{"{}2x\ (Turbo)"{}}\ :\ \textcolor{stringliteral}{"{}1x\ (Normal)"{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00866}00866\ \ \ \ \ drawText(sf::Vector2f(col1X,\ cpY\ +\ 36.0f),\ \textcolor{stringliteral}{"{}Speed:\ "{}}\ +\ speedStr,\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00867}00867\ \ \ \ \ std::string\ slotStr\ =\ (activeSlot\ ==\ -\/1)\ ?\ \textcolor{stringliteral}{"{}E\ (External)"{}}\ :\ std::to\_string(activeSlot);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00868}00868\ \ \ \ \ drawText(sf::Vector2f(col1X,\ cpY\ +\ 56.0f),\ \textcolor{stringliteral}{"{}Slot:\ \ ["{}}\ +\ slotStr\ +\ \textcolor{stringliteral}{"{}]"{}},\ 14,\ textColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00869}00869\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00870}00870\ \ \ \ \ \textcolor{keywordflow}{if}\ (activeSlot\ ==\ -\/1\ \&\&\ !externalStatePath.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00871}00871\ \ \ \ \ \ \ \ \ std::string\ filename\ =\ std::filesystem::path(externalStatePath).filename().string();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00872}00872\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (filename.length()\ >\ 20)\ filename\ =\ filename.substr(0,\ 17)\ +\ \textcolor{stringliteral}{"{}..."{}};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00873}00873\ \ \ \ \ \ \ \ \ drawText(sf::Vector2f(col1X\ +\ 120.0f,\ cpY\ +\ 56.0f),\ \textcolor{stringliteral}{"{}File:\ "{}}\ +\ filename,\ 12,\ sf::Color(140,\ 160,\ 180));}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00874}00874\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00875}00875\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00876}00876\ \ \ \ \ \textcolor{keywordtype}{float}\ col2X\ =\ cpX\ +\ 260.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00877}00877\ \ \ \ \ drawText(sf::Vector2f(col2X,\ cpY\ +\ 12.0f),\ \textcolor{stringliteral}{"{}State\ Hotkeys"{}},\ 16,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00878}00878\ \ \ \ \ drawText(sf::Vector2f(col2X,\ cpY\ +\ 36.0f),\ \textcolor{stringliteral}{"{}0-\/9\ /\ Shift+0-\/9:\ Load/Save\ Slot"{}},\ 13,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00879}00879\ \ \ \ \ drawText(sf::Vector2f(col2X,\ cpY\ +\ 56.0f),\ \textcolor{stringliteral}{"{}E\ /\ Shift+E:\ Load/Save\ External"{}},\ 13,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00880}00880\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00881}00881\ \ \ \ \ \textcolor{keywordtype}{float}\ col3X\ =\ cpX\ +\ 540.0f;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00882}00882\ \ \ \ \ drawText(sf::Vector2f(col3X,\ cpY\ +\ 12.0f),\ \textcolor{stringliteral}{"{}System\ Hotkeys"{}},\ 16,\ titleColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00883}00883\ \ \ \ \ drawText(sf::Vector2f(col3X,\ cpY\ +\ 36.0f),\ \textcolor{stringliteral}{"{}R:\ Reset\ Emulator"{}},\ 13,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00884}00884\ \ \ \ \ drawText(sf::Vector2f(col3X,\ cpY\ +\ 56.0f),\ \textcolor{stringliteral}{"{}Space:\ Pause\ |\ N:\ Step"{}},\ 13,\ highlightColor);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00885}00885\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00886}00886\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00887}00887\ \textcolor{keywordtype}{void}\ PPU::drawText(\textcolor{keyword}{const}\ sf::Vector2f\&\ pos,\ \textcolor{keyword}{const}\ std::string\&\ text,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ size,\ \textcolor{keyword}{const}\ sf::Color\&\ color)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00888}00888\ \ \ \ \ \textcolor{keywordflow}{if}\ (!fontLoaded)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00889}00889\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00890}00890\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00891}00891\ \ \ \ \ sf::Text\ txt(font,\ text,\ size);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00892}00892\ \ \ \ \ txt.setFillColor(color);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00893}00893\ \ \ \ \ txt.setPosition(pos);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00894}00894\ \ \ \ \ window.draw(txt);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00895}00895\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00896}00896\ }
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00897}00897\ std::string\ PPU::toHex(\textcolor{keyword}{const}\ u32\ value,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ width)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00898}00898\ \ \ \ \ std::ostringstream\ ss;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00899}00899\ \ \ \ \ ss\ <<\ std::hex\ <<\ std::uppercase\ <<\ std::setw(width)\ <<\ std::setfill(\textcolor{charliteral}{'0'})\ <<\ value;}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00900}00900\ \ \ \ \ \textcolor{keywordflow}{return}\ ss.str();}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00901}00901\ \}}
+
+\end{DoxyCode}

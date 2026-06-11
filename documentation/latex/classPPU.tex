@@ -1,0 +1,369 @@
+\doxysection{PPU Class Reference}
+\hypertarget{classPPU}{}\label{classPPU}\index{PPU@{PPU}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{structPPU_1_1RomInfo}{Rom\+Info}}
+\item 
+struct \doxymbox{\hyperlink{structPPU_1_1OpcodeTrace}{Opcode\+Trace}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classPPU_a7e1b1a2094d5102ee85a81b0b261f423}{PPU}} (\doxymbox{\hyperlink{classInterruptController}{Interrupt\+Controller}} \&ic)
+\item 
+void \doxymbox{\hyperlink{classPPU_a79c8b64b26c61ef53f44b1ba89f72181}{set\+\_\+mmu}} (\doxymbox{\hyperlink{classMMU}{MMU}} \texorpdfstring{$\ast$}{*}m)
+\item 
+void \doxymbox{\hyperlink{classPPU_ab02588cce1755d63a5c1fa8efd95ee9b}{set\+\_\+cpu}} (\doxymbox{\hyperlink{classProcessingUnit}{Processing\+Unit}} \texorpdfstring{$\ast$}{*}c)
+\item 
+void \doxymbox{\hyperlink{classPPU_a049848f9257c2c3c50698ab993a71286}{set\+\_\+rom\+\_\+info}} (const \doxymbox{\hyperlink{structPPU_1_1RomInfo}{Rom\+Info}} \&info)
+\item 
+void \doxymbox{\hyperlink{classPPU_a15924f43d680a80b59ad701be465d167}{step}} (int cycles)
+\item 
+u8 \doxymbox{\hyperlink{classPPU_a62b03554c1082ae73cf7f4a330b0aa0d}{read}} (u16 address) const
+\item 
+void \doxymbox{\hyperlink{classPPU_a06b316194994f31cd76d6a546790cc34}{write}} (u16 address, u8 value)
+\item 
+const u32 \texorpdfstring{$\ast$}{*} \doxymbox{\hyperlink{classPPU_a4c7be70948983a03d2d7574c07011436}{get\+\_\+framebuffer}} () const
+\item 
+bool \doxymbox{\hyperlink{classPPU_ad347aaea143f5cac9c74e606afb3ef08}{is\+\_\+frame\+\_\+ready}} () const
+\item 
+void \doxymbox{\hyperlink{classPPU_ac5e6d9c36b35bc43769eccb37771a3b2}{clear\+\_\+frame\+\_\+ready}} ()
+\item 
+void \doxymbox{\hyperlink{classPPU_a2b163f864b371e73b1d02118efea6b9e}{init\+\_\+window}} (bool debug, const std::\+string \&rom\+\_\+title, bool fullscreen=false)
+\item 
+bool \doxymbox{\hyperlink{classPPU_af66eb60a1d69757679dda7a161b74ae9}{is\+Open}} () const
+\item 
+bool \doxymbox{\hyperlink{classPPU_a593d6e664cae8390975d96e306658bff}{is\+Paused}} () const
+\item 
+void \doxymbox{\hyperlink{classPPU_a67bbf60416f5883837d56df8808098f1}{handle\+Events}} (\doxymbox{\hyperlink{structJoypadState}{Joypad\+State}} \&joypad)
+\item 
+void \doxymbox{\hyperlink{classPPU_a64ee4b6cd60cc3d7cd8091a607511d4e}{update}} (float dt\+Seconds, u64 cycles\+Executed)
+\item 
+void \doxymbox{\hyperlink{classPPU_a35a16782fd86e48813172e2beea1cb54}{render}} ()
+\item 
+void \doxymbox{\hyperlink{classPPU_a2a9271ed43f9b5fc962a3d94c99ae297}{record\+Opcode}} (u16 pc, u8 opcode)
+\item 
+void \doxymbox{\hyperlink{classPPU_af2ddad936756c37baa6b803c1eae18e4}{check\+Breakpoint}} (u16 pc)
+\item 
+bool \doxymbox{\hyperlink{classPPU_ad47bf41904be97a28797758bbbebe387}{is\+Step\+Requested}} () const
+\item 
+void \doxymbox{\hyperlink{classPPU_a9fee45221abd2e5e385010b1d7748d25}{clear\+Step\+Request}} ()
+\item 
+bool \doxymbox{\hyperlink{classPPU_a9a937371864e7fef84a356dc07fed345}{is\+Turbo}} () const
+\item 
+void \doxymbox{\hyperlink{classPPU_a23724ce30b9a870be06cec29df743763}{set\+Turbo}} (bool val)
+\item 
+int \doxymbox{\hyperlink{classPPU_ad10028adeb5e131de59cbb37797f2f73}{get\+Active\+Slot}} () const
+\item 
+void \doxymbox{\hyperlink{classPPU_a222019732c98e00fe7b40ba634a0bec8}{set\+Active\+Slot}} (int slot)
+\item 
+void \doxymbox{\hyperlink{classPPU_a54dce8ceda11a7b2f327382d7f09c962}{reset}} ()
+\item 
+bool \doxymbox{\hyperlink{classPPU_aac8dd6941865f4ad1fdeda50ad419bf5}{is\+Reset\+Requested}} () const
+\item 
+void \doxymbox{\hyperlink{classPPU_a77e68d5dac2e969f33c1b5dce118699c}{clear\+Reset\+Request}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00016}{16}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{classPPU_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classPPU_a69d85e0ee4b972e4409509971135595f}\index{PPU@{PPU}!PPU@{PPU}}
+\index{PPU@{PPU}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{PPU()}{PPU()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classPPU_a69d85e0ee4b972e4409509971135595f} 
+PPU::\+\+PPU (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00049}{49}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a7e1b1a2094d5102ee85a81b0b261f423}\index{PPU@{PPU}!PPU@{PPU}}
+\index{PPU@{PPU}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{PPU()}{PPU()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classPPU_a7e1b1a2094d5102ee85a81b0b261f423} 
+PPU::\+\+PPU (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classInterruptController}{Interrupt\+Controller}} \&}]{ic}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00062}{62}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{classPPU_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classPPU_af2ddad936756c37baa6b803c1eae18e4}\index{PPU@{PPU}!checkBreakpoint@{checkBreakpoint}}
+\index{checkBreakpoint@{checkBreakpoint}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{checkBreakpoint()}{checkBreakpoint()}}
+{\footnotesize\ttfamily \label{classPPU_af2ddad936756c37baa6b803c1eae18e4} 
+void PPU::\+check\+Breakpoint (\begin{DoxyParamCaption}\item[{u16}]{pc}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00544}{544}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_ac5e6d9c36b35bc43769eccb37771a3b2}\index{PPU@{PPU}!clear\_frame\_ready@{clear\_frame\_ready}}
+\index{clear\_frame\_ready@{clear\_frame\_ready}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{clear\_frame\_ready()}{clear\_frame\_ready()}}
+{\footnotesize\ttfamily \label{classPPU_ac5e6d9c36b35bc43769eccb37771a3b2} 
+void PPU::\+clear\+\_\+frame\+\_\+ready (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00044}{44}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a77e68d5dac2e969f33c1b5dce118699c}\index{PPU@{PPU}!clearResetRequest@{clearResetRequest}}
+\index{clearResetRequest@{clearResetRequest}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{clearResetRequest()}{clearResetRequest()}}
+{\footnotesize\ttfamily \label{classPPU_a77e68d5dac2e969f33c1b5dce118699c} 
+void PPU::\+clear\+Reset\+Request (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00066}{66}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a9fee45221abd2e5e385010b1d7748d25}\index{PPU@{PPU}!clearStepRequest@{clearStepRequest}}
+\index{clearStepRequest@{clearStepRequest}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{clearStepRequest()}{clearStepRequest()}}
+{\footnotesize\ttfamily \label{classPPU_a9fee45221abd2e5e385010b1d7748d25} 
+void PPU::\+clear\+Step\+Request (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00058}{58}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a4c7be70948983a03d2d7574c07011436}\index{PPU@{PPU}!get\_framebuffer@{get\_framebuffer}}
+\index{get\_framebuffer@{get\_framebuffer}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{get\_framebuffer()}{get\_framebuffer()}}
+{\footnotesize\ttfamily \label{classPPU_a4c7be70948983a03d2d7574c07011436} 
+const u32 \texorpdfstring{$\ast$}{*} PPU::\+get\+\_\+framebuffer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00042}{42}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_ad10028adeb5e131de59cbb37797f2f73}\index{PPU@{PPU}!getActiveSlot@{getActiveSlot}}
+\index{getActiveSlot@{getActiveSlot}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{getActiveSlot()}{getActiveSlot()}}
+{\footnotesize\ttfamily \label{classPPU_ad10028adeb5e131de59cbb37797f2f73} 
+int PPU::\+get\+Active\+Slot (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00062}{62}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a67bbf60416f5883837d56df8808098f1}\index{PPU@{PPU}!handleEvents@{handleEvents}}
+\index{handleEvents@{handleEvents}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{handleEvents()}{handleEvents()}}
+{\footnotesize\ttfamily \label{classPPU_a67bbf60416f5883837d56df8808098f1} 
+void PPU::\+handle\+Events (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{structJoypadState}{Joypad\+State}} \&}]{joypad}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00346}{346}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a2b163f864b371e73b1d02118efea6b9e}\index{PPU@{PPU}!init\_window@{init\_window}}
+\index{init\_window@{init\_window}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{init\_window()}{init\_window()}}
+{\footnotesize\ttfamily \label{classPPU_a2b163f864b371e73b1d02118efea6b9e} 
+void PPU::\+init\+\_\+window (\begin{DoxyParamCaption}\item[{bool}]{debug}{, }\item[{const std::\+string \&}]{rom\+\_\+title}{, }\item[{bool}]{fullscreen}{ = {\ttfamily false}}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00274}{274}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_ad347aaea143f5cac9c74e606afb3ef08}\index{PPU@{PPU}!is\_frame\_ready@{is\_frame\_ready}}
+\index{is\_frame\_ready@{is\_frame\_ready}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{is\_frame\_ready()}{is\_frame\_ready()}}
+{\footnotesize\ttfamily \label{classPPU_ad347aaea143f5cac9c74e606afb3ef08} 
+bool PPU::\+is\+\_\+frame\+\_\+ready (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00043}{43}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_af66eb60a1d69757679dda7a161b74ae9}\index{PPU@{PPU}!isOpen@{isOpen}}
+\index{isOpen@{isOpen}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{isOpen()}{isOpen()}}
+{\footnotesize\ttfamily \label{classPPU_af66eb60a1d69757679dda7a161b74ae9} 
+bool PPU::\+is\+Open (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00342}{342}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a593d6e664cae8390975d96e306658bff}\index{PPU@{PPU}!isPaused@{isPaused}}
+\index{isPaused@{isPaused}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{isPaused()}{isPaused()}}
+{\footnotesize\ttfamily \label{classPPU_a593d6e664cae8390975d96e306658bff} 
+bool PPU::\+is\+Paused (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00049}{49}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_aac8dd6941865f4ad1fdeda50ad419bf5}\index{PPU@{PPU}!isResetRequested@{isResetRequested}}
+\index{isResetRequested@{isResetRequested}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{isResetRequested()}{isResetRequested()}}
+{\footnotesize\ttfamily \label{classPPU_aac8dd6941865f4ad1fdeda50ad419bf5} 
+bool PPU::\+is\+Reset\+Requested (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00065}{65}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_ad47bf41904be97a28797758bbbebe387}\index{PPU@{PPU}!isStepRequested@{isStepRequested}}
+\index{isStepRequested@{isStepRequested}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{isStepRequested()}{isStepRequested()}}
+{\footnotesize\ttfamily \label{classPPU_ad47bf41904be97a28797758bbbebe387} 
+bool PPU::\+is\+Step\+Requested (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00057}{57}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a9a937371864e7fef84a356dc07fed345}\index{PPU@{PPU}!isTurbo@{isTurbo}}
+\index{isTurbo@{isTurbo}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{isTurbo()}{isTurbo()}}
+{\footnotesize\ttfamily \label{classPPU_a9a937371864e7fef84a356dc07fed345} 
+bool PPU::\+is\+Turbo (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00060}{60}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a62b03554c1082ae73cf7f4a330b0aa0d}\index{PPU@{PPU}!read@{read}}
+\index{read@{read}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{classPPU_a62b03554c1082ae73cf7f4a330b0aa0d} 
+u8 PPU::\+read (\begin{DoxyParamCaption}\item[{u16}]{address}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00128}{128}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a2a9271ed43f9b5fc962a3d94c99ae297}\index{PPU@{PPU}!recordOpcode@{recordOpcode}}
+\index{recordOpcode@{recordOpcode}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{recordOpcode()}{recordOpcode()}}
+{\footnotesize\ttfamily \label{classPPU_a2a9271ed43f9b5fc962a3d94c99ae297} 
+void PPU::\+record\+Opcode (\begin{DoxyParamCaption}\item[{u16}]{pc}{, }\item[{u8}]{opcode}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00537}{537}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a35a16782fd86e48813172e2beea1cb54}\index{PPU@{PPU}!render@{render}}
+\index{render@{render}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{render()}{render()}}
+{\footnotesize\ttfamily \label{classPPU_a35a16782fd86e48813172e2beea1cb54} 
+void PPU::\+render (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00516}{516}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a54dce8ceda11a7b2f327382d7f09c962}\index{PPU@{PPU}!reset@{reset}}
+\index{reset@{reset}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{classPPU_a54dce8ceda11a7b2f327382d7f09c962} 
+void PPU::\+reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00555}{555}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_ab02588cce1755d63a5c1fa8efd95ee9b}\index{PPU@{PPU}!set\_cpu@{set\_cpu}}
+\index{set\_cpu@{set\_cpu}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{set\_cpu()}{set\_cpu()}}
+{\footnotesize\ttfamily \label{classPPU_ab02588cce1755d63a5c1fa8efd95ee9b} 
+void PPU::\+set\+\_\+cpu (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classProcessingUnit}{Processing\+Unit}} \texorpdfstring{$\ast$}{*}}]{c}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00036}{36}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a79c8b64b26c61ef53f44b1ba89f72181}\index{PPU@{PPU}!set\_mmu@{set\_mmu}}
+\index{set\_mmu@{set\_mmu}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{set\_mmu()}{set\_mmu()}}
+{\footnotesize\ttfamily \label{classPPU_a79c8b64b26c61ef53f44b1ba89f72181} 
+void PPU::\+set\+\_\+mmu (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classMMU}{MMU}} \texorpdfstring{$\ast$}{*}}]{m}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00035}{35}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a049848f9257c2c3c50698ab993a71286}\index{PPU@{PPU}!set\_rom\_info@{set\_rom\_info}}
+\index{set\_rom\_info@{set\_rom\_info}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{set\_rom\_info()}{set\_rom\_info()}}
+{\footnotesize\ttfamily \label{classPPU_a049848f9257c2c3c50698ab993a71286} 
+void PPU::\+set\+\_\+rom\+\_\+info (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{structPPU_1_1RomInfo}{Rom\+Info}} \&}]{info}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00037}{37}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a222019732c98e00fe7b40ba634a0bec8}\index{PPU@{PPU}!setActiveSlot@{setActiveSlot}}
+\index{setActiveSlot@{setActiveSlot}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{setActiveSlot()}{setActiveSlot()}}
+{\footnotesize\ttfamily \label{classPPU_a222019732c98e00fe7b40ba634a0bec8} 
+void PPU::\+set\+Active\+Slot (\begin{DoxyParamCaption}\item[{int}]{slot}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00063}{63}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a23724ce30b9a870be06cec29df743763}\index{PPU@{PPU}!setTurbo@{setTurbo}}
+\index{setTurbo@{setTurbo}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{setTurbo()}{setTurbo()}}
+{\footnotesize\ttfamily \label{classPPU_a23724ce30b9a870be06cec29df743763} 
+void PPU::\+set\+Turbo (\begin{DoxyParamCaption}\item[{bool}]{val}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8hpp_source_l00061}{61}} of file \doxymbox{\hyperlink{ppu_8hpp_source}{ppu.\+hpp}}.
+
+\Hypertarget{classPPU_a15924f43d680a80b59ad701be465d167}\index{PPU@{PPU}!step@{step}}
+\index{step@{step}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily \label{classPPU_a15924f43d680a80b59ad701be465d167} 
+void PPU::\+step (\begin{DoxyParamCaption}\item[{int}]{cycles}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00074}{74}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a64ee4b6cd60cc3d7cd8091a607511d4e}\index{PPU@{PPU}!update@{update}}
+\index{update@{update}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{classPPU_a64ee4b6cd60cc3d7cd8091a607511d4e} 
+void PPU::\+update (\begin{DoxyParamCaption}\item[{float}]{dt\+Seconds}{, }\item[{u64}]{cycles\+Executed}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00495}{495}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+\Hypertarget{classPPU_a06b316194994f31cd76d6a546790cc34}\index{PPU@{PPU}!write@{write}}
+\index{write@{write}!PPU@{PPU}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily \label{classPPU_a06b316194994f31cd76d6a546790cc34} 
+void PPU::\+write (\begin{DoxyParamCaption}\item[{u16}]{address}{, }\item[{u8}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ppu_8cpp_source_l00148}{148}} of file \doxymbox{\hyperlink{ppu_8cpp_source}{ppu.\+cpp}}.
+
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+include/\+ppu.\+hpp\item 
+src/\+core/\+ppu.\+cpp\end{DoxyCompactItemize}

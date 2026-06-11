@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['and_20pipeline_0',['Workflow and Pipeline',['../index.html#autotoc_md5',1,'']]],
-  ['and_20run_1',['Build and Run',['../index.html#autotoc_md4',1,'']]],
-  ['architecture_2',['Opcode Architecture',['../index.html#autotoc_md3',1,'']]],
-  ['automation_20setup_3',['Extended Automation Setup',['../index.html#autotoc_md8',1,'']]]
+  ['a_20high_20fidelity_20game_20boy_20dmg_2001_20architecture_20simulation_0',['GB_Emulator: A High-Fidelity Game Boy (DMG-01) Architecture Simulation',['../index.html',1,'']]],
+  ['advanced_20memory_20management_20unit_20mmu_1',['Advanced Memory Management Unit (MMU)',['../index.html#autotoc_md4',1,'']]],
+  ['and_20controls_2',['Capabilities and Controls',['../index.html#autotoc_md6',1,'']]],
+  ['and_20maintainers_3',['Contribution and Maintainers',['../index.html#autotoc_md10',1,'']]],
+  ['architecture_4',['System Architecture',['../index.html#autotoc_md1',1,'']]],
+  ['architecture_20simulation_5',['GB_Emulator: A High-Fidelity Game Boy (DMG-01) Architecture Simulation',['../index.html',1,'']]]
 ];

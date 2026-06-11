@@ -1,158 +1,106 @@
-\chapter{GB\+\_\+\+Emulator }
-\hypertarget{index}{}\label{index}\index{GB\_Emulator@{GB\_Emulator}}
+\chapter{GB\+\_\+\+Emulator:\+ A High-\/\+Fidelity Game Boy (DMG-\/01) Architecture Simulation }
+\hypertarget{index}{}\label{index}\index{GB\_Emulator: A High-\/Fidelity Game Boy (DMG-\/01) Architecture Simulation@{GB\_Emulator: A High-\/Fidelity Game Boy (DMG-\/01) Architecture Simulation}}
 \label{index_md_README}%
 \Hypertarget{index_md_README}%
 
 
-Game Boy (DMG-\/01) emulator project focused on building an accurate LR35902 CPU core, memory subsystem, and a reliable CI/\+testing pipeline.
+Welcome to the GB\+\_\+\+Emulator project—a rigorous, low-\/level architectural simulation of the original Nintendo Game Boy (DMG-\/01). Engineered from the ground up in modern C++17, this project transcends a simple emulator; it is a masterclass in component-\/driven system design, cycle-\/accurate synchronization, and robust software engineering practices.\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{System Architecture}{System Architecture}}\label{index_autotoc_md1}
+Our emulator fundamentally adheres to a highly modular, decoupled architecture. Component ownership boundaries are strictly enforced to replicate the physical hardware constraints of the DMG-\/01 motherboard. This ensures a clean separation of concerns, deterministic execution, and unparalleled stability.
 
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{❯\ ./utility\_scripts/opcode\_progress.py}
-\DoxyCodeLine{-\/\ Base\ Opcodes:\ [████████████████████]\ 100.0\%\ (256/256)}
-\DoxyCodeLine{-\/\ CB\ Opcodes:\ \ \ [████████████████████]\ 100.0\%\ (256/256)}
-\DoxyCodeLine{-\/\ Combined:\ \ \ \ \ [████████████████████]\ 100.0\%\ (512/512)}
+\DoxyCodeLine{graph\ TD}
+\DoxyCodeLine{\ \ \ \ A[Main\ Emulator\ Loop]\ -\/-\/>\ B(PPU\ /\ SFML\ 3.0\ Renderer)}
+\DoxyCodeLine{\ \ \ \ A\ -\/-\/>\ C(LR35902\ CPU)}
+\DoxyCodeLine{\ \ \ \ A\ -\/-\/>\ D(Timer)}
+\DoxyCodeLine{\ \ \ \ C\ <-\/-\/>\ E(MMU\ /\ Memory\ Bus)}
+\DoxyCodeLine{\ \ \ \ B\ <-\/-\/>\ E}
+\DoxyCodeLine{\ \ \ \ D\ <-\/-\/>\ E}
+\DoxyCodeLine{\ \ \ \ E\ <-\/-\/>\ F[Cartridge\ /\ ROM\ Metadata]}
+\DoxyCodeLine{\ \ \ \ E\ <-\/-\/>\ G[Interrupt\ Controller]}
+\DoxyCodeLine{\ \ \ \ G\ -\/.-\/>|Triggers|\ C}
 
 \end{DoxyCode}
-\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{Current Focus}{Current Focus}}\label{index_autotoc_md1}
+\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{The Hardware Subsystems}{The Hardware Subsystems}}\label{index_autotoc_md2}
+\hypertarget{index_autotoc_md3}{}\doxysubsection{\texorpdfstring{Custom LR35902 CPU Core}{Custom LR35902 CPU Core}}\label{index_autotoc_md3}
+At the heart of the emulator lies our custom-\/built Sharp LR35902 CPU core. We have successfully implemented and exhaustively tested 100\% of the base and CB-\/prefixed opcodes. This core accurately simulates register state, precise flag mutations (Zero, Subtraction, Half-\/\+Carry, Carry), and intricate jump branching behavior exactly as the physical silicon would.\hypertarget{index_autotoc_md4}{}\doxysubsection{\texorpdfstring{Advanced Memory Management Unit (MMU)}{Advanced Memory Management Unit (MMU)}}\label{index_autotoc_md4}
+The memory subsystem acts as the central nervous system of the emulator. It orchestrates all reads and writes between the CPU, the \doxylink{classCartridge}{Cartridge}, the High RAM (HRAM), Work RAM (WRAM), and the Memory-\/\+Mapped I/\+O registers. It includes sophisticated memory banking controllers that accurately mimic original hardware limitations and memory mirroring.\hypertarget{index_autotoc_md5}{}\doxysubsection{\texorpdfstring{Pixel Processing Unit (PPU) \& SFML 3.\+0 Renderer}{Pixel Processing Unit (PPU) \& SFML 3.\+0 Renderer}}\label{index_autotoc_md5}
+Our graphical pipeline utilizes cutting-\/edge SFML 3.\+0 bindings to accurately render the state of the Game Boy display. The \doxylink{classPPU}{PPU} faithfully translates Video RAM (VRAM) and Object Attribute Memory (OAM) into vivid pixels. We have gone a step further to introduce a fully scalable 16:\+9 pixel-\/perfect resolution pipeline.\hypertarget{index_autotoc_md6}{}\doxysection{\texorpdfstring{Capabilities and Controls}{Capabilities and Controls}}\label{index_autotoc_md6}
+The emulator features two deeply integrated runtime modes:\+ a seamless Standard Mode for casual execution, and an incredibly dense AMOLED Debug View engineered for software analysis.
+
 
 \begin{DoxyItemize}
-\item CPU core progression using opcode-\/function tables ({\ttfamily instruction\+Table} and {\ttfamily cb\+Instruction\+Table}).
-\item \doxylink{classMMU}{MMU} behavior, ROM mapping, and cartridge metadata parsing.
-\item Test-\/first iteration for opcode implementations ({\ttfamily tests/\+op\+\_\+tests}).
-\item CI protocol named {\bfseries{TIRP}} (Test Init Response Protocol) with automated Discord reporting.
-\end{DoxyItemize}\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{Current Code Structure}{Current Code Structure}}\label{index_autotoc_md2}
-
-\begin{DoxyCode}{0}
-\DoxyCodeLine{GB\_Emulator/}
-\DoxyCodeLine{├──\ include/}
-\DoxyCodeLine{│\ \ \ ├──\ ProcessingUnit.hpp}
-\DoxyCodeLine{│\ \ \ ├──\ mmu.hpp}
-\DoxyCodeLine{│\ \ \ ├──\ cartridge.hpp}
-\DoxyCodeLine{│\ \ \ ├──\ opcode\_table.hpp}
-\DoxyCodeLine{│\ \ \ ├──\ opcodes.hpp}
-\DoxyCodeLine{│\ \ \ └──\ cb\_opcodes.hpp}
-\DoxyCodeLine{├──\ src/}
-\DoxyCodeLine{│\ \ \ ├──\ core/}
-\DoxyCodeLine{│\ \ \ │\ \ \ ├──\ cpu/}
-\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ ├──\ ProcessingUnit.cpp}
-\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ └──\ instructions/}
-\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ \ \ \ \ ├──\ opcode\_table.cpp}
-\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ \ \ \ \ ├──\ opcodes/\ \ \ \ \ \ \ \ \#\ op\_00.cpp\ ...\ op\_0F.cpp}
-\DoxyCodeLine{│\ \ \ │\ \ \ │\ \ \ \ \ \ \ └──\ cb\_opcodes/\ \ \ \ \ \#\ cb\_op\_00.cpp\ ...\ cb\_op\_0F.cpp}
-\DoxyCodeLine{│\ \ \ │\ \ \ └──\ memory/}
-\DoxyCodeLine{│\ \ \ ├──\ io/}
-\DoxyCodeLine{│\ \ \ │\ \ \ └──\ port.cpp}
-\DoxyCodeLine{│\ \ \ └──\ main.cpp}
-\DoxyCodeLine{├──\ tests/}
-\DoxyCodeLine{│\ \ \ ├──\ ProcessingUnitTest.cpp}
-\DoxyCodeLine{│\ \ \ ├──\ mmu\_tests.cpp}
-\DoxyCodeLine{│\ \ \ ├──\ sanity\_tests.cpp}
-\DoxyCodeLine{│\ \ \ └──\ op\_tests/\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ opcode\ +\ CB-\/opcode\ test\ files}
-\DoxyCodeLine{├──\ utility\_scripts/}
-\DoxyCodeLine{│\ \ \ ├──\ build\_and\_test.sh}
-\DoxyCodeLine{│\ \ \ ├──\ build\_and\_run.sh}
-\DoxyCodeLine{│\ \ \ ├──\ run\_game.sh}
-\DoxyCodeLine{│\ \ \ ├──\ valgrind\_tests.sh}
-\DoxyCodeLine{│\ \ \ ├──\ opcode\_lookup.py}
-\DoxyCodeLine{│\ \ \ ├──\ opcode\_docs.sh}
-\DoxyCodeLine{│\ \ \ ├──\ make\_opcode\_skeleton.sh}
-\DoxyCodeLine{│\ \ \ ├──\ make\_cb\_opcode\_skeleton.sh}
-\DoxyCodeLine{│\ \ \ └──\ groq\_push\_summary.py}
-\DoxyCodeLine{├──\ pipline/}
-\DoxyCodeLine{│\ \ \ └──\ SetUp.md\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ Discord\ +\ Cloudflare\ +\ workflow\ integration\ guide}
-\DoxyCodeLine{└──\ .github/workflows/}
-\DoxyCodeLine{\ \ \ \ ├──\ test-\/init-\/response-\/protocol.yml}
-\DoxyCodeLine{\ \ \ \ └──\ static.yml}
-
-\end{DoxyCode}
-\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{Opcode Architecture}{Opcode Architecture}}\label{index_autotoc_md3}
-
-\begin{DoxyItemize}
-\item Opcode declarations live in {\ttfamily \doxylink{opcodes_8hpp_source}{include/\+opcodes.\+hpp}} and {\ttfamily \doxylink{cb__opcodes_8hpp_source}{include/\+cb\+\_\+opcodes.\+hpp}}.
-\item Dispatch tables are defined in {\ttfamily \doxylink{opcode__table_8cpp_source}{src/\+core/\+cpu/\+instructions/\+opcode\+\_\+table.\+cpp}}.
-\item Base opcode implementation files are grouped under {\ttfamily src/\+core/\+cpu/\+instructions/\+opcodes/\+}.
-\item CB-\/prefixed opcode implementation files are grouped under {\ttfamily src/\+core/\+cpu/\+instructions/\+cb\+\_\+opcodes/\+}.
-\item Matching tests are mirrored under {\ttfamily tests/\+op\+\_\+tests/\+}.
+\item Turbo Mode (2x Speed):\+ Toggle with \textquotesingle{}T\textquotesingle{}
+\item Pause/\+\+Play Execution:\+ Toggle with \textquotesingle{}Space\textquotesingle{}
+\item Step Instruction:\+ Press \textquotesingle{}N\textquotesingle{} (while execution is paused)
+\item Hardware Reset:\+ Press \textquotesingle{}R\textquotesingle{}
+\item Internal Save States:\+ Press \textquotesingle{}0-\/9\textquotesingle{} to Load, \textquotesingle{}Shift + 0-\/9\textquotesingle{} to Save.
+\item External Save States:\+ Press \textquotesingle{}E\textquotesingle{} to Load, \textquotesingle{}Shift + E\textquotesingle{} to Save (via Zenity File Picker).
 \end{DoxyItemize}
 
-This layout keeps opcode declarations, implementations, and tests aligned and easy to expand incrementally.\hypertarget{index_autotoc_md4}{}\doxysection{\texorpdfstring{Build and Run}{Build and Run}}\label{index_autotoc_md4}
+Gamepad Mappings:\+
+
+
+\begin{DoxyItemize}
+\item Arrow Keys map to the D-\/\+Pad
+\item \textquotesingle{}Z\textquotesingle{} maps to the A Button
+\item \textquotesingle{}X\textquotesingle{} maps to the B Button
+\item \textquotesingle{}Enter\textquotesingle{} maps to Start
+\item \textquotesingle{}Right Shift\textquotesingle{} maps to Select
+\end{DoxyItemize}\hypertarget{index_autotoc_md7}{}\doxysection{\texorpdfstring{Visualization Modes}{Visualization Modes}}\label{index_autotoc_md7}
+
+\begin{DoxyItemize}
+\item Standard Mode:\+ Renders the ROM executing with a 1.\+0x native, perfectly unscaled display.
+\item Debug Mode (--debug):\+ Unveils a breathtaking 16:\+9 (1600x900) AMOLED-\/themed developer UI. This environment features:\+
+\begin{DoxyItemize}
+\item 5x Upscaled Game Execution Screen
+\item Real-\/\+Time CPU Registers (AF, BC, DE, HL, SP, PC, and Flags)
+\item Live Real-\/\+Time Opcode Trace
+\item Interactive Virtual Gamepad
+\item Read/\+\+Write Bus Metrics
+\item Live Hex-\/\+Byte ROM Monitoring
+\end{DoxyItemize}
+\item Fullscreen Mode (--fullscreen):\+ Losslessly upscales both modes to 1920x1080 without distorting the strict pixel aspect ratio.
+\end{DoxyItemize}\hypertarget{index_autotoc_md8}{}\doxysection{\texorpdfstring{Build Instructions}{Build Instructions}}\label{index_autotoc_md8}
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\#\ Configure\ +\ build\ +\ run\ all\ tests}
+\DoxyCodeLine{\#\ Configure,\ build,\ and\ run\ the\ entire\ comprehensive\ test\ suite}
 \DoxyCodeLine{./utility\_scripts/build\_and\_test.sh}
 \DoxyCodeLine{}
-\DoxyCodeLine{\#\ Configure\ +\ build\ +\ run\ emulator\ with\ first\ ROM\ in\ roms/}
-\DoxyCodeLine{./utility\_scripts/build\_and\_run.sh}
+\DoxyCodeLine{\#\ Execute\ the\ emulator\ with\ standard\ graphics}
+\DoxyCodeLine{./build/bin/gb\_emu\ <path-\/to-\/rom.gb>}
 \DoxyCodeLine{}
-\DoxyCodeLine{\#\ Run\ emulator\ directly\ (expects\ an\ existing\ build)}
-\DoxyCodeLine{./utility\_scripts/run\_game.sh}
-\DoxyCodeLine{}
-\DoxyCodeLine{\#\ Run\ valgrind\ protocol\ (script\ requires\ sudo/root)}
-\DoxyCodeLine{sudo\ ./utility\_scripts/valgrind\_tests.sh}
+\DoxyCodeLine{\#\ Execute\ the\ emulator\ in\ the\ advanced\ Debug\ Developer\ View\ in\ Fullscreen}
+\DoxyCodeLine{./build/bin/gb\_emu\ <path-\/to-\/rom.gb>\ -\/-\/debug\ -\/-\/fullscreen}
 
 \end{DoxyCode}
-
-
-Direct binary usage:\+
+\hypertarget{index_autotoc_md9}{}\doxysection{\texorpdfstring{The TIRP Continuous Integration Protocol}{The TIRP Continuous Integration Protocol}}\label{index_autotoc_md9}
+Reliability is paramount. To that end, we have engineered the Test Init Response Protocol (TIRP), a state-\/of-\/the-\/art continuous integration pipeline. This system leverages Git\+Hub Actions to enforce correctness across every single commit, passing memory sanitization data through Groq\textquotesingle{}s AI summarization engine before dispatching payload results directly to Discord.
 
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{./build/bin/gb\_emu\ <path-\/to-\/rom.gb>}
+\DoxyCodeLine{sequenceDiagram}
+\DoxyCodeLine{\ \ \ \ participant\ Dev\ as\ Developer}
+\DoxyCodeLine{\ \ \ \ participant\ Git\ as\ GitHub\ Actions}
+\DoxyCodeLine{\ \ \ \ participant\ Groq\ as\ AI\ Summary\ Engine}
+\DoxyCodeLine{\ \ \ \ participant\ Discord\ as\ Discord\ Webhook}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ Dev-\/>>Git:\ Push\ /\ Pull\ Request}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Execute\ CMake\ Build\ Target}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Enforce\ GTest\ Suite\ Verification}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Valgrind\ Memcheck\ Leak\ Analysis}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Groq:\ Transmit\ Git\ Diff\ \&\ Trace\ Logs}
+\DoxyCodeLine{\ \ \ \ Groq-\/-\/>>Git:\ Generate\ Intelligent\ Executive\ Summary}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Discord:\ Dispatch\ Pass/Fail\ Webhook\ Notification}
 
 \end{DoxyCode}
-\hypertarget{index_autotoc_md5}{}\doxysection{\texorpdfstring{Workflow and Pipeline}{Workflow and Pipeline}}\label{index_autotoc_md5}
-\hypertarget{index_autotoc_md6}{}\doxysubsection{\texorpdfstring{1) TIRP CI Workflow}{1) TIRP CI Workflow}}\label{index_autotoc_md6}
-File:\+ {\ttfamily .github/\+workflows/\+test-\/init-\/response-\/protocol.\+yml}
+\hypertarget{index_autotoc_md10}{}\doxysection{\texorpdfstring{Contribution and Maintainers}{Contribution and Maintainers}}\label{index_autotoc_md10}
+We maintain extremely high standards for codebase integrity. Please refer to our Contribution Guidelines (CONTRIBUTING.\+md) for branch naming conventions, rigorous coding style expectations, and pull request checklist requirements.
 
-Triggers:\+
-\begin{DoxyItemize}
-\item {\ttfamily push}
-\item {\ttfamily pull\+\_\+request} (targeting {\ttfamily main} /\+ {\ttfamily master})
-\item {\ttfamily workflow\+\_\+dispatch}
-\item {\ttfamily repository\+\_\+dispatch} with type {\ttfamily run-\/test}
-\end{DoxyItemize}
-
-Core stages:\+
-\begin{DoxyItemize}
-\item Build + test ({\ttfamily build\+\_\+and\+\_\+test.\+sh})
-\item Valgrind protocol ({\ttfamily valgrind\+\_\+tests.\+sh})
-\item AI summary generation ({\ttfamily groq\+\_\+push\+\_\+summary.\+py})
-\item Discord payload preparation + webhook notification
-\item Final fail/\+pass gate based on test and valgrind exit codes
-\end{DoxyItemize}\hypertarget{index_autotoc_md7}{}\doxysubsection{\texorpdfstring{2) Pages Deploy Workflow}{2) Pages Deploy Workflow}}\label{index_autotoc_md7}
-File:\+ {\ttfamily .github/\+workflows/\+static.\+yml}
-
-Triggers:\+
-\begin{DoxyItemize}
-\item tag pushes matching {\ttfamily deploy-\/\texorpdfstring{$\ast$}{*}}
-\item {\ttfamily workflow\+\_\+dispatch}
-\item {\ttfamily repository\+\_\+dispatch} with type {\ttfamily deploy-\/pages}
-\end{DoxyItemize}
-
-Publishes {\ttfamily documentation/\+html} through Git\+Hub Pages deployment actions.\hypertarget{index_autotoc_md8}{}\doxysection{\texorpdfstring{Extended Automation Setup}{Extended Automation Setup}}\label{index_autotoc_md8}
-The full Discord bot + Cloudflare Worker + Git\+Hub Actions operational setup is documented in:\+
+Maintainers:\+
 
 
 \begin{DoxyItemize}
-\item {\ttfamily pipline/\+\+Set\+Up.\+md}
-\end{DoxyItemize}
-
-That document includes:\+
-\begin{DoxyItemize}
-\item Role-\/based slash command flow ({\ttfamily /\+test}, {\ttfamily /\+deploy}, issue/\+\+PR commands)
-\item {\ttfamily repository\+\_\+dispatch} wiring
-\item secret/\+token setup and security notes
-\item failure notification and maintainer tagging behavior
-\end{DoxyItemize}\hypertarget{index_autotoc_md9}{}\doxysection{\texorpdfstring{Documentation}{Documentation}}\label{index_autotoc_md9}
-
-\begin{DoxyItemize}
-\item Doxygen config:\+ {\ttfamily Doxygen\+Config}
-\item Generated docs:\+ {\ttfamily documentation/\+html/\+}
-\item Pages deployment source:\+ {\ttfamily documentation/\+html/\+}
-\end{DoxyItemize}\hypertarget{index_autotoc_md10}{}\doxysection{\texorpdfstring{Notes}{Notes}}\label{index_autotoc_md10}
-
-\begin{DoxyItemize}
-\item This project is still in active bring-\/up; CPU and \doxylink{classMMU}{MMU} areas are evolving quickly.
-\item Graphics/\+\+PPU, sound, interrupts/\+timers, and full hardware timing are still under development. 
+\item Jayesh Puri (@\+Jayesh-\/Dev21)
+\item Swarit Srivastava (@swarrit\+Srivastava) 
 \end{DoxyItemize}

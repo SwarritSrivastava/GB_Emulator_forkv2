@@ -1,0 +1,45 @@
+<!-- HTML footer for doxygen 1.16.1-->
+<!-- start footer part -->
+<!--BEGIN GENERATE_TREEVIEW-->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    $navpath
+    <li class="footer">$generatedby <a href="https://www.doxygen.org/index.html"><img class="footer" src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen"/></a> $doxygenversion </li>
+  </ul>
+</div>
+<!--END GENERATE_TREEVIEW-->
+<!--BEGIN !GENERATE_TREEVIEW-->
+<hr class="footer"/><address class="footer"><small>
+$generatedby&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen"/></a> $doxygenversion
+</small></address>
+</div><!-- doc-content -->
+<!--END !GENERATE_TREEVIEW-->
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark'
+  });
+  window.addEventListener('load', function() {
+    var fragments = document.querySelectorAll('.fragment');
+    fragments.forEach(function(fragment) {
+      var lines = fragment.querySelectorAll('.line');
+      if (lines.length > 0) {
+        var firstLineText = lines[0].textContent.replace(/\u00A0/g, ' ').trim();
+        if (firstLineText.startsWith('graph') || firstLineText.startsWith('sequenceDiagram') || firstLineText.startsWith('stateDiagram') || firstLineText.startsWith('classDiagram')) {
+          var mermaidText = '';
+          lines.forEach(function(line) {
+            mermaidText += line.textContent.replace(/\u00A0/g, ' ') + '\n';
+          });
+          var mermaidDiv = document.createElement('div');
+          mermaidDiv.className = 'mermaid';
+          mermaidDiv.innerText = mermaidText;
+          fragment.parentNode.replaceChild(mermaidDiv, fragment);
+        }
+      }
+    });
+    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+  });
+</script>
+</body>
+</html>

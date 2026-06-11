@@ -1,0 +1,208 @@
+\doxysection{Timer Class Reference}
+\hypertarget{classTimer}{}\label{classTimer}\index{Timer@{Timer}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classTimer_aa9b806de1d26355113ab9b140b448012}{Timer}} (\doxymbox{\hyperlink{classInterruptController}{Interrupt\+Controller}} \&ic)
+\item 
+void \doxymbox{\hyperlink{classTimer_ae189ef957dbb57a91d7fe2259cb6a635}{step}} (int cycles)
+\item 
+u8 \doxymbox{\hyperlink{classTimer_a26569c81fec5642259b42974404557f9}{read}} (u16 address) const
+\item 
+void \doxymbox{\hyperlink{classTimer_a0656228915a62bb9671b78386d42d728}{write}} (u16 address, u8 value)
+\item 
+void \doxymbox{\hyperlink{classTimer_a9020542d73357a4eef512eefaf57524b}{reset}} ()
+\item 
+u16 \doxymbox{\hyperlink{classTimer_ae6bf57a6981cc59e4f21ab0c9a208ed3}{get\+\_\+div\+\_\+counter}} () const
+\item 
+u8 \doxymbox{\hyperlink{classTimer_aada142e3a65e132a9b74bae0402e54e6}{get\+\_\+tima}} () const
+\item 
+u8 \doxymbox{\hyperlink{classTimer_ae2fb00278af6a3c3aeeb83c372355ee5}{get\+\_\+tma}} () const
+\item 
+u8 \doxymbox{\hyperlink{classTimer_a6380dc8b1e486f6de1fddd9956af4f9f}{get\+\_\+tac}} () const
+\item 
+int \doxymbox{\hyperlink{classTimer_a12c4527c647e21a9318ee88b63547c3c}{get\+\_\+tima\+\_\+counter}} () const
+\item 
+void \doxymbox{\hyperlink{classTimer_af12654941d57ae422cd26312f9014108}{set\+\_\+div\+\_\+counter}} (u16 value)
+\item 
+void \doxymbox{\hyperlink{classTimer_a4238cbf56b5e6360e1c09251c25cee75}{set\+\_\+tima}} (u8 value)
+\item 
+void \doxymbox{\hyperlink{classTimer_a879bd2d0c4f6e157157fb5303d563e5b}{set\+\_\+tma}} (u8 value)
+\item 
+void \doxymbox{\hyperlink{classTimer_a3f16e6e7adcee78ed6bf7ef15c6496fe}{set\+\_\+tac}} (u8 value)
+\item 
+void \doxymbox{\hyperlink{classTimer_a13bb80a19b61a9f335cc2217db678a5e}{set\+\_\+tima\+\_\+counter}} (int value)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00007}{7}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{classTimer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classTimer_aa9b806de1d26355113ab9b140b448012}\index{Timer@{Timer}!Timer@{Timer}}
+\index{Timer@{Timer}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{Timer()}{Timer()}}
+{\footnotesize\ttfamily \label{classTimer_aa9b806de1d26355113ab9b140b448012} 
+Timer::\+\+Timer (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classInterruptController}{Interrupt\+Controller}} \&}]{ic}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8cpp_source_l00004}{4}} of file \doxymbox{\hyperlink{timer_8cpp_source}{timer.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{classTimer_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classTimer_ae6bf57a6981cc59e4f21ab0c9a208ed3}\index{Timer@{Timer}!get\_div\_counter@{get\_div\_counter}}
+\index{get\_div\_counter@{get\_div\_counter}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{get\_div\_counter()}{get\_div\_counter()}}
+{\footnotesize\ttfamily \label{classTimer_ae6bf57a6981cc59e4f21ab0c9a208ed3} 
+u16 Timer::\+get\+\_\+div\+\_\+counter (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00018}{18}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_a6380dc8b1e486f6de1fddd9956af4f9f}\index{Timer@{Timer}!get\_tac@{get\_tac}}
+\index{get\_tac@{get\_tac}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{get\_tac()}{get\_tac()}}
+{\footnotesize\ttfamily \label{classTimer_a6380dc8b1e486f6de1fddd9956af4f9f} 
+u8 Timer::\+get\+\_\+tac (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00021}{21}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_aada142e3a65e132a9b74bae0402e54e6}\index{Timer@{Timer}!get\_tima@{get\_tima}}
+\index{get\_tima@{get\_tima}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{get\_tima()}{get\_tima()}}
+{\footnotesize\ttfamily \label{classTimer_aada142e3a65e132a9b74bae0402e54e6} 
+u8 Timer::\+get\+\_\+tima (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00019}{19}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_a12c4527c647e21a9318ee88b63547c3c}\index{Timer@{Timer}!get\_tima\_counter@{get\_tima\_counter}}
+\index{get\_tima\_counter@{get\_tima\_counter}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{get\_tima\_counter()}{get\_tima\_counter()}}
+{\footnotesize\ttfamily \label{classTimer_a12c4527c647e21a9318ee88b63547c3c} 
+int Timer::\+get\+\_\+tima\+\_\+counter (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00022}{22}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_ae2fb00278af6a3c3aeeb83c372355ee5}\index{Timer@{Timer}!get\_tma@{get\_tma}}
+\index{get\_tma@{get\_tma}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{get\_tma()}{get\_tma()}}
+{\footnotesize\ttfamily \label{classTimer_ae2fb00278af6a3c3aeeb83c372355ee5} 
+u8 Timer::\+get\+\_\+tma (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00020}{20}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_a26569c81fec5642259b42974404557f9}\index{Timer@{Timer}!read@{read}}
+\index{read@{read}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{classTimer_a26569c81fec5642259b42974404557f9} 
+u8 Timer::\+read (\begin{DoxyParamCaption}\item[{u16}]{address}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8cpp_source_l00035}{35}} of file \doxymbox{\hyperlink{timer_8cpp_source}{timer.\+cpp}}.
+
+\Hypertarget{classTimer_a9020542d73357a4eef512eefaf57524b}\index{Timer@{Timer}!reset@{reset}}
+\index{reset@{reset}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{classTimer_a9020542d73357a4eef512eefaf57524b} 
+void Timer::\+reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8cpp_source_l00054}{54}} of file \doxymbox{\hyperlink{timer_8cpp_source}{timer.\+cpp}}.
+
+\Hypertarget{classTimer_af12654941d57ae422cd26312f9014108}\index{Timer@{Timer}!set\_div\_counter@{set\_div\_counter}}
+\index{set\_div\_counter@{set\_div\_counter}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{set\_div\_counter()}{set\_div\_counter()}}
+{\footnotesize\ttfamily \label{classTimer_af12654941d57ae422cd26312f9014108} 
+void Timer::\+set\+\_\+div\+\_\+counter (\begin{DoxyParamCaption}\item[{u16}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00024}{24}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_a3f16e6e7adcee78ed6bf7ef15c6496fe}\index{Timer@{Timer}!set\_tac@{set\_tac}}
+\index{set\_tac@{set\_tac}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{set\_tac()}{set\_tac()}}
+{\footnotesize\ttfamily \label{classTimer_a3f16e6e7adcee78ed6bf7ef15c6496fe} 
+void Timer::\+set\+\_\+tac (\begin{DoxyParamCaption}\item[{u8}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00027}{27}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_a4238cbf56b5e6360e1c09251c25cee75}\index{Timer@{Timer}!set\_tima@{set\_tima}}
+\index{set\_tima@{set\_tima}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{set\_tima()}{set\_tima()}}
+{\footnotesize\ttfamily \label{classTimer_a4238cbf56b5e6360e1c09251c25cee75} 
+void Timer::\+set\+\_\+tima (\begin{DoxyParamCaption}\item[{u8}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00025}{25}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_a13bb80a19b61a9f335cc2217db678a5e}\index{Timer@{Timer}!set\_tima\_counter@{set\_tima\_counter}}
+\index{set\_tima\_counter@{set\_tima\_counter}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{set\_tima\_counter()}{set\_tima\_counter()}}
+{\footnotesize\ttfamily \label{classTimer_a13bb80a19b61a9f335cc2217db678a5e} 
+void Timer::\+set\+\_\+tima\+\_\+counter (\begin{DoxyParamCaption}\item[{int}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00028}{28}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_a879bd2d0c4f6e157157fb5303d563e5b}\index{Timer@{Timer}!set\_tma@{set\_tma}}
+\index{set\_tma@{set\_tma}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{set\_tma()}{set\_tma()}}
+{\footnotesize\ttfamily \label{classTimer_a879bd2d0c4f6e157157fb5303d563e5b} 
+void Timer::\+set\+\_\+tma (\begin{DoxyParamCaption}\item[{u8}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8hpp_source_l00026}{26}} of file \doxymbox{\hyperlink{timer_8hpp_source}{timer.\+hpp}}.
+
+\Hypertarget{classTimer_ae189ef957dbb57a91d7fe2259cb6a635}\index{Timer@{Timer}!step@{step}}
+\index{step@{step}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily \label{classTimer_ae189ef957dbb57a91d7fe2259cb6a635} 
+void Timer::\+step (\begin{DoxyParamCaption}\item[{int}]{cycles}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8cpp_source_l00009}{9}} of file \doxymbox{\hyperlink{timer_8cpp_source}{timer.\+cpp}}.
+
+\Hypertarget{classTimer_a0656228915a62bb9671b78386d42d728}\index{Timer@{Timer}!write@{write}}
+\index{write@{write}!Timer@{Timer}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily \label{classTimer_a0656228915a62bb9671b78386d42d728} 
+void Timer::\+write (\begin{DoxyParamCaption}\item[{u16}]{address}{, }\item[{u8}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{timer_8cpp_source_l00045}{45}} of file \doxymbox{\hyperlink{timer_8cpp_source}{timer.\+cpp}}.
+
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+include/\+timer.\+hpp\item 
+src/\+core/\+timer.\+cpp\end{DoxyCompactItemize}

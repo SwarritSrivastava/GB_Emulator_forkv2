@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['opcode_20architecture_0',['Opcode Architecture',['../index.html#autotoc_md3',1,'']]]
+  ['lr35902_20cpu_20core_0',['Custom LR35902 CPU Core',['../index.html#autotoc_md3',1,'']]]
 ];

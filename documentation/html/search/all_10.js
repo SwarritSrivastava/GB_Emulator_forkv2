@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['workflow_0',['Workflow',['../index.html#autotoc_md6',1,'1) TIRP CI Workflow'],['../index.html#autotoc_md7',1,'2) Pages Deploy Workflow']]],
-  ['workflow_20and_20pipeline_1',['Workflow and Pipeline',['../index.html#autotoc_md5',1,'']]],
-  ['write_2',['write',['../classMMU.html#a5df9ab9c4ac566decef576fc819ad4a1',1,'MMU']]]
+  ['sfml_203_200_20renderer_0',['Pixel Processing Unit (PPU) &amp;amp; SFML 3.0 Renderer',['../index.html#autotoc_md5',1,'']]],
+  ['simulation_1',['GB_Emulator: A High-Fidelity Game Boy (DMG-01) Architecture Simulation',['../index.html',1,'']]],
+  ['subsystems_2',['The Hardware Subsystems',['../index.html#autotoc_md2',1,'']]],
+  ['system_20architecture_3',['System Architecture',['../index.html#autotoc_md1',1,'']]]
 ];

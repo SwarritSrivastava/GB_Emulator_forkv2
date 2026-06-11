@@ -95,18 +95,57 @@ $(function(){initNavTree('classMMU.html','',''); });
 
 <p>This is the complete list of members for <a class="el" href="classMMU.html">MMU</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classMMU.html#a4a7b8a9bb3d11a612b7c9ec6e5bef7d9">map_rom</a>(const std::vector&lt; u8 &gt; &amp;rom_data)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>dump_memory</b>() const (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>get_current_rom_bank</b>() const (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>get_joypad_state</b>() const (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>get_read_count</b>() const (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>get_write_count</b>() const (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>load_memory</b>(const std::vector&lt; u8 &gt; &amp;dump) (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>map_rom</b>(const std::vector&lt; u8 &gt; &amp;rom_data) (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>MMU</b>() (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a>(u16 address) const</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classMMU.html#a5df9ab9c4ac566decef576fc819ad4a1">write</a>(u16 address, u8 value)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>MMU</b>(Cartridge &amp;cartridge, PPU &amp;ppu, Timer &amp;timer, InterruptController &amp;ic) (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>read</b>(u16 address) const (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>reset</b>() (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>set_joypad_state</b>(u8 action, u8 direction) (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>step_timer</b>(int cycles) (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>write</b>(u16 address, u8 value) (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~MMU</b>() (defined in <a class="el" href="classMMU.html">MMU</a>)</td><td class="entry"><a class="el" href="classMMU.html">MMU</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->
+<!-- HTML footer for doxygen 1.16.1-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.16.1 </li>
   </ul>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark'
+  });
+  window.addEventListener('load', function() {
+    var fragments = document.querySelectorAll('.fragment');
+    fragments.forEach(function(fragment) {
+      var lines = fragment.querySelectorAll('.line');
+      if (lines.length > 0) {
+        var firstLineText = lines[0].textContent.replace(/\u00A0/g, ' ').trim();
+        if (firstLineText.startsWith('graph') || firstLineText.startsWith('sequenceDiagram') || firstLineText.startsWith('stateDiagram') || firstLineText.startsWith('classDiagram')) {
+          var mermaidText = '';
+          lines.forEach(function(line) {
+            mermaidText += line.textContent.replace(/\u00A0/g, ' ') + '\n';
+          });
+          var mermaidDiv = document.createElement('div');
+          mermaidDiv.className = 'mermaid';
+          mermaidDiv.innerText = mermaidText;
+          fragment.parentNode.replaceChild(mermaidDiv, fragment);
+        }
+      }
+    });
+    mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+  });
+</script>
 </body>
 </html>
