@@ -129,7 +129,8 @@ Capabilities and Controls</h1>
 <li>Internal Save States: Press '0-9' to Load, 'Shift + 0-9' to Save.</li>
 <li>External Save States: Press 'E' to Load, 'Shift + E' to Save (via Zenity File Picker).</li>
 </ul>
-<p>Gamepad Mappings:</p><ul>
+<p>Gamepad Mappings:</p>
+<ul>
 <li>Arrow Keys map to the D-Pad</li>
 <li>'Z' maps to the A Button</li>
 <li>'X' maps to the B Button</li>
@@ -180,9 +181,10 @@ The TIRP Continuous Integration Protocol</h1>
 </div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
 Contribution and Maintainers</h1>
 <p>We maintain extremely high standards for codebase integrity. Please refer to our Contribution Guidelines (CONTRIBUTING.md) for branch naming conventions, rigorous coding style expectations, and pull request checklist requirements.</p>
-<p>Maintainers:</p><ul>
+<p>Maintainers:</p>
+<ul>
 <li>Jayesh Puri (@Jayesh-Dev21)</li>
-<li>Swarit Srivastava (@Swarit,srivastava) </li>
+<li>Swarit Srivastava (@swarritSrivastava) </li>
 </ul>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
@@ -207,11 +209,11 @@ Contribution and Maintainers</h1>
     fragments.forEach(function(fragment) {
       var lines = fragment.querySelectorAll('.line');
       if (lines.length > 0) {
-        var firstLineText = lines[0].innerText.trim();
+        var firstLineText = lines[0].textContent.replace(/\u00A0/g, ' ').trim();
         if (firstLineText.startsWith('graph') || firstLineText.startsWith('sequenceDiagram') || firstLineText.startsWith('stateDiagram') || firstLineText.startsWith('classDiagram')) {
           var mermaidText = '';
           lines.forEach(function(line) {
-            mermaidText += line.innerText + '\n';
+            mermaidText += line.textContent.replace(/\u00A0/g, ' ') + '\n';
           });
           var mermaidDiv = document.createElement('div');
           mermaidDiv.className = 'mermaid';

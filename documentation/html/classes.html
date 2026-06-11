@@ -140,11 +140,11 @@ $(function(){initNavTree('classes.html','',''); });
     fragments.forEach(function(fragment) {
       var lines = fragment.querySelectorAll('.line');
       if (lines.length > 0) {
-        var firstLineText = lines[0].innerText.trim();
+        var firstLineText = lines[0].textContent.replace(/\u00A0/g, ' ').trim();
         if (firstLineText.startsWith('graph') || firstLineText.startsWith('sequenceDiagram') || firstLineText.startsWith('stateDiagram') || firstLineText.startsWith('classDiagram')) {
           var mermaidText = '';
           lines.forEach(function(line) {
-            mermaidText += line.innerText + '\n';
+            mermaidText += line.textContent.replace(/\u00A0/g, ' ') + '\n';
           });
           var mermaidDiv = document.createElement('div');
           mermaidDiv.className = 'mermaid';
