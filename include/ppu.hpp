@@ -3,11 +3,13 @@
 #include "ProcessingUnit.hpp"
 #include "mmu.hpp"
 #include "common.hpp"
+#include "interrupt_controller.hpp"
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <deque>
 #include <string>
 #include <vector>
+#include <memory>
 
 class MMU;
 
@@ -28,6 +30,7 @@ public:
     };
 
     PPU();
+    explicit PPU(InterruptController& ic);
 
     void set_mmu(MMU* m) { mmu = m; }
     void set_cpu(ProcessingUnit* c) { cpu = c; }
@@ -54,15 +57,27 @@ public:
     bool isStepRequested() const { return stepRequested; }
     void clearStepRequest() { stepRequested = false; }
 
+    bool isTurbo() const { return turbo; }
+    void setTurbo(bool val) { turbo = val; }
+    int getActiveSlot() const { return activeSlot; }
+    void setActiveSlot(int slot) { activeSlot = slot; }
+    void reset();
+    bool isResetRequested() const { return resetRequested; }
+    void clearResetRequest() { resetRequested = false; }
+
 private:
     bool saveStateSlot(int slot);
     bool loadStateSlot(int slot);
+    bool saveStatePath(const std::string& filepath);
+    bool loadStatePath(const std::string& filepath);
 
     void drawPanels();
     void drawText(const sf::Vector2f& pos, const std::string& text, unsigned size, const sf::Color& color);
     std::string toHex(u32 value, int width) const;
 
     // Emulation components
+    std::unique_ptr<InterruptController> dummy_ic;
+    InterruptController& ic;
     ProcessingUnit* cpu = nullptr;
     MMU* mmu = nullptr;
     RomInfo romInfo;
@@ -118,6 +133,13 @@ private:
     std::vector<u16> breakpoints;
     bool paused{false};
     bool stepRequested{false};
+    bool turbo{false};
+    int activeSlot{0};
+    bool resetRequested{false};
+    std::string externalStatePath;
+    JoypadState clickableJoypad{};
+    JoypadState physicalJoypad{};
+    JoypadState currentJoypadState{};
 
     float timeAccumulator{0.0f};
     u64 lastCycles{0};

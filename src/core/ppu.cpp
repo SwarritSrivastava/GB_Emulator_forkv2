@@ -11,14 +11,14 @@
 namespace {
 constexpr u32 screen_width = 160;
 constexpr u32 screen_height = 144;
-constexpr u32 ui_width = 560;
+constexpr u32 ui_width = 600;
 constexpr u32 ui_height = 420;
 constexpr u32 window_width = screen_width + ui_width + 64;
 constexpr u32 window_height = 720;
 constexpr size_t opcode_log_size = 28;
 constexpr float status_display_seconds = 2.5f;
-constexpr size_t rom_bytes_per_row = 16;
-constexpr size_t rom_rows_visible = 10;
+constexpr size_t rom_bytes_per_row = 8;
+constexpr size_t rom_rows_visible = 8;
 
 std::string mbcNameFromType(u8 type) {
     switch (type) {
@@ -47,7 +47,21 @@ std::string mbcNameFromType(u8 type) {
 }
 
 PPU::PPU()
-    : screenSprite(screenTexture)
+    : dummy_ic(std::make_unique<InterruptController>())
+    , ic(*dummy_ic)
+    , screenSprite(screenTexture)
+{
+    framebuffer.fill(0xFFFFFFFF);
+    lcdc = 0x91;
+    stat = 0x85;
+    bgp = 0xFC;
+    obp0 = 0xFF;
+    obp1 = 0xFF;
+}
+
+PPU::PPU(InterruptController& interrupt_controller)
+    : ic(interrupt_controller)
+    , screenSprite(screenTexture)
 {
     framebuffer.fill(0xFFFFFFFF);
     lcdc = 0x91;
@@ -152,28 +166,23 @@ void PPU::write(u16 address, u8 value) {
 
 void PPU::set_mode(Mode mode) {
     stat = (stat & ~0x03) | static_cast<u8>(mode);
-    if (mmu) {
-        if (mode == Mode::VBlank) {
-            u8 if_reg = mmu->read(0xFF0F);
-            mmu->write(0xFF0F, if_reg | 0x01);
-        }
-        bool interrupt = false;
-        if (mode == Mode::HBlank && (stat & 0x08)) interrupt = true;
-        if (mode == Mode::VBlank && (stat & 0x10)) interrupt = true;
-        if (mode == Mode::OAMSearch && (stat & 0x20)) interrupt = true;
-        if (interrupt) {
-            u8 if_reg = mmu->read(0xFF0F);
-            mmu->write(0xFF0F, if_reg | 0x02);
-        }
+    if (mode == Mode::VBlank) {
+        ic.request_interrupt(InterruptType::VBlank);
+    }
+    bool interrupt = false;
+    if (mode == Mode::HBlank && (stat & 0x08)) interrupt = true;
+    if (mode == Mode::VBlank && (stat & 0x10)) interrupt = true;
+    if (mode == Mode::OAMSearch && (stat & 0x20)) interrupt = true;
+    if (interrupt) {
+        ic.request_interrupt(InterruptType::LCDStat);
     }
 }
 
 void PPU::update_stat() {
     if (ly == lyc) {
         stat |= 0x04;
-        if (mmu && (stat & 0x40)) {
-            u8 if_reg = mmu->read(0xFF0F);
-            mmu->write(0xFF0F, if_reg | 0x02);
+        if (stat & 0x40) {
+            ic.request_interrupt(InterruptType::LCDStat);
         }
     } else {
         stat &= ~0x04;
@@ -277,10 +286,24 @@ void PPU::init_window(bool debug, const std::string& rom_title) {
 
     (void)screenTexture.resize({screen_width, screen_height});
     screenSprite.setTexture(screenTexture);
+    screenSprite.setTextureRect(sf::IntRect({0, 0}, {static_cast<int>(screen_width), static_cast<int>(screen_height)}));
 
-    fontLoaded = font.openFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf");
+    const std::vector<std::string> fontPaths = {
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+        "/usr/share/fonts/liberation/LiberationMono-Regular.ttf",
+        "/usr/share/fonts/liberation-fonts/LiberationMono-Regular.ttf",
+        "/usr/share/fonts/Adwaita/AdwaitaMono-Regular.ttf",
+        "DejaVuSansMono.ttf",
+        "LiberationMono-Regular.ttf"
+    };
+
+    for (const auto& path : fontPaths) {
+        fontLoaded = font.openFromFile(path);
+        if (fontLoaded) break;
+    }
+
     if (!fontLoaded && debugMode) {
-        statusMessage = "Missing font: /usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf";
+        statusMessage = "Missing monospace font. Debug text won't render.";
         statusTimer = status_display_seconds;
     }
 
@@ -316,14 +339,14 @@ void PPU::handleEvents(JoypadState& joypad) {
 
         if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
             switch (keyPressed->code) {
-                case sf::Keyboard::Key::Right: joypad.right = true; break;
-                case sf::Keyboard::Key::Left:  joypad.left = true; break;
-                case sf::Keyboard::Key::Up:    joypad.up = true; break;
-                case sf::Keyboard::Key::Down:  joypad.down = true; break;
-                case sf::Keyboard::Key::Z:     joypad.a = true; break;
-                case sf::Keyboard::Key::X:     joypad.b = true; break;
-                case sf::Keyboard::Key::Enter: joypad.start = true; break;
-                case sf::Keyboard::Key::RShift: joypad.select = true; break;
+                case sf::Keyboard::Key::Right: physicalJoypad.right = true; break;
+                case sf::Keyboard::Key::Left:  physicalJoypad.left = true; break;
+                case sf::Keyboard::Key::Up:    physicalJoypad.up = true; break;
+                case sf::Keyboard::Key::Down:  physicalJoypad.down = true; break;
+                case sf::Keyboard::Key::Z:     physicalJoypad.a = true; break;
+                case sf::Keyboard::Key::X:     physicalJoypad.b = true; break;
+                case sf::Keyboard::Key::Enter: physicalJoypad.start = true; break;
+                case sf::Keyboard::Key::RShift: physicalJoypad.select = true; break;
                 case sf::Keyboard::Key::Escape: window.close(); break;
                 
                 // Debug actions
@@ -341,9 +364,64 @@ void PPU::handleEvents(JoypadState& joypad) {
                         statusTimer = status_display_seconds;
                     }
                     break;
+                case sf::Keyboard::Key::T:
+                    if (debugMode) {
+                        turbo = !turbo;
+                        statusMessage = turbo ? "Turbo Mode 2x" : "Normal Mode 1x";
+                        statusTimer = status_display_seconds;
+                    }
+                    break;
+                case sf::Keyboard::Key::R:
+                    if (debugMode) {
+                        resetRequested = true;
+                        statusMessage = "Reset requested";
+                        statusTimer = status_display_seconds;
+                    }
+                    break;
+                case sf::Keyboard::Key::E:
+                    if (debugMode) {
+                        activeSlot = -1; // -1 represents 'e'
+                        bool ok = false;
+                        if (keyPressed->shift || keyPressed->control) {
+                            std::string filepath = "savestates/external.bin";
+                            FILE* f = popen("zenity --file-selection --save --confirm-overwrite --file-filter='Save States (*.bin) | *.bin' 2>/dev/null", "r");
+                            if (f) {
+                                char buf[1024];
+                                if (fgets(buf, sizeof(buf), f)) {
+                                    std::string s(buf);
+                                    if (!s.empty() && s.back() == '\n') s.pop_back();
+                                    if (!s.empty()) filepath = s;
+                                }
+                                pclose(f);
+                            }
+                            externalStatePath = filepath;
+                            ok = saveStatePath(filepath);
+                            std::string filename = std::filesystem::path(filepath).filename().string();
+                            statusMessage = ok ? "Saved: " + filename : "Save failed";
+                        } else {
+                            std::string filepath = "savestates/external.bin";
+                            FILE* f = popen("zenity --file-selection --file-filter='Save States (*.bin) | *.bin' 2>/dev/null", "r");
+                            if (f) {
+                                char buf[1024];
+                                if (fgets(buf, sizeof(buf), f)) {
+                                    std::string s(buf);
+                                    if (!s.empty() && s.back() == '\n') s.pop_back();
+                                    if (!s.empty()) filepath = s;
+                                }
+                                pclose(f);
+                            }
+                            externalStatePath = filepath;
+                            ok = loadStatePath(filepath);
+                            std::string filename = std::filesystem::path(filepath).filename().string();
+                            statusMessage = ok ? "Loaded: " + filename : "Load failed";
+                        }
+                        statusTimer = status_display_seconds;
+                    }
+                    break;
                 default:
                     if (debugMode && keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
                         int slot = static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num0);
+                        activeSlot = slot;
                         bool ok = false;
                         if (keyPressed->shift || keyPressed->control) {
                             ok = saveStateSlot(slot);
@@ -362,18 +440,66 @@ void PPU::handleEvents(JoypadState& joypad) {
 
         if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
             switch (keyReleased->code) {
-                case sf::Keyboard::Key::Right: joypad.right = false; break;
-                case sf::Keyboard::Key::Left:  joypad.left = false; break;
-                case sf::Keyboard::Key::Up:    joypad.up = false; break;
-                case sf::Keyboard::Key::Down:  joypad.down = false; break;
-                case sf::Keyboard::Key::Z:     joypad.a = false; break;
-                case sf::Keyboard::Key::X:     joypad.b = false; break;
-                case sf::Keyboard::Key::Enter: joypad.start = false; break;
-                case sf::Keyboard::Key::RShift: joypad.select = false; break;
+                case sf::Keyboard::Key::Right: physicalJoypad.right = false; break;
+                case sf::Keyboard::Key::Left:  physicalJoypad.left = false; break;
+                case sf::Keyboard::Key::Up:    physicalJoypad.up = false; break;
+                case sf::Keyboard::Key::Down:  physicalJoypad.down = false; break;
+                case sf::Keyboard::Key::Z:     physicalJoypad.a = false; break;
+                case sf::Keyboard::Key::X:     physicalJoypad.b = false; break;
+                case sf::Keyboard::Key::Enter: physicalJoypad.start = false; break;
+                case sf::Keyboard::Key::RShift: physicalJoypad.select = false; break;
                 default: break;
             }
         }
+
+        if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+            if (mousePressed->button == sf::Mouse::Button::Left) {
+                sf::Vector2f mPos = window.mapPixelToCoords(mousePressed->position);
+                const float ctrlStartX = 32.0f;
+                const float ctrlTop = 32.0f + screen_height * 3.0f + 20.0f;
+                const float gpX = ctrlStartX + 300.0f;
+
+                auto rectContains = [](float rx, float ry, float rw, float rh, float px, float py) {
+                    return px >= rx && px <= rx + rw && py >= ry && py <= ry + rh;
+                };
+
+                if (rectContains(gpX + 40.0f, ctrlTop + 30.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.up = !clickableJoypad.up;
+                }
+                if (rectContains(gpX + 40.0f, ctrlTop + 90.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.down = !clickableJoypad.down;
+                }
+                if (rectContains(gpX + 10.0f, ctrlTop + 60.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.left = !clickableJoypad.left;
+                }
+                if (rectContains(gpX + 70.0f, ctrlTop + 60.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.right = !clickableJoypad.right;
+                }
+                if (rectContains(gpX + 145.0f, ctrlTop + 50.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.a = !clickableJoypad.a;
+                }
+                if (rectContains(gpX + 110.0f, ctrlTop + 75.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.b = !clickableJoypad.b;
+                }
+                if (rectContains(gpX + 15.0f, ctrlTop + 140.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.select = !clickableJoypad.select;
+                }
+                if (rectContains(gpX + 90.0f, ctrlTop + 140.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
+                    clickableJoypad.start = !clickableJoypad.start;
+                }
+            }
+        }
     }
+
+    joypad.up = physicalJoypad.up || clickableJoypad.up;
+    joypad.down = physicalJoypad.down || clickableJoypad.down;
+    joypad.left = physicalJoypad.left || clickableJoypad.left;
+    joypad.right = physicalJoypad.right || clickableJoypad.right;
+    joypad.a = physicalJoypad.a || clickableJoypad.a;
+    joypad.b = physicalJoypad.b || clickableJoypad.b;
+    joypad.select = physicalJoypad.select || clickableJoypad.select;
+    joypad.start = physicalJoypad.start || clickableJoypad.start;
+    currentJoypadState = joypad;
 }
 
 void PPU::update(const float dtSeconds, const u64 cyclesExecuted) {
@@ -430,14 +556,34 @@ void PPU::checkBreakpoint(const u16 pc) {
     }
 }
 
-bool PPU::saveStateSlot(const int slot) {
+void PPU::reset() {
+    vram.fill(0);
+    oam.fill(0);
+    lcdc = 0x91;
+    stat = 0x85;
+    bgp = 0xFC;
+    obp0 = 0xFF;
+    obp1 = 0xFF;
+    scy = 0x00;
+    scx = 0x00;
+    ly = 0x00;
+    lyc = 0x00;
+    wy = 0x00;
+    wx = 0x00;
+    mode_clock = 0;
+    window_line_counter = 0;
+    frame_ready = false;
+    framebuffer.fill(0xFFFFFFFF);
+}
+
+bool PPU::saveStatePath(const std::string& filepath) {
     if (!cpu || !mmu) return false;
 
-    std::filesystem::create_directories("savestates");
-    std::ostringstream path;
-    path << "savestates/slot_" << slot << ".bin";
+    try {
+        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());
+    } catch (...) {}
 
-    std::ofstream out(path.str(), std::ios::binary);
+    std::ofstream out(filepath, std::ios::binary);
     if (!out) {
         return false;
     }
@@ -485,13 +631,16 @@ bool PPU::saveStateSlot(const int slot) {
     return true;
 }
 
-bool PPU::loadStateSlot(const int slot) {
-    if (!cpu || !mmu) return false;
-
+bool PPU::saveStateSlot(const int slot) {
     std::ostringstream path;
     path << "savestates/slot_" << slot << ".bin";
+    return saveStatePath(path.str());
+}
 
-    std::ifstream in(path.str(), std::ios::binary);
+bool PPU::loadStatePath(const std::string& filepath) {
+    if (!cpu || !mmu) return false;
+
+    std::ifstream in(filepath, std::ios::binary);
     if (!in) {
         return false;
     }
@@ -552,6 +701,12 @@ bool PPU::loadStateSlot(const int slot) {
     return true;
 }
 
+bool PPU::loadStateSlot(const int slot) {
+    std::ostringstream path;
+    path << "savestates/slot_" << slot << ".bin";
+    return loadStatePath(path.str());
+}
+
 void PPU::drawPanels() {
     const float panelStartX = 32.0f + screen_width * 3.0f + 32.0f;
     const float panelTop = 24.0f;
@@ -591,14 +746,20 @@ void PPU::drawPanels() {
     cursorY += 24.0f;
     drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Title: " + romInfo.title, 14, sf::Color(180, 200, 240));
     cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Type: 0x" + toHex(romInfo.type, 2) + " (" + romInfo.mbc_name + ")", 14, sf::Color(180, 200, 240));
+    
+    // Shorten MBC name if too long to fit
+    std::string shortMbc = romInfo.mbc_name;
+    if (shortMbc.length() > 16) {
+        shortMbc = shortMbc.substr(0, 13) + "...";
+    }
+    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Type: 0x" + toHex(romInfo.type, 2) + " (" + shortMbc + ")", 14, sf::Color(180, 200, 240));
     cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "ROM Size: 0x" + toHex(romInfo.rom_size, 2) + "  RAM Size: 0x" + toHex(romInfo.ram_size, 2), 14, sf::Color(180, 200, 240));
+    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "ROM: 0x" + toHex(romInfo.rom_size, 2) + "  RAM: 0x" + toHex(romInfo.ram_size, 2), 14, sf::Color(180, 200, 240));
     cursorY += 24.0f;
 
     drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Memory/Bus", 16, sf::Color(220, 220, 230));
     cursorY += 24.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Reads: " + std::to_string(lastReads) + "  Writes: " + std::to_string(lastWrites), 14, sf::Color(180, 200, 240));
+    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Rds: " + std::to_string(lastReads) + "  Wrs: " + std::to_string(lastWrites), 14, sf::Color(180, 200, 240));
     cursorY += 18.0f;
     drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Cycles: " + std::to_string(lastCycles), 14, sf::Color(180, 200, 240));
     cursorY += 24.0f;
@@ -629,16 +790,91 @@ void PPU::drawPanels() {
         }
     }
 
-    cursorY = window_height - 96.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Save State: Shift+0-9", 13, sf::Color(200, 180, 120));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Load State: 0-9", 13, sf::Color(200, 180, 120));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Pause: Space  Step: N", 13, sf::Color(200, 180, 120));
-    cursorY += 18.0f;
+    cursorY = std::max(cursorY + 16.0f, window_height - 64.0f);
     if (!statusMessage.empty()) {
         drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), statusMessage, 13, sf::Color(220, 140, 140));
     }
+
+    // Draw Control Panel Box below the game screen
+    const float ctrlStartX = 32.0f;
+    const float ctrlTop = 32.0f + screen_height * 3.0f + 20.0f;
+    const float ctrlWidth = screen_width * 3.0f;
+    const float ctrlHeight = window_height - ctrlTop - 24.0f;
+
+    sf::RectangleShape ctrlBg(sf::Vector2f(ctrlWidth, ctrlHeight));
+    ctrlBg.setPosition(sf::Vector2f(ctrlStartX, ctrlTop));
+    ctrlBg.setFillColor(sf::Color(26, 29, 35));
+    ctrlBg.setOutlineColor(sf::Color(50, 55, 70));
+    ctrlBg.setOutlineThickness(1.0f);
+    window.draw(ctrlBg);
+
+    float ctrlY = ctrlTop + 12.0f;
+    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "Emulator Control Panel", 16, sf::Color(100, 220, 200));
+    ctrlY += 24.0f;
+
+    std::string speedStr = turbo ? "Turbo Mode (2x)" : "Normal Mode (1x)";
+    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "Speed:  " + speedStr + "  (Toggle: Press 'T')", 13, sf::Color(180, 200, 240));
+    ctrlY += 18.0f;
+
+    std::string slotStr = (activeSlot == -1) ? "E (External)" : std::to_string(activeSlot);
+    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "Active State Slot:  [" + slotStr + "]", 13, sf::Color(180, 200, 240));
+    ctrlY += 16.0f;
+    if (activeSlot == -1 && !externalStatePath.empty()) {
+        std::string filename = std::filesystem::path(externalStatePath).filename().string();
+        if (filename.length() > 20) filename = filename.substr(0, 17) + "...";
+        drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "File: " + filename, 11, sf::Color(140, 160, 180));
+        ctrlY += 14.0f;
+    } else {
+        ctrlY += 14.0f;
+    }
+
+    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "State Hotkeys:", 13, sf::Color(210, 210, 210));
+    ctrlY += 14.0f;
+    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Load / Save Slot: Press 0-9 / Shift + 0-9", 11, sf::Color(170, 190, 210));
+    ctrlY += 14.0f;
+    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Load / Save External: Press E / Shift + E", 11, sf::Color(170, 190, 210));
+    ctrlY += 18.0f;
+
+    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "System Hotkeys:", 13, sf::Color(210, 210, 210));
+    ctrlY += 14.0f;
+    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Reset Emulator: Press 'R'  |  Pause/Play: Press Space", 11, sf::Color(170, 190, 210));
+    ctrlY += 14.0f;
+    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Single Step (when paused): Press 'N'", 11, sf::Color(170, 190, 210));
+
+    // Gamepad Interactive Overlay
+    const float gamepadStartX = ctrlStartX + 300.0f;
+    drawText(sf::Vector2f(gamepadStartX, ctrlTop + 12.0f), "Gamepad (Clickable)", 14, sf::Color(100, 220, 200));
+
+    auto drawButton = [&](float x, float y, float w, float h, const std::string& label, bool isActive) {
+        sf::RectangleShape btn(sf::Vector2f(w, h));
+        btn.setPosition(sf::Vector2f(x, y));
+        if (isActive) {
+            btn.setFillColor(sf::Color(100, 220, 200));
+        } else {
+            btn.setFillColor(sf::Color(50, 55, 65));
+        }
+        btn.setOutlineColor(sf::Color(80, 85, 100));
+        btn.setOutlineThickness(1.0f);
+        window.draw(btn);
+
+        float textX = x + (w - label.length() * 6.5f) / 2.0f;
+        float textY = y + (h - 11.0f) / 2.0f - 1.0f;
+        drawText(sf::Vector2f(textX, textY), label, 10, isActive ? sf::Color(20, 20, 20) : sf::Color(220, 220, 220));
+    };
+
+    // Render D-Pad
+    drawButton(gamepadStartX + 40.0f, ctrlTop + 30.0f, 24.0f, 24.0f, "U", currentJoypadState.up);
+    drawButton(gamepadStartX + 10.0f, ctrlTop + 60.0f, 24.0f, 24.0f, "L", currentJoypadState.left);
+    drawButton(gamepadStartX + 70.0f, ctrlTop + 60.0f, 24.0f, 24.0f, "R", currentJoypadState.right);
+    drawButton(gamepadStartX + 40.0f, ctrlTop + 90.0f, 24.0f, 24.0f, "D", currentJoypadState.down);
+
+    // Render Action Buttons
+    drawButton(gamepadStartX + 110.0f, ctrlTop + 75.0f, 26.0f, 26.0f, "B", currentJoypadState.b);
+    drawButton(gamepadStartX + 145.0f, ctrlTop + 50.0f, 26.0f, 26.0f, "A", currentJoypadState.a);
+
+    // Render Select and Start
+    drawButton(gamepadStartX + 15.0f, ctrlTop + 140.0f, 65.0f, 18.0f, "SELECT", currentJoypadState.select);
+    drawButton(gamepadStartX + 90.0f, ctrlTop + 140.0f, 65.0f, 18.0f, "START", currentJoypadState.start);
 }
 
 void PPU::drawText(const sf::Vector2f& pos, const std::string& text, const unsigned size, const sf::Color& color) {
