@@ -6,72 +6,73 @@
 \DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00002}00002\ }
 \DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ <vector>}}
 \DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ <string>}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00006}00006\ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00007}\doxymbox{\hyperlink{structrom__header}{00007}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Memory\ Map}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00008}00008\ \ \ u8\ entry[4];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0100-\/0x0103}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00009}00009\ \ \ u8\ nintendo\_logo[0x30];\ \ \ \textcolor{comment}{//\ 0x0104-\/0x0133}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00010}00010\ \ \ \textcolor{keywordtype}{char}\ title[16];\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0134-\/0x0143}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00011}00011\ \ \ u16\ new\_lic\_code;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0144-\/0x0145}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00012}00012\ \ \ u8\ sgb\_flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0146}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00013}00013\ \ \ u8\ type;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0147}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00014}00014\ \ \ u8\ rom\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0148}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00015}00015\ \ \ u8\ ram\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0149}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00016}00016\ \ \ u8\ dest\_code;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014A}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00017}00017\ \ \ u8\ old\_lic\_code;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014B}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00018}00018\ \ \ u8\ version;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014C}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00019}00019\ \ \ u8\ checksum;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014D}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00020}00020\ \ \ u16\ global\_checksum;\ \ \ \ \ \ \textcolor{comment}{//\ 0x014E-\/0x014F}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00021}00021\ \}\ \doxymbox{\hyperlink{structrom__header}{rom\_header}};}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00022}00022\ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00023}\doxymbox{\hyperlink{classCartridge}{00023}}\ \textcolor{keyword}{class\ }Cartridge\ \{}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00024}00024\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00025}00025\ \ \ \ \ Cartridge();}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00026}00026\ \ \ \ \ \textcolor{keyword}{explicit}\ Cartridge(\textcolor{keyword}{const}\ std::vector<u8>\&\ rom\_data);}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00027}00027\ \ \ \ \ \string~Cartridge()\ =\ \textcolor{keywordflow}{default};}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00028}00028\ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00029}00029\ \ \ \ \ \textcolor{keywordtype}{bool}\ load\_rom(\textcolor{keyword}{const}\ std::vector<u8>\&\ rom\_data);}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00030}00030\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00031}00031\ \ \ \ \ u8\ read(u16\ address)\ \textcolor{keyword}{const};}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00032}00032\ \ \ \ \ \textcolor{keywordtype}{void}\ write(u16\ address,\ u8\ value);}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00033}00033\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00034}00034\ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00035}00035\ \ \ \ \ std::string\ get\_title()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ title;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00036}00036\ \ \ \ \ u8\ get\_mbc\_type()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ header.type;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00037}00037\ \ \ \ \ u8\ get\_rom\_size\_code()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ header.rom\_size;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00038}00038\ \ \ \ \ u8\ get\_ram\_size\_code()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ header.ram\_size;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00039}00039\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<u8>\&\ get\_rom\_bytes()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ rom;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00040}00040\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00041}00041\ \ \ \ \ u8\ get\_current\_rom\_bank()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ current\_rom\_bank;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00042}00042\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_current\_rom\_bank(u8\ bank)\ \{\ current\_rom\_bank\ =\ bank;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00043}00043\ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00044}00044\ \ \ \ \ \textcolor{keyword}{const}\ std::vector<u8>\&\ get\_ram\_bytes()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ram;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00045}00045\ \ \ \ \ std::vector<u8>\&\ get\_ram\_bytes\_mutable()\ \{\ \textcolor{keywordflow}{return}\ ram;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_ram\_bytes(\textcolor{keyword}{const}\ std::vector<u8>\&\ ram\_data)\ \{\ ram\ =\ ram\_data;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00047}00047\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00048}00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_ram\_enabled()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ram\_enabled;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00049}00049\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_ram\_enabled(\textcolor{keywordtype}{bool}\ enabled)\ \{\ ram\_enabled\ =\ enabled;\ \}}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00050}00050\ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00051}00051\ \textcolor{keyword}{private}:}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00052}00052\ \ \ \ \ \textcolor{keyword}{enum\ class}\ MBCType\ \{}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00053}00053\ \ \ \ \ \ \ \ \ None,}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00054}00054\ \ \ \ \ \ \ \ \ MBC1,}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00055}00055\ \ \ \ \ \ \ \ \ MBC3,}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00056}00056\ \ \ \ \ \ \ \ \ MBC5}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00057}00057\ \ \ \ \ \};}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00058}00058\ \ \ \ \ MBCType\ mbc\_type\ =\ MBCType::None;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00059}00059\ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00060}00060\ \ \ \ \ std::vector<u8>\ rom;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00061}00061\ \ \ \ \ std::vector<u8>\ ram;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00062}00062\ \ \ \ \ \doxymbox{\hyperlink{structrom__header}{rom\_header}}\ header\{\};}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00063}00063\ \ \ \ \ std::string\ title;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00064}00064\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00065}00065\ \ \ \ \ u8\ current\_rom\_bank\ =\ 1;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00066}00066\ \ \ \ \ u8\ current\_ram\_bank\ =\ 0;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00067}00067\ \ \ \ \ \textcolor{keywordtype}{bool}\ ram\_enabled\ =\ \textcolor{keyword}{false};}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00068}00068\ \ \ \ \ u8\ banking\_mode\ =\ 0;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00069}00069\ \ \ \ \ u8\ rom\_bank\_low\ =\ 1;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00070}00070\ \ \ \ \ u8\ rom\_bank\_high\ =\ 0;}
-\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00071}00071\ \};}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <string\_view>}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00008}\doxymbox{\hyperlink{structrom__header}{00008}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Memory\ Map}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00009}00009\ \ \ u8\ entry[4];\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0100-\/0x0103}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00010}00010\ \ \ u8\ nintendo\_logo[0x30];\ \ \ \textcolor{comment}{//\ 0x0104-\/0x0133}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00011}00011\ \ \ \textcolor{keywordtype}{char}\ title[16];\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0134-\/0x0143}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00012}00012\ \ \ u16\ new\_lic\_code;\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0144-\/0x0145}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00013}00013\ \ \ u8\ sgb\_flag;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0146}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00014}00014\ \ \ u8\ type;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0147}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00015}00015\ \ \ u8\ rom\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0148}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00016}00016\ \ \ u8\ ram\_size;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x0149}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00017}00017\ \ \ u8\ dest\_code;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014A}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00018}00018\ \ \ u8\ old\_lic\_code;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014B}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00019}00019\ \ \ u8\ version;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014C}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00020}00020\ \ \ u8\ checksum;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 0x014D}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00021}00021\ \ \ u16\ global\_checksum;\ \ \ \ \ \ \textcolor{comment}{//\ 0x014E-\/0x014F}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00022}00022\ \}\ \doxymbox{\hyperlink{structrom__header}{rom\_header}};}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00024}\doxymbox{\hyperlink{classCartridge}{00024}}\ \textcolor{keyword}{class\ }Cartridge\ \{}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00025}00025\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00026}00026\ \ \ \ \ Cartridge();}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00027}00027\ \ \ \ \ \textcolor{keyword}{explicit}\ Cartridge(\textcolor{keyword}{const}\ std::vector<u8>\&\ rom\_data);}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00028}00028\ \ \ \ \ \string~Cartridge()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00030}00030\ \ \ \ \ \textcolor{keywordtype}{bool}\ load\_rom(\textcolor{keyword}{const}\ std::vector<u8>\&\ rom\_data);}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00031}00031\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00032}00032\ \ \ \ \ [[nodiscard]]\ u8\ read(u16\ address)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00033}00033\ \ \ \ \ \textcolor{keywordtype}{void}\ write(u16\ address,\ u8\ value);}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00034}00034\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00036}00036\ \ \ \ \ [[nodiscard]]\ std::string\_view\ get\_title()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ title;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00037}00037\ \ \ \ \ [[nodiscard]]\ u8\ get\_mbc\_type()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ header.type;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00038}00038\ \ \ \ \ [[nodiscard]]\ u8\ get\_rom\_size\_code()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ header.rom\_size;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00039}00039\ \ \ \ \ [[nodiscard]]\ u8\ get\_ram\_size\_code()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ header.ram\_size;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00040}00040\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ std::vector<u8>\&\ get\_rom\_bytes()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ rom;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00041}00041\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00042}00042\ \ \ \ \ [[nodiscard]]\ u8\ get\_current\_rom\_bank()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ current\_rom\_bank;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00043}00043\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_current\_rom\_bank(u8\ bank)\ \{\ current\_rom\_bank\ =\ bank;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00045}00045\ \ \ \ \ [[nodiscard]]\ \textcolor{keyword}{const}\ std::vector<u8>\&\ get\_ram\_bytes()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ram;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00046}00046\ \ \ \ \ [[nodiscard]]\ std::vector<u8>\&\ get\_ram\_bytes\_mutable()\ \{\ \textcolor{keywordflow}{return}\ ram;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_ram\_bytes(\textcolor{keyword}{const}\ std::vector<u8>\&\ ram\_data)\ \{\ ram\ =\ ram\_data;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00048}00048\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00049}00049\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ is\_ram\_enabled()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ ram\_enabled;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00050}00050\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_ram\_enabled(\textcolor{keywordtype}{bool}\ enabled)\ \{\ ram\_enabled\ =\ enabled;\ \}}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00052}00052\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00053}00053\ \ \ \ \ \textcolor{keyword}{enum\ class}\ MBCType\ \{}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00054}00054\ \ \ \ \ \ \ \ \ None,}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00055}00055\ \ \ \ \ \ \ \ \ MBC1,}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00056}00056\ \ \ \ \ \ \ \ \ MBC3,}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00057}00057\ \ \ \ \ \ \ \ \ MBC5}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00058}00058\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00059}00059\ \ \ \ \ MBCType\ mbc\_type\ =\ MBCType::None;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00061}00061\ \ \ \ \ std::vector<u8>\ rom;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00062}00062\ \ \ \ \ std::vector<u8>\ ram;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00063}00063\ \ \ \ \ \doxymbox{\hyperlink{structrom__header}{rom\_header}}\ header\{\};}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00064}00064\ \ \ \ \ std::string\ title;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00065}00065\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00066}00066\ \ \ \ \ u8\ current\_rom\_bank\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00067}00067\ \ \ \ \ u8\ current\_ram\_bank\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00068}00068\ \ \ \ \ \textcolor{keywordtype}{bool}\ ram\_enabled\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00069}00069\ \ \ \ \ u8\ banking\_mode\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00070}00070\ \ \ \ \ u8\ rom\_bank\_low\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00071}00071\ \ \ \ \ u8\ rom\_bank\_high\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{cartridge_8hpp_source_l00072}00072\ \};}
 
 \end{DoxyCode}

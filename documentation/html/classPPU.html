@@ -110,7 +110,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4c7be70948983a03d2d7574c07011436" id="r_a4c7be70948983a03d2d7574c07011436"><td class="memItemLeft">const u32 *&#160;</td><td class="memItemRight"><a class="el" href="#a4c7be70948983a03d2d7574c07011436">get_framebuffer</a> () const</td></tr>
 <tr class="memitem:ad347aaea143f5cac9c74e606afb3ef08" id="r_ad347aaea143f5cac9c74e606afb3ef08"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ad347aaea143f5cac9c74e606afb3ef08">is_frame_ready</a> () const</td></tr>
 <tr class="memitem:ac5e6d9c36b35bc43769eccb37771a3b2" id="r_ac5e6d9c36b35bc43769eccb37771a3b2"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ac5e6d9c36b35bc43769eccb37771a3b2">clear_frame_ready</a> ()</td></tr>
-<tr class="memitem:a2b163f864b371e73b1d02118efea6b9e" id="r_a2b163f864b371e73b1d02118efea6b9e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a2b163f864b371e73b1d02118efea6b9e">init_window</a> (bool debug, const std::string &amp;rom_title, bool fullscreen=false)</td></tr>
+<tr class="memitem:a690537188466af46fdfd9508ff0778ff" id="r_a690537188466af46fdfd9508ff0778ff"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a690537188466af46fdfd9508ff0778ff">init_window</a> (bool debug, std::string_view rom_title, bool fullscreen=false)</td></tr>
 <tr class="memitem:af66eb60a1d69757679dda7a161b74ae9" id="r_af66eb60a1d69757679dda7a161b74ae9"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#af66eb60a1d69757679dda7a161b74ae9">isOpen</a> () const</td></tr>
 <tr class="memitem:a593d6e664cae8390975d96e306658bff" id="r_a593d6e664cae8390975d96e306658bff"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a593d6e664cae8390975d96e306658bff">isPaused</a> () const</td></tr>
 <tr class="memitem:a67bbf60416f5883837d56df8808098f1" id="r_a67bbf60416f5883837d56df8808098f1"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a67bbf60416f5883837d56df8808098f1">handleEvents</a> (<a class="el" href="structJoypadState.html">JoypadState</a> &amp;joypad)</td></tr>
@@ -130,7 +130,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00016">16</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00017">17</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 </div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a69d85e0ee4b972e4409509971135595f" name="a69d85e0ee4b972e4409509971135595f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a69d85e0ee4b972e4409509971135595f">&#9670;&#160;</a></span>PPU() <span class="overload">[1/2]</span></h2>
@@ -221,7 +221,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00044">44</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00045">45</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -248,7 +248,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00066">66</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00067">67</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -275,7 +275,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00058">58</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00059">59</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -297,12 +297,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00042">42</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00043">43</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -324,12 +324,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00062">62</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00063">63</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -352,8 +352,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a2b163f864b371e73b1d02118efea6b9e" name="a2b163f864b371e73b1d02118efea6b9e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b163f864b371e73b1d02118efea6b9e">&#9670;&#160;</a></span>init_window()</h2>
+<a id="a690537188466af46fdfd9508ff0778ff" name="a690537188466af46fdfd9508ff0778ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a690537188466af46fdfd9508ff0778ff">&#9670;&#160;</a></span>init_window()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -366,7 +366,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>rom_title</em></span>, </td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>rom_title</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -398,12 +398,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00043">43</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00044">44</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -412,6 +412,9 @@ Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">bool PPU::isOpen </td>
@@ -420,6 +423,11 @@ Public Member Functions</h2></td></tr>
           <td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel nodiscard">nodiscard</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="ppu_8cpp_source.html#l00342">342</a> of file <a class="el" href="ppu_8cpp_source.html">ppu.cpp</a>.</p>
@@ -444,12 +452,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00049">49</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00050">50</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -471,12 +479,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00065">65</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00066">66</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -498,12 +506,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00057">57</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00058">58</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -525,12 +533,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel nodiscard">nodiscard</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00060">60</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00061">61</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -637,7 +645,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00036">36</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00037">37</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -664,7 +672,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00035">35</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00036">36</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -691,7 +699,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00037">37</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00038">38</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -718,7 +726,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00063">63</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00064">64</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>
@@ -745,7 +753,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00061">61</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ppu_8hpp_source.html#l00062">62</a> of file <a class="el" href="ppu_8hpp_source.html">ppu.hpp</a>.</p>
 
 </div>
 </div>

@@ -105,16 +105,16 @@ $(function(){initNavTree('timer_8hpp_source.html','',''); });
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    ~Timer() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keywordtype">void</span> step(<span class="keywordtype">int</span> cycles);</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    u8 read(u16 address) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    [[nodiscard]] u8 read(u16 address) <span class="keyword">const</span>;</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keywordtype">void</span> write(u16 address, u8 value);</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keywordtype">void</span> reset();</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="comment">// Serialization support</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    u16 get_div_counter()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> div_counter; }</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    u8 get_tima()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tima; }</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    u8 get_tma()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tma; }</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    u8 get_tac()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tac; }</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordtype">int</span> get_tima_counter()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tima_counter; }</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    [[nodiscard]] u16 get_div_counter()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> div_counter; }</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    [[nodiscard]] u8 get_tima()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tima; }</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    [[nodiscard]] u8 get_tma()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tma; }</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    [[nodiscard]] u8 get_tac()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tac; }</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    [[nodiscard]] <span class="keywordtype">int</span> get_tima_counter()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> tima_counter; }</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordtype">void</span> set_div_counter(u16 value) { div_counter = value; }</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordtype">void</span> set_tima(u8 value) { tima = value; }</div>

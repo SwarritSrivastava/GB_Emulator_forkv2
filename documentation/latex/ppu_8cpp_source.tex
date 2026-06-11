@@ -275,7 +275,7 @@
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00271}00271\ \textcolor{comment}{//\ Debug\ /\ UI\ Features}}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00272}00272\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00273}00273\ }
-\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00274}00274\ \textcolor{keywordtype}{void}\ PPU::init\_window(\textcolor{keywordtype}{bool}\ debug,\ \textcolor{keyword}{const}\ std::string\&\ rom\_title,\ \textcolor{keywordtype}{bool}\ fullscreen)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00274}00274\ \textcolor{keywordtype}{void}\ PPU::init\_window(\textcolor{keywordtype}{bool}\ debug,\ std::string\_view\ rom\_title,\ \textcolor{keywordtype}{bool}\ fullscreen)\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00275}00275\ \ \ \ \ debugMode\ =\ debug;}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00276}00276\ \ \ \ \ sf::State\ state\ =\ fullscreen\ ?\ sf::State::Fullscreen\ :\ sf::State::Windowed;}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00277}00277\ }
@@ -576,14 +576,14 @@
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00572}00572\ \ \ \ \ framebuffer.fill(0xFFFFFFFF);}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00573}00573\ \}}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00574}00574\ }
-\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00575}00575\ \textcolor{keywordtype}{bool}\ PPU::saveStatePath(\textcolor{keyword}{const}\ std::string\&\ filepath)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00575}00575\ \textcolor{keywordtype}{bool}\ PPU::saveStatePath(std::string\_view\ filepath)\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00576}00576\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu\ ||\ !mmu)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00577}00577\ }
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00578}00578\ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00579}00579\ \ \ \ \ \ \ \ \ std::filesystem::create\_directories(std::filesystem::path(filepath).parent\_path());}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00580}00580\ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (...)\ \{\}}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00581}00581\ }
-\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00582}00582\ \ \ \ \ std::ofstream\ out(filepath,\ std::ios::binary);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00582}00582\ \ \ \ \ std::ofstream\ out(std::string(filepath),\ std::ios::binary);}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00583}00583\ \ \ \ \ \textcolor{keywordflow}{if}\ (!out)\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00584}00584\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00585}00585\ \ \ \ \ \}}
@@ -637,10 +637,10 @@
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00633}00633\ \ \ \ \ \textcolor{keywordflow}{return}\ saveStatePath(path.str());}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00634}00634\ \}}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00635}00635\ }
-\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00636}00636\ \textcolor{keywordtype}{bool}\ PPU::loadStatePath(\textcolor{keyword}{const}\ std::string\&\ filepath)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00636}00636\ \textcolor{keywordtype}{bool}\ PPU::loadStatePath(std::string\_view\ filepath)\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00637}00637\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu\ ||\ !mmu)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00638}00638\ }
-\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00639}00639\ \ \ \ \ std::ifstream\ in(filepath,\ std::ios::binary);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00639}00639\ \ \ \ \ std::ifstream\ in(std::string(filepath),\ std::ios::binary);}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00640}00640\ \ \ \ \ \textcolor{keywordflow}{if}\ (!in)\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00641}00641\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00642}00642\ \ \ \ \ \}}
@@ -888,11 +888,11 @@
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00884}00884\ \ \ \ \ drawText(sf::Vector2f(col3X,\ cpY\ +\ 56.0f),\ \textcolor{stringliteral}{"{}Space:\ Pause\ |\ N:\ Step"{}},\ 13,\ highlightColor);}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00885}00885\ \}}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00886}00886\ }
-\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00887}00887\ \textcolor{keywordtype}{void}\ PPU::drawText(\textcolor{keyword}{const}\ sf::Vector2f\&\ pos,\ \textcolor{keyword}{const}\ std::string\&\ text,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ size,\ \textcolor{keyword}{const}\ sf::Color\&\ color)\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00887}00887\ \textcolor{keywordtype}{void}\ PPU::drawText(\textcolor{keyword}{const}\ sf::Vector2f\&\ pos,\ std::string\_view\ text,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{unsigned}\ size,\ \textcolor{keyword}{const}\ sf::Color\&\ color)\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00888}00888\ \ \ \ \ \textcolor{keywordflow}{if}\ (!fontLoaded)\ \{}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00889}00889\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00890}00890\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00891}00891\ \ \ \ \ sf::Text\ txt(font,\ text,\ size);}
+\DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00891}00891\ \ \ \ \ sf::Text\ txt(font,\ std::string(text),\ size);}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00892}00892\ \ \ \ \ txt.setFillColor(color);}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00893}00893\ \ \ \ \ txt.setPosition(pos);}
 \DoxyCodeLine{\Hypertarget{ppu_8cpp_source_l00894}00894\ \ \ \ \ window.draw(txt);}

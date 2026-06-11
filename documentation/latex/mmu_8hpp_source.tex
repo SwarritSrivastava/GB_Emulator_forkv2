@@ -45,7 +45,7 @@
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00041}00041\ \ \ \ \ MMU(\doxymbox{\hyperlink{classCartridge}{Cartridge}}\&\ cartridge,\ \doxymbox{\hyperlink{classPPU}{PPU}}\&\ ppu,\ \doxymbox{\hyperlink{classTimer}{Timer}}\&\ timer,\ \doxymbox{\hyperlink{classInterruptController}{InterruptController}}\&\ ic);}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00042}00042\ \ \ \ \ \string~MMU();}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00043}00043\ }
-\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00044}00044\ \ \ \ \ u8\ read(u16\ address)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00044}00044\ \ \ \ \ [[nodiscard]]\ u8\ read(u16\ address)\ \textcolor{keyword}{const};}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00045}00045\ \ \ \ \ \textcolor{keywordtype}{void}\ write(u16\ address,\ u8\ value);}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00046}00046\ }
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{bool}\ map\_rom(\textcolor{keyword}{const}\ std::vector<u8>\&\ rom\_data);}
@@ -55,12 +55,12 @@
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00051}00051\ }
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00052}00052\ \ \ \ \ \textcolor{comment}{//\ Joypad\ state\ interface}}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00053}00053\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_joypad\_state(u8\ action,\ u8\ direction);}
-\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00054}00054\ \ \ \ \ u8\ get\_joypad\_state()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00054}00054\ \ \ \ \ [[nodiscard]]\ u8\ get\_joypad\_state()\ \textcolor{keyword}{const};}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00055}00055\ }
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00056}00056\ \ \ \ \ \textcolor{comment}{//\ Statistics}}
-\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00057}00057\ \ \ \ \ u64\ get\_read\_count()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ read\_count;\ \}}
-\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00058}00058\ \ \ \ \ u64\ get\_write\_count()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ write\_count;\ \}}
-\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00059}00059\ \ \ \ \ u8\ get\_current\_rom\_bank()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00057}00057\ \ \ \ \ [[nodiscard]]\ u64\ get\_read\_count()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ read\_count;\ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00058}00058\ \ \ \ \ [[nodiscard]]\ u64\ get\_write\_count()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ write\_count;\ \}}
+\DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00059}00059\ \ \ \ \ [[nodiscard]]\ u8\ get\_current\_rom\_bank()\ \textcolor{keyword}{const};}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00060}00060\ }
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00061}00061\ \ \ \ \ \textcolor{comment}{//\ Serialization}}
 \DoxyCodeLine{\Hypertarget{mmu_8hpp_source_l00062}00062\ \ \ \ \ std::vector<u8>\ dump\_memory()\ \textcolor{keyword}{const};}

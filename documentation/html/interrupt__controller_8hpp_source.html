@@ -109,7 +109,7 @@ $(function(){initNavTree('interrupt__controller_8hpp_source.html','',''); });
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    InterruptController() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    ~InterruptController() = <span class="keywordflow">default</span>;</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    u8 read(u16 address)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    [[nodiscard]] u8 read(u16 address)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        <span class="keywordflow">if</span> (address == 0xFF0F) <span class="keywordflow">return</span> interrupt_flag | 0xE0;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        <span class="keywordflow">if</span> (address == 0xFFFF) <span class="keywordflow">return</span> interrupt_enable;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        <span class="keywordflow">return</span> 0xFF;</div>
@@ -131,12 +131,12 @@ $(function(){initNavTree('interrupt__controller_8hpp_source.html','',''); });
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        interrupt_flag &amp;= ~static_cast&lt;u8&gt;(type);</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    }</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">bool</span> has_pending_interrupts()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    [[nodiscard]] <span class="keywordtype">bool</span> has_pending_interrupts()<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <span class="keywordflow">return</span> (interrupt_flag &amp; interrupt_enable &amp; 0x1F) != 0;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    }</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    u8 get_if()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> interrupt_flag; }</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    u8 get_ie()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> interrupt_enable; }</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    [[nodiscard]] u8 get_if()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> interrupt_flag; }</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    [[nodiscard]] u8 get_ie()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> interrupt_enable; }</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordtype">void</span> set_if(u8 value) { interrupt_flag = value | 0xE0; }</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">void</span> set_ie(u8 value) { interrupt_enable = value; }</div>

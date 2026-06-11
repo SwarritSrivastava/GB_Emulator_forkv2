@@ -365,7 +365,7 @@ $(function(){initNavTree('ppu_8cpp_source.html','',''); });
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span><span class="comment">// Debug / UI Features</span></div>
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span><span class="comment">// ----------------------------------------------------</span></div>
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="keywordtype">void</span> PPU::init_window(<span class="keywordtype">bool</span> debug, <span class="keyword">const</span> std::string&amp; rom_title, <span class="keywordtype">bool</span> fullscreen) {</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="keywordtype">void</span> PPU::init_window(<span class="keywordtype">bool</span> debug, std::string_view rom_title, <span class="keywordtype">bool</span> fullscreen) {</div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    debugMode = debug;</div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    sf::State state = fullscreen ? sf::State::Fullscreen : sf::State::Windowed;</div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
@@ -666,14 +666,14 @@ $(function(){initNavTree('ppu_8cpp_source.html','',''); });
 <div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>    framebuffer.fill(0xFFFFFFFF);</div>
 <div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>}</div>
 <div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span> </div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span><span class="keywordtype">bool</span> PPU::saveStatePath(<span class="keyword">const</span> std::string&amp; filepath) {</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span><span class="keywordtype">bool</span> PPU::saveStatePath(std::string_view filepath) {</div>
 <div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>    <span class="keywordflow">if</span> (!cpu || !mmu) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span> </div>
 <div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>    <span class="keywordflow">try</span> {</div>
 <div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>        std::filesystem::create_directories(std::filesystem::path(filepath).parent_path());</div>
 <div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>    } <span class="keywordflow">catch</span> (...) {}</div>
 <div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span> </div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>    std::ofstream out(filepath, std::ios::binary);</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>    std::ofstream out(std::string(filepath), std::ios::binary);</div>
 <div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    <span class="keywordflow">if</span> (!out) {</div>
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>    }</div>
@@ -727,10 +727,10 @@ $(function(){initNavTree('ppu_8cpp_source.html','',''); });
 <div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    <span class="keywordflow">return</span> saveStatePath(path.str());</div>
 <div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>}</div>
 <div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span> </div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span><span class="keywordtype">bool</span> PPU::loadStatePath(<span class="keyword">const</span> std::string&amp; filepath) {</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span><span class="keywordtype">bool</span> PPU::loadStatePath(std::string_view filepath) {</div>
 <div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    <span class="keywordflow">if</span> (!cpu || !mmu) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span> </div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>    std::ifstream in(filepath, std::ios::binary);</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>    std::ifstream in(std::string(filepath), std::ios::binary);</div>
 <div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>    <span class="keywordflow">if</span> (!in) {</div>
 <div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>    }</div>
@@ -978,11 +978,11 @@ $(function(){initNavTree('ppu_8cpp_source.html','',''); });
 <div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>    drawText(sf::Vector2f(col3X, cpY + 56.0f), <span class="stringliteral">&quot;Space: Pause | N: Step&quot;</span>, 13, highlightColor);</div>
 <div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>}</div>
 <div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span> </div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="keywordtype">void</span> PPU::drawText(<span class="keyword">const</span> sf::Vector2f&amp; pos, <span class="keyword">const</span> std::string&amp; text, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> size, <span class="keyword">const</span> sf::Color&amp; color) {</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span><span class="keywordtype">void</span> PPU::drawText(<span class="keyword">const</span> sf::Vector2f&amp; pos, std::string_view text, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> size, <span class="keyword">const</span> sf::Color&amp; color) {</div>
 <div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>    <span class="keywordflow">if</span> (!fontLoaded) {</div>
 <div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>    }</div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>    sf::Text txt(font, text, size);</div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>    sf::Text txt(font, std::string(text), size);</div>
 <div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>    txt.setFillColor(color);</div>
 <div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>    txt.setPosition(pos);</div>
 <div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>    window.draw(txt);</div>

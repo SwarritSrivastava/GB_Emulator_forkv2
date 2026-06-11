@@ -14,16 +14,16 @@
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00010}00010\ \ \ \ \ \string~Timer()\ =\ \textcolor{keywordflow}{default};}
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00011}00011\ }
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00012}00012\ \ \ \ \ \textcolor{keywordtype}{void}\ step(\textcolor{keywordtype}{int}\ cycles);}
-\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00013}00013\ \ \ \ \ u8\ read(u16\ address)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00013}00013\ \ \ \ \ [[nodiscard]]\ u8\ read(u16\ address)\ \textcolor{keyword}{const};}
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00014}00014\ \ \ \ \ \textcolor{keywordtype}{void}\ write(u16\ address,\ u8\ value);}
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00015}00015\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00016}00016\ }
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00017}00017\ \ \ \ \ \textcolor{comment}{//\ Serialization\ support}}
-\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00018}00018\ \ \ \ \ u16\ get\_div\_counter()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ div\_counter;\ \}}
-\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00019}00019\ \ \ \ \ u8\ get\_tima()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tima;\ \}}
-\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00020}00020\ \ \ \ \ u8\ get\_tma()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tma;\ \}}
-\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00021}00021\ \ \ \ \ u8\ get\_tac()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tac;\ \}}
-\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00022}00022\ \ \ \ \ \textcolor{keywordtype}{int}\ get\_tima\_counter()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tima\_counter;\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00018}00018\ \ \ \ \ [[nodiscard]]\ u16\ get\_div\_counter()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ div\_counter;\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00019}00019\ \ \ \ \ [[nodiscard]]\ u8\ get\_tima()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tima;\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00020}00020\ \ \ \ \ [[nodiscard]]\ u8\ get\_tma()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tma;\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00021}00021\ \ \ \ \ [[nodiscard]]\ u8\ get\_tac()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tac;\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00022}00022\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{int}\ get\_tima\_counter()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ tima\_counter;\ \}}
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00023}00023\ }
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00024}00024\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_div\_counter(u16\ value)\ \{\ div\_counter\ =\ value;\ \}}
 \DoxyCodeLine{\Hypertarget{timer_8hpp_source_l00025}00025\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_tima(u8\ value)\ \{\ tima\ =\ value;\ \}}

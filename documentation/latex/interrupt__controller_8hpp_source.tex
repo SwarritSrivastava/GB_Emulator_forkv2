@@ -18,7 +18,7 @@
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00014}00014\ \ \ \ \ InterruptController()\ =\ \textcolor{keywordflow}{default};}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00015}00015\ \ \ \ \ \string~InterruptController()\ =\ \textcolor{keywordflow}{default};}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00016}00016\ }
-\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00017}00017\ \ \ \ \ u8\ read(u16\ address)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00017}00017\ \ \ \ \ [[nodiscard]]\ u8\ read(u16\ address)\textcolor{keyword}{\ const\ }\{}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ ==\ 0xFF0F)\ \textcolor{keywordflow}{return}\ interrupt\_flag\ |\ 0xE0;}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00019}00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (address\ ==\ 0xFFFF)\ \textcolor{keywordflow}{return}\ interrupt\_enable;}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00020}00020\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0xFF;}
@@ -40,12 +40,12 @@
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00036}00036\ \ \ \ \ \ \ \ \ interrupt\_flag\ \&=\ \string~static\_cast<u8>(type);}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00037}00037\ \ \ \ \ \}}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00038}00038\ }
-\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00039}00039\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_pending\_interrupts()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00039}00039\ \ \ \ \ [[nodiscard]]\ \textcolor{keywordtype}{bool}\ has\_pending\_interrupts()\textcolor{keyword}{\ const\ }\{}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (interrupt\_flag\ \&\ interrupt\_enable\ \&\ 0x1F)\ !=\ 0;}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00041}00041\ \ \ \ \ \}}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00042}00042\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00043}00043\ \ \ \ \ u8\ get\_if()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ interrupt\_flag;\ \}}
-\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00044}00044\ \ \ \ \ u8\ get\_ie()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ interrupt\_enable;\ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00043}00043\ \ \ \ \ [[nodiscard]]\ u8\ get\_if()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ interrupt\_flag;\ \}}
+\DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00044}00044\ \ \ \ \ [[nodiscard]]\ u8\ get\_ie()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ interrupt\_enable;\ \}}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00045}00045\ }
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_if(u8\ value)\ \{\ interrupt\_flag\ =\ value\ |\ 0xE0;\ \}}
 \DoxyCodeLine{\Hypertarget{interrupt__controller_8hpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_ie(u8\ value)\ \{\ interrupt\_enable\ =\ value;\ \}}
