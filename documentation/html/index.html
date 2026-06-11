@@ -93,13 +93,22 @@ $(function(){initNavTree('index.html','',''); });
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p><a class="anchor" id="md_README"></a></p>
-<p>Game Boy (DMG-01) emulator project focused on building an accurate LR35902 CPU core, memory subsystem, <a class="el" href="classPPU.html">PPU</a> renderer, and a reliable CI/testing pipeline.</p>
-<div class="fragment"><div class="line">❯ ./utility_scripts/opcode_progress.py</div>
-<div class="line">- Base Opcodes: [████████████████████] 100.0% (256/256)</div>
-<div class="line">- CB Opcodes:   [████████████████████] 100.0% (256/256)</div>
-<div class="line">- Combined:     [████████████████████] 100.0% (512/512)</div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
-Features &amp; Controls</h1>
+<p>A robust and accurate Game Boy (DMG-01) emulator featuring a fully-fledged LR35902 CPU core, high-performance SFML 3.0 renderer, integrated Debug AMOLED UI, and an advanced automated Testing/CI pipeline.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
+📐 Architecture Overview</h1>
+<p>The emulator follows a highly modular design built entirely in C++17, emphasizing tight component ownership and clear memory bus segregation.</p>
+<div class="fragment"><div class="line">graph TD</div>
+<div class="line">    A[Main Emulator Loop] --&gt; B(PPU / SFML 3.0 Renderer)</div>
+<div class="line">    A --&gt; C(LR35902 CPU)</div>
+<div class="line">    A --&gt; D(Timer)</div>
+<div class="line">    C &lt;--&gt; E(MMU / Memory Bus)</div>
+<div class="line">    B &lt;--&gt; E</div>
+<div class="line">    D &lt;--&gt; E</div>
+<div class="line">    E &lt;--&gt; F[Cartridge / ROM Metadata]</div>
+<div class="line">    E &lt;--&gt; G[Interrupt Controller]</div>
+<div class="line">    G -.-&gt;|Triggers| C</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
+🎮 Features &amp; Controls</h1>
 <p>The emulator uses SFML 3.0 to render a robust UI in both standard mode and an advanced AMOLED Debug View. Both modes fully support the following features:</p>
 <ul>
 <li><b>Turbo Mode (2x Speed)</b>: Toggle with <span class="tt">T</span></li>
@@ -118,8 +127,8 @@ Features &amp; Controls</h1>
 </li>
 </ul>
 <p><em>Note: In Normal mode, system hotkey triggers will display a temporary bright-red confirmation overlay.</em></p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md2"></a>
-Display Modes</h1>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+🖥️ Display Modes</h1>
 <ul>
 <li><b>Standard Mode</b>: Plays the ROM with a 1.0x native display.</li>
 <li><b>Debug Mode (<span class="tt">--debug</span>)</b>: Opens a stunning 16:9 (1600x900) AMOLED-themed developer UI featuring:<ul>
@@ -133,37 +142,8 @@ Display Modes</h1>
 </li>
 <li><b>Fullscreen (<span class="tt">--fullscreen</span>)</b>: Upscales both Normal and Debug modes to 1920x1080 without distorting the pixel aspect ratio.</li>
 </ul>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
-Current Focus</h1>
-<ul>
-<li><b>Timers &amp; Interrupts</b>: Integrating CPU/MMU flow through an advanced Interrupt Controller.</li>
-<li><b>Memory/Bus Checkpoints</b>: Refactoring architecture boundaries to ensure clean class definitions for <a class="el" href="classPPU.html">PPU</a> and CPU bus access.</li>
-<li><b>CI/Quality Pipeline</b>: Integrating automated regression tests.</li>
-</ul>
 <h1 class="doxsection"><a class="anchor" id="autotoc_md4"></a>
-Current Code Structure</h1>
-<div class="fragment"><div class="line">GB_Emulator/</div>
-<div class="line">├── include/</div>
-<div class="line">│   ├── ProcessingUnit.hpp</div>
-<div class="line">│   ├── mmu.hpp</div>
-<div class="line">│   ├── ppu.hpp</div>
-<div class="line">│   ├── opcode_table.hpp</div>
-<div class="line">│   └── opcodes.hpp</div>
-<div class="line">├── src/</div>
-<div class="line">│   ├── core/</div>
-<div class="line">│   │   ├── cpu/</div>
-<div class="line">│   │   ├── memory/</div>
-<div class="line">│   │   └── ppu.cpp</div>
-<div class="line">│   ├── io/</div>
-<div class="line">│   └── main.cpp</div>
-<div class="line">├── tests/</div>
-<div class="line">│   └── op_tests/</div>
-<div class="line">└── utility_scripts/</div>
-<div class="line">    ├── build_and_test.sh</div>
-<div class="line">    ├── build_and_run.sh</div>
-<div class="line">    └── run_debug.sh</div>
-</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
-Build and Run</h1>
+🚀 Build and Run</h1>
 <div class="fragment"><div class="line"># Configure + build + run all tests</div>
 <div class="line">./utility_scripts/build_and_test.sh</div>
 <div class="line"> </div>
@@ -172,12 +152,29 @@ Build and Run</h1>
 <div class="line"> </div>
 <div class="line"># Run emulator in Debug Developer View with Fullscreen</div>
 <div class="line">./build/bin/gb_emu &lt;path-to-rom.gb&gt; --debug --fullscreen</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+🔄 Workflow and TIRP Protocol</h1>
+<p>The project actively runs a highly automated <b>TIRP CI Workflow</b> mapped to Discord webhooks and GitHub Actions. All details regarding our cloud architecture can be found in <span class="tt">pipline/SetUp.md</span> and the generated Doxygen files.</p>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    participant Dev as Developer</div>
+<div class="line">    participant Git as GitHub Actions</div>
+<div class="line">    participant Groq as AI Summary Engine</div>
+<div class="line">    participant Discord as Discord Webhook</div>
+<div class="line"> </div>
+<div class="line">    Dev-&gt;&gt;Git: Push / Pull Request</div>
+<div class="line">    Git-&gt;&gt;Git: Run CMake Build</div>
+<div class="line">    Git-&gt;&gt;Git: Execute GTest Suite</div>
+<div class="line">    Git-&gt;&gt;Git: Run Valgrind Memcheck</div>
+<div class="line">    Git-&gt;&gt;Groq: Send Git Diff &amp; Logs</div>
+<div class="line">    Groq--&gt;&gt;Git: Generate Intelligent Summary</div>
+<div class="line">    Git-&gt;&gt;Discord: Post Pass/Fail + Summary Webhook</div>
 </div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
-Workflow and Pipeline</h1>
-<p>The project actively runs a highly automated <b>TIRP CI Workflow</b> mapped to Discord webhooks and GitHub Actions. All details regarding our cloud architecture can be found in <span class="tt">pipline/SetUp.md</span>.</p>
-<h1 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
-Contributing</h1>
-<p>See our Contribution Guidelines for branch naming rules, coding style, and PR requirements. </p>
+🤝 Contributing &amp; Maintainers</h1>
+<p>See our Contribution Guidelines for branch naming rules, coding style, and PR requirements.</p>
+<p><b>Maintainers:</b></p><ul>
+<li>Jayesh Puri (@Jayesh-Dev21)</li>
+<li>Swarit Srivastava (@Swarit,srivastava) </li>
+</ul>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->

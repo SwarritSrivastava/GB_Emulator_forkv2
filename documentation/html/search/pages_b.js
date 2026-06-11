@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['pages_20deploy_20workflow_0',['2) Pages Deploy Workflow',['../index.html#autotoc_md7',1,'']]],
-  ['pipeline_1',['Workflow and Pipeline',['../index.html#autotoc_md5',1,'']]]
+  ['workflow_20and_20tirp_20protocol_0',['🔄 Workflow and TIRP Protocol',['../index.html#autotoc_md5',1,'']]]
 ];

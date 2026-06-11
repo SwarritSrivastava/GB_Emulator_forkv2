@@ -1,0 +1,684 @@
+\doxysection{opcode\+\_\+lookup.\+py}
+\hypertarget{opcode__lookup_8py_source}{}\label{opcode__lookup_8py_source}\index{utility\_scripts/opcode\_lookup.py@{utility\_scripts/opcode\_lookup.py}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00001}00001\ \textcolor{comment}{\#!/usr/bin/env\ python3}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00003}00003\ \textcolor{keyword}{import}\ argparse}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00004}00004\ \textcolor{keyword}{import}\ curses}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00005}00005\ \textcolor{keyword}{import}\ html}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00006}00006\ \textcolor{keyword}{import}\ json}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00007}00007\ \textcolor{keyword}{import}\ re}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00008}00008\ \textcolor{keyword}{import}\ shutil}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00009}00009\ \textcolor{keyword}{import}\ subprocess}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00010}00010\ \textcolor{keyword}{import}\ sys}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00011}00011\ \textcolor{keyword}{import}\ tempfile}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00012}00012\ \textcolor{keyword}{import}\ textwrap}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00013}00013\ \textcolor{keyword}{from}\ datetime\ \textcolor{keyword}{import}\ datetime,\ timezone}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00014}00014\ \textcolor{keyword}{from}\ pathlib\ \textcolor{keyword}{import}\ Path}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00017}00017\ PROJECT\_ROOT\ =\ Path(\_\_file\_\_).resolve().parent.parent}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00018}00018\ DIST\_DIR\ =\ PROJECT\_ROOT\ /\ \textcolor{stringliteral}{"{}dist"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00019}00019\ INDEX\_HTML\ =\ DIST\_DIR\ /\ \textcolor{stringliteral}{"{}index.html"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00020}00020\ INDEX\_JSON\ =\ DIST\_DIR\ /\ \textcolor{stringliteral}{"{}opcode\_lookup\_index.json"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00022}00022\ OPCODES\_HEADER\ =\ PROJECT\_ROOT\ /\ \textcolor{stringliteral}{"{}include"{}}\ /\ \textcolor{stringliteral}{"{}opcodes.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00023}00023\ CB\_OPCODES\_HEADER\ =\ PROJECT\_ROOT\ /\ \textcolor{stringliteral}{"{}include"{}}\ /\ \textcolor{stringliteral}{"{}cb\_opcodes.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00024}00024\ BASE\_OPCODE\_SRC\_DIR\ =\ PROJECT\_ROOT\ /\ \textcolor{stringliteral}{"{}src"{}}\ /\ \textcolor{stringliteral}{"{}core"{}}\ /\ \textcolor{stringliteral}{"{}cpu"{}}\ /\ \textcolor{stringliteral}{"{}instructions"{}}\ /\ \textcolor{stringliteral}{"{}opcodes"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00025}00025\ CB\_OPCODE\_SRC\_DIR\ =\ (}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00026}00026\ \ \ \ \ PROJECT\_ROOT\ /\ \textcolor{stringliteral}{"{}src"{}}\ /\ \textcolor{stringliteral}{"{}core"{}}\ /\ \textcolor{stringliteral}{"{}cpu"{}}\ /\ \textcolor{stringliteral}{"{}instructions"{}}\ /\ \textcolor{stringliteral}{"{}cb\_opcodes"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00027}00027\ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00029}00029\ OP\_DECL\_PATTERN\ =\ re.compile(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00030}00030\ \ \ \ \ \textcolor{stringliteral}{r"{}\string^\(\backslash\)s*int\(\backslash\)s+(op\_[A-\/Za-\/z0-\/9\_]+)\(\backslash\)s*\(\backslash\)([\string^;]*\(\backslash\))\(\backslash\)s*;\(\backslash\)s*//\(\backslash\)s*(0x[0-\/9A-\/Fa-\/f]+)\(\backslash\)s*\$"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00031}00031\ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00032}00032\ DUMMY\_PATTERN\ =\ re.compile(\textcolor{stringliteral}{r"{}DUMMY\(\backslash\)(\(\backslash\)s*(op\_[A-\/Za-\/z0-\/9\_]+)\(\backslash\)s*\(\backslash\))"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00035}00035\ \textcolor{keyword}{def\ }find\_chromium\_binary()\ -\/>\ str:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00036}00036\ \ \ \ \ \textcolor{keywordflow}{for}\ name\ \textcolor{keywordflow}{in}\ (}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}chromium"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00038}00038\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}chromium-\/browser"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00039}00039\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}google-\/chrome"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}google-\/chrome-\/stable"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00041}00041\ \ \ \ \ ):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00042}00042\ \ \ \ \ \ \ \ \ binary\ =\ shutil.which(name)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00043}00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ binary:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00044}00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ binary}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00045}00045\ \ \ \ \ \textcolor{keywordflow}{raise}\ RuntimeError(\textcolor{stringliteral}{"{}No\ Chromium\ binary\ found.\ Install\ chromium/chromium-\/browser."{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00048}00048\ \textcolor{keyword}{def\ }run\_chromium\_dump(helper\_file:\ Path)\ -\/>\ str:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00049}00049\ \ \ \ \ binary\ =\ find\_chromium\_binary()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00050}00050\ \ \ \ \ cmd\ =\ [}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00051}00051\ \ \ \ \ \ \ \ \ binary,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00052}00052\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/headless"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00053}00053\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/disable-\/gpu"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00054}00054\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/allow-\/file-\/access-\/from-\/files"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00055}00055\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/virtual-\/time-\/budget=20000"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00056}00056\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/dump-\/dom"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00057}00057\ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}file://\{helper\_file.as\_posix()\}"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00058}00058\ \ \ \ \ ]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00059}00059\ \ \ \ \ proc\ =\ subprocess.run(cmd,\ capture\_output=\textcolor{keyword}{True},\ text=\textcolor{keyword}{True},\ check=\textcolor{keyword}{False})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00060}00060\ \ \ \ \ \textcolor{keywordflow}{if}\ proc.returncode\ !=\ 0:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00061}00061\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ RuntimeError(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}Chromium\ failed:\ \{proc.stderr.strip()\ or\ proc.stdout.strip()\}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00063}00063\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00064}00064\ \ \ \ \ \textcolor{keywordflow}{return}\ proc.stdout}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00066}00066\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00067}00067\ \textcolor{keyword}{def\ }parse\_opcode\_declarations(header\_path:\ Path)\ -\/>\ list[tuple[str,\ str]]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00068}00068\ \ \ \ \ entries:\ list[tuple[str,\ str]]\ =\ []}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00069}00069\ \ \ \ \ \textcolor{keywordflow}{for}\ line\ \textcolor{keywordflow}{in}\ header\_path.read\_text(encoding=\textcolor{stringliteral}{"{}utf-\/8"{}}).splitlines():}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00070}00070\ \ \ \ \ \ \ \ \ match\ =\ OP\_DECL\_PATTERN.match(line)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00071}00071\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ match:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ entries.append((match.group(1),\ match.group(2).upper()))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00073}00073\ \ \ \ \ \textcolor{keywordflow}{return}\ entries}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00075}00075\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00076}00076\ \textcolor{keyword}{def\ }collect\_dummy\_symbols(source\_dir:\ Path)\ -\/>\ set[str]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00077}00077\ \ \ \ \ dummies:\ set[str]\ =\ set()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00078}00078\ \ \ \ \ \textcolor{keywordflow}{for}\ cpp\_file\ \textcolor{keywordflow}{in}\ sorted(source\_dir.glob(\textcolor{stringliteral}{"{}*.cpp"{}})):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00079}00079\ \ \ \ \ \ \ \ \ content\ =\ cpp\_file.read\_text(encoding=\textcolor{stringliteral}{"{}utf-\/8"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00080}00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ symbol\ \textcolor{keywordflow}{in}\ DUMMY\_PATTERN.findall(content):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00081}00081\ \ \ \ \ \ \ \ \ \ \ \ \ dummies.add(symbol)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00082}00082\ \ \ \ \ \textcolor{keywordflow}{return}\ dummies}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00083}00083\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00085}00085\ \textcolor{keyword}{def\ }get\_implemented\_opcode\_keys()\ -\/>\ set[str]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00086}00086\ \ \ \ \ base\_entries\ =\ parse\_opcode\_declarations(OPCODES\_HEADER)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00087}00087\ \ \ \ \ cb\_entries\ =\ parse\_opcode\_declarations(CB\_OPCODES\_HEADER)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00088}00088\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00089}00089\ \ \ \ \ base\_dummies\ =\ collect\_dummy\_symbols(BASE\_OPCODE\_SRC\_DIR)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00090}00090\ \ \ \ \ cb\_dummies\ =\ collect\_dummy\_symbols(CB\_OPCODE\_SRC\_DIR)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00091}00091\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00092}00092\ \ \ \ \ implemented:\ set[str]\ =\ set()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00093}00093\ \ \ \ \ implemented.update(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00094}00094\ \ \ \ \ \ \ \ \ opcode.upper()\ \textcolor{keywordflow}{for}\ name,\ opcode\ \textcolor{keywordflow}{in}\ base\_entries\ \textcolor{keywordflow}{if}\ name\ \textcolor{keywordflow}{not}\ \textcolor{keywordflow}{in}\ base\_dummies}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00095}00095\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00096}00096\ \ \ \ \ implemented.update(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00097}00097\ \ \ \ \ \ \ \ \ opcode.upper()\ \textcolor{keywordflow}{for}\ name,\ opcode\ \textcolor{keywordflow}{in}\ cb\_entries\ \textcolor{keywordflow}{if}\ name\ \textcolor{keywordflow}{not}\ \textcolor{keywordflow}{in}\ cb\_dummies}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00098}00098\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00099}00099\ \ \ \ \ \textcolor{keywordflow}{return}\ implemented}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00100}00100\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00101}00101\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00102}00102\ \textcolor{keyword}{def\ }annotate\_implementation\_status(entries:\ list[dict])\ -\/>\ \textcolor{keywordtype}{None}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00103}00103\ \ \ \ \ implemented\_keys\ =\ get\_implemented\_opcode\_keys()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00104}00104\ \ \ \ \ \textcolor{keywordflow}{for}\ entry\ \textcolor{keywordflow}{in}\ entries:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00105}00105\ \ \ \ \ \ \ \ \ key\ =\ str(entry.get(\textcolor{stringliteral}{"{}opcode"{}},\ \textcolor{stringliteral}{"{}"{}})).upper()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00106}00106\ \ \ \ \ \ \ \ \ entry[\textcolor{stringliteral}{"{}implemented"{}}]\ =\ key\ \textcolor{keywordflow}{in}\ implemented\_keys}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00107}00107\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00108}00108\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00109}00109\ \textcolor{keyword}{def\ }scrape\_rows\_from\_dist()\ -\/>\ list[dict]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00110}00110\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ INDEX\_HTML.exists():}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00111}00111\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ FileNotFoundError(f\textcolor{stringliteral}{"{}Missing\ \{INDEX\_HTML\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00112}00112\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00113}00113\ \ \ \ \ \textcolor{keyword}{with}\ tempfile.TemporaryDirectory(prefix=\textcolor{stringliteral}{"{}gb\_opcode\_lookup\_"{}})\ \textcolor{keyword}{as}\ td:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00114}00114\ \ \ \ \ \ \ \ \ temp\_dir\ =\ Path(td)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00115}00115\ \ \ \ \ \ \ \ \ helper\ =\ temp\_dir\ /\ \textcolor{stringliteral}{"{}dump.html"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00117}00117\ \ \ \ \ \ \ \ \ helper.write\_text(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00118}00118\ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}"{}"{}<!doctype\ html><html><body><pre\ id=\(\backslash\)"{}out\(\backslash\)"{}>[]</pre><script>}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00119}00119\ \textcolor{stringliteral}{(async\ function()\ \{\{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00120}00120\ \textcolor{stringliteral}{\ \ const\ out\ =\ document.getElementById('out');}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00121}00121\ \textcolor{stringliteral}{\ \ const\ iframe\ =\ document.createElement('iframe');}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00122}00122\ \textcolor{stringliteral}{\ \ iframe.src\ =\ 'file://\{INDEX\_HTML.resolve().as\_posix()\}';}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00123}00123\ \textcolor{stringliteral}{\ \ iframe.style.width\ =\ '1400px';}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00124}00124\ \textcolor{stringliteral}{\ \ iframe.style.height\ =\ '1000px';}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00125}00125\ \textcolor{stringliteral}{\ \ document.body.appendChild(iframe);}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00126}00126\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00127}00127\ \textcolor{stringliteral}{\ \ await\ new\ Promise((resolve)\ =>\ iframe.addEventListener('load',\ resolve,\ \{\{\ once:\ true\ \}\}));}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00128}00128\ \textcolor{stringliteral}{\ \ const\ doc\ =\ iframe.contentWindow.document;}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00129}00129\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00130}00130\ \textcolor{stringliteral}{\ \ function\ sleep(ms)\ \{\{\ return\ new\ Promise((resolve)\ =>\ setTimeout(resolve,\ ms));\ \}\}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00131}00131\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00132}00132\ \textcolor{stringliteral}{\ \ for\ (let\ i\ =\ 0;\ i\ <\ 120;\ i\ +=\ 1)\ \{\{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00133}00133\ \textcolor{stringliteral}{\ \ \ \ if\ (doc.querySelectorAll('button[aria-\/label\string^="{}Opcode:"{}]').length\ >\ 0)\ break;}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00134}00134\ \textcolor{stringliteral}{\ \ \ \ await\ sleep(50);}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00135}00135\ \textcolor{stringliteral}{\ \ \}\}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00136}00136\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00137}00137\ \textcolor{stringliteral}{\ \ const\ buttons\ =\ Array.from(doc.querySelectorAll('button[aria-\/label\string^="{}Opcode:"{}]'));}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00138}00138\ \textcolor{stringliteral}{\ \ const\ rows\ =\ [];}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00139}00139\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00140}00140\ \textcolor{stringliteral}{\ \ for\ (const\ btn\ of\ buttons)\ \{\{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00141}00141\ \textcolor{stringliteral}{\ \ \ \ btn.click();}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00142}00142\ \textcolor{stringliteral}{\ \ \ \ await\ sleep(12);}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00143}00143\ \textcolor{stringliteral}{\ \ \ \ const\ sidebar\ =\ doc.querySelector('\#details-\/sidebar');}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00144}00144\ \textcolor{stringliteral}{\ \ \ \ const\ title\ =\ sidebar?.querySelector('h2')?.textContent?.trim()\ ||\ '';}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00145}00145\ \textcolor{stringliteral}{\ \ \ \ const\ fields\ =\ Array.from(sidebar?.querySelectorAll('li')\ ||\ []).map((x)\ =>\ x.textContent.trim());}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00146}00146\ \textcolor{stringliteral}{\ \ \ \ const\ desc\ =\ sidebar?.querySelector('section[aria-\/label="{}description"{}]')?.innerText?.replace(/\(\backslash\)\(\backslash\)s+/g,\ '\ ').trim()\ ||\ '';}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00147}00147\ \textcolor{stringliteral}{\ \ \ \ const\ aria\ =\ btn.getAttribute('aria-\/label')\ ||\ '';}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00148}00148\ \textcolor{stringliteral}{\ \ \ \ rows.push(\{\{\ aria,\ title,\ fields,\ description:\ desc\ \}\});}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00149}00149\ \textcolor{stringliteral}{\ \ \}\}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00150}00150\ \textcolor{stringliteral}{}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00151}00151\ \textcolor{stringliteral}{\ \ out.textContent\ =\ JSON.stringify(rows);}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00152}00152\ \textcolor{stringliteral}{\ \ document.title\ =\ 'done';}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00153}00153\ \textcolor{stringliteral}{\}\})();}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00154}00154\ \textcolor{stringliteral}{</script></body></html>"{}"{}"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00155}00155\ \ \ \ \ \ \ \ \ \ \ \ \ encoding=\textcolor{stringliteral}{"{}utf-\/8"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00156}00156\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00157}00157\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00158}00158\ \ \ \ \ \ \ \ \ dumped\ =\ run\_chromium\_dump(helper)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00159}00159\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00160}00160\ \ \ \ \ match\ =\ re.search(\textcolor{stringliteral}{r"{}<pre\ id=\(\backslash\)"{}out\(\backslash\)"{}>([\(\backslash\)s\(\backslash\)S]*?)</pre>"{}},\ dumped)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00161}00161\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ match:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00162}00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ RuntimeError(\textcolor{stringliteral}{"{}Could\ not\ extract\ opcode\ data\ from\ rendered\ DOM"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00163}00163\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00164}00164\ \ \ \ \ raw\ =\ html.unescape(match.group(1))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00165}00165\ \ \ \ \ rows\ =\ json.loads(raw)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00166}00166\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ isinstance(rows,\ list):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00167}00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ RuntimeError(\textcolor{stringliteral}{"{}Unexpected\ scrape\ payload\ format"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00168}00168\ \ \ \ \ \textcolor{keywordflow}{return}\ rows}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00169}00169\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00170}00170\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00171}00171\ \textcolor{keyword}{def\ }normalize\_spaces(text:\ str)\ -\/>\ str:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00172}00172\ \ \ \ \ \textcolor{keywordflow}{return}\ re.sub(\textcolor{stringliteral}{r"{}\(\backslash\)s+"{}},\ \textcolor{stringliteral}{"{}\ "{}},\ text).strip()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00173}00173\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00174}00174\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00175}00175\ \textcolor{keyword}{def\ }parse\_fields(fields:\ list[str])\ -\/>\ tuple[str,\ int,\ str,\ dict]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00176}00176\ \ \ \ \ opcode\ =\ \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00177}00177\ \ \ \ \ bytes\_count\ =\ -\/1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00178}00178\ \ \ \ \ cycles\ =\ \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00179}00179\ \ \ \ \ flags\ =\ \{\textcolor{stringliteral}{"{}Z"{}}:\ \textcolor{stringliteral}{"{}-\/"{}},\ \textcolor{stringliteral}{"{}N"{}}:\ \textcolor{stringliteral}{"{}-\/"{}},\ \textcolor{stringliteral}{"{}H"{}}:\ \textcolor{stringliteral}{"{}-\/"{}},\ \textcolor{stringliteral}{"{}CY"{}}:\ \textcolor{stringliteral}{"{}-\/"{}}\}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00180}00180\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00181}00181\ \ \ \ \ \textcolor{keywordflow}{for}\ item\ \textcolor{keywordflow}{in}\ fields:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00182}00182\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ item.startswith(\textcolor{stringliteral}{"{}Opcode:"{}}):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00183}00183\ \ \ \ \ \ \ \ \ \ \ \ \ opcode\ =\ normalize\_spaces(item.split(\textcolor{stringliteral}{"{}:"{}},\ 1)[1])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00184}00184\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{elif}\ item.startswith(\textcolor{stringliteral}{"{}Number\ of\ Bytes:"{}}):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00185}00185\ \ \ \ \ \ \ \ \ \ \ \ \ raw\ =\ normalize\_spaces(item.split(\textcolor{stringliteral}{"{}:"{}},\ 1)[1])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00186}00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bytes\_count\ =\ int(raw)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00188}00188\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{except}\ ValueError:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00189}00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bytes\_count\ =\ -\/1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00190}00190\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{elif}\ item.startswith(\textcolor{stringliteral}{"{}Number\ of\ Cycles:"{}}):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00191}00191\ \ \ \ \ \ \ \ \ \ \ \ \ cycles\ =\ normalize\_spaces(item.split(\textcolor{stringliteral}{"{}:"{}},\ 1)[1])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00192}00192\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{elif}\ item.startswith(\textcolor{stringliteral}{"{}Flags:"{}}):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00193}00193\ \ \ \ \ \ \ \ \ \ \ \ \ raw\ =\ normalize\_spaces(item.split(\textcolor{stringliteral}{"{}:"{}},\ 1)[1])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00194}00194\ \ \ \ \ \ \ \ \ \ \ \ \ parts\ =\ raw.split(\textcolor{stringliteral}{"{}\ "{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00195}00195\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ len(parts)\ <\ 4:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00196}00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ parts.append(\textcolor{stringliteral}{"{}-\/"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00197}00197\ \ \ \ \ \ \ \ \ \ \ \ \ flags\ =\ \{}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00198}00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Z"{}}:\ parts[0],}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00199}00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}N"{}}:\ parts[1],}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00200}00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}H"{}}:\ parts[2],}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00201}00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}CY"{}}:\ parts[3],}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00202}00202\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00203}00203\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00204}00204\ \ \ \ \ \textcolor{keywordflow}{return}\ opcode,\ bytes\_count,\ cycles,\ flags}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00205}00205\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00206}00206\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00207}00207\ \textcolor{keyword}{def\ }canonical\_opcode(opcode\_text:\ str)\ -\/>\ str:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00208}00208\ \ \ \ \ cleaned\ =\ opcode\_text.upper().replace(\textcolor{stringliteral}{"{}\ "{}},\ \textcolor{stringliteral}{"{}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00209}00209\ \ \ \ \ \textcolor{keywordflow}{if}\ cleaned.startswith(\textcolor{stringliteral}{"{}0X"{}}):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00210}00210\ \ \ \ \ \ \ \ \ cleaned\ =\ cleaned[2:]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00211}00211\ \ \ \ \ \textcolor{keywordflow}{return}\ f\textcolor{stringliteral}{"{}0x\{cleaned\}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00212}00212\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00213}00213\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00214}00214\ \textcolor{keyword}{def\ }rows\_to\_entries(rows:\ list[dict])\ -\/>\ list[dict]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00215}00215\ \ \ \ \ entries\ =\ []}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00216}00216\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00217}00217\ \ \ \ \ \textcolor{keywordflow}{for}\ row\ \textcolor{keywordflow}{in}\ rows:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00218}00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ isinstance(row,\ dict):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00219}00219\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00220}00220\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00221}00221\ \ \ \ \ \ \ \ \ fields\ =\ row.get(\textcolor{stringliteral}{"{}fields"{}},\ [])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00222}00222\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ isinstance(fields,\ list):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00223}00223\ \ \ \ \ \ \ \ \ \ \ \ \ fields\ =\ []}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00224}00224\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00225}00225\ \ \ \ \ \ \ \ \ opcode\_text,\ bytes\_count,\ cycles,\ flags\ =\ parse\_fields(fields)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00226}00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ opcode\_text:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00227}00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00228}00228\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00229}00229\ \ \ \ \ \ \ \ \ opcode\ =\ canonical\_opcode(opcode\_text)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00230}00230\ \ \ \ \ \ \ \ \ mnemonic\ =\ normalize\_spaces(str(row.get(\textcolor{stringliteral}{"{}title"{}},\ \textcolor{stringliteral}{"{}"{}})))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00231}00231\ \ \ \ \ \ \ \ \ description\ =\ normalize\_spaces(str(row.get(\textcolor{stringliteral}{"{}description"{}},\ \textcolor{stringliteral}{"{}"{}})))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00232}00232\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ description.lower().startswith(\textcolor{stringliteral}{"{}description\ "{}}):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00233}00233\ \ \ \ \ \ \ \ \ \ \ \ \ description\ =\ description[len(\textcolor{stringliteral}{"{}Description\ "{}})\ :].strip()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00234}00234\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00235}00235\ \ \ \ \ \ \ \ \ type\_label\ =\ \textcolor{stringliteral}{"{}cb"{}}\ \textcolor{keywordflow}{if}\ opcode.upper().startswith(\textcolor{stringliteral}{"{}0XCB"{}})\ \textcolor{keywordflow}{else}\ \textcolor{stringliteral}{"{}base"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00236}00236\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00237}00237\ \ \ \ \ \ \ \ \ entries.append(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00238}00238\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00239}00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}opcode"{}}:\ opcode,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00240}00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}prefix"{}}:\ type\_label,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00241}00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}mnemonic"{}}:\ mnemonic,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00242}00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}bytes"{}}:\ bytes\_count,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00243}00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}cycles"{}}:\ cycles,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00244}00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}flags"{}}:\ flags,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00245}00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}description"{}}:\ description,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00246}00246\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00247}00247\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00248}00248\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00249}00249\ \ \ \ \ unique\ =\ \{\}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00250}00250\ \ \ \ \ \textcolor{keywordflow}{for}\ entry\ \textcolor{keywordflow}{in}\ entries:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00251}00251\ \ \ \ \ \ \ \ \ unique[entry[\textcolor{stringliteral}{"{}opcode"{}}].upper()]\ =\ entry}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00252}00252\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00253}00253\ \ \ \ \ deduped\ =\ list(unique.values())}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00254}00254\ \ \ \ \ deduped.sort(key=\textcolor{keyword}{lambda}\ x:\ int(x[\textcolor{stringliteral}{"{}opcode"{}}][2:],\ 16))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00255}00255\ \ \ \ \ \textcolor{keywordflow}{return}\ deduped}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00256}00256\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00257}00257\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00258}00258\ \textcolor{keyword}{def\ }build\_index()\ -\/>\ dict:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00259}00259\ \ \ \ \ rows\ =\ scrape\_rows\_from\_dist()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00260}00260\ \ \ \ \ entries\ =\ rows\_to\_entries(rows)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00261}00261\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00262}00262\ \ \ \ \ payload\ =\ \{}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00263}00263\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}generated\_at"{}}:\ datetime.now(timezone.utc).isoformat(),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00264}00264\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}source"{}}:\ str(INDEX\_HTML.relative\_to(PROJECT\_ROOT)),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00265}00265\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}count"{}}:\ len(entries),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00266}00266\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}entries"{}}:\ entries,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00267}00267\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00268}00268\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00269}00269\ \ \ \ \ INDEX\_JSON.write\_text(json.dumps(payload,\ indent=2),\ encoding=\textcolor{stringliteral}{"{}utf-\/8"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00270}00270\ \ \ \ \ \textcolor{keywordflow}{return}\ payload}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00271}00271\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00272}00272\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00273}00273\ \textcolor{keyword}{def\ }parse\_query\_as\_opcode(query:\ str)\ -\/>\ str\ |\ \textcolor{keywordtype}{None}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00274}00274\ \ \ \ \ q\ =\ query.strip().upper()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00275}00275\ \ \ \ \ q\ =\ re.sub(\textcolor{stringliteral}{r"{}\(\backslash\)s+"{}},\ \textcolor{stringliteral}{"{}\ "{}},\ q)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00276}00276\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00277}00277\ \ \ \ \ \textcolor{keywordflow}{for}\ pattern\ \textcolor{keywordflow}{in}\ (}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00278}00278\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{r"{}\string^0XCB([0-\/9A-\/F]\{2\})\$"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00279}00279\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{r"{}\string^CB\(\backslash\)s*([0-\/9A-\/F]\{2\})\$"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00280}00280\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{r"{}\string^CB[:\(\backslash\)-\/\ ]([0-\/9A-\/F]\{2\})\$"{}},}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00281}00281\ \ \ \ \ ):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00282}00282\ \ \ \ \ \ \ \ \ m\ =\ re.match(pattern,\ q)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00283}00283\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ m:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00284}00284\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ f\textcolor{stringliteral}{"{}0xCB\{m.group(1)\}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00285}00285\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00286}00286\ \ \ \ \ m4\ =\ re.match(\textcolor{stringliteral}{r"{}\string^0X([0-\/9A-\/F]\{4\})\$"{}},\ q)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00287}00287\ \ \ \ \ \textcolor{keywordflow}{if}\ m4:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00288}00288\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ f\textcolor{stringliteral}{"{}0x\{m4.group(1)\}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00289}00289\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00290}00290\ \ \ \ \ m2\ =\ re.match(\textcolor{stringliteral}{r"{}\string^(?:0X)?([0-\/9A-\/F]\{2\})\$"{}},\ q)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00291}00291\ \ \ \ \ \textcolor{keywordflow}{if}\ m2:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00292}00292\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ f\textcolor{stringliteral}{"{}0x\{m2.group(1)\}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00293}00293\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00294}00294\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keywordtype}{None}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00295}00295\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00296}00296\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00297}00297\ \textcolor{keyword}{def\ }load\_index()\ -\/>\ dict:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00298}00298\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ INDEX\_JSON.exists():}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00299}00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ FileNotFoundError(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00300}00300\ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}Missing\ \{INDEX\_JSON\}.\ Run:\ python3\ utility\_scripts/opcode\_lookup.py\ -\/-\/build"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00301}00301\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00302}00302\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00303}00303\ \ \ \ \ data\ =\ json.loads(INDEX\_JSON.read\_text(encoding=\textcolor{stringliteral}{"{}utf-\/8"{}}))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00304}00304\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ isinstance(data,\ dict)\ \textcolor{keywordflow}{or}\ \textcolor{stringliteral}{"{}entries"{}}\ \textcolor{keywordflow}{not}\ \textcolor{keywordflow}{in}\ data:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00305}00305\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ RuntimeError(f\textcolor{stringliteral}{"{}Invalid\ index\ format:\ \{INDEX\_JSON\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00306}00306\ \ \ \ \ \textcolor{keywordflow}{return}\ data}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00307}00307\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00308}00308\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00309}00309\ \textcolor{keyword}{def\ }find\_entries(index:\ dict,\ query:\ str)\ -\/>\ list[dict]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00310}00310\ \ \ \ \ entries\ =\ index.get(\textcolor{stringliteral}{"{}entries"{}},\ [])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00311}00311\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ isinstance(entries,\ list):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00312}00312\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ []}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00313}00313\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00314}00314\ \ \ \ \ opcode\ =\ parse\_query\_as\_opcode(query)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00315}00315\ \ \ \ \ \textcolor{keywordflow}{if}\ opcode:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00316}00316\ \ \ \ \ \ \ \ \ key\ =\ opcode.upper()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00317}00317\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ [e\ \textcolor{keywordflow}{for}\ e\ \textcolor{keywordflow}{in}\ entries\ \textcolor{keywordflow}{if}\ str(e.get(\textcolor{stringliteral}{"{}opcode"{}},\ \textcolor{stringliteral}{"{}"{}})).upper()\ ==\ key]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00318}00318\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00319}00319\ \ \ \ \ needle\ =\ normalize\_spaces(query).lower()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00320}00320\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ needle:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00321}00321\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ []}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00322}00322\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00323}00323\ \ \ \ \ exact\ =\ [e\ \textcolor{keywordflow}{for}\ e\ \textcolor{keywordflow}{in}\ entries\ \textcolor{keywordflow}{if}\ str(e.get(\textcolor{stringliteral}{"{}mnemonic"{}},\ \textcolor{stringliteral}{"{}"{}})).lower()\ ==\ needle]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00324}00324\ \ \ \ \ \textcolor{keywordflow}{if}\ exact:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00325}00325\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ exact}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00326}00326\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00327}00327\ \ \ \ \ \textcolor{keywordflow}{return}\ [e\ \textcolor{keywordflow}{for}\ e\ \textcolor{keywordflow}{in}\ entries\ \textcolor{keywordflow}{if}\ needle\ \textcolor{keywordflow}{in}\ str(e.get(\textcolor{stringliteral}{"{}mnemonic"{}},\ \textcolor{stringliteral}{"{}"{}})).lower()]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00328}00328\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00329}00329\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00330}00330\ \textcolor{keyword}{def\ }print\_entry(entry:\ dict)\ -\/>\ \textcolor{keywordtype}{None}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00331}00331\ \ \ \ \ flags\ =\ entry.get(\textcolor{stringliteral}{"{}flags"{}},\ \{\})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00332}00332\ \ \ \ \ z\ =\ flags.get(\textcolor{stringliteral}{"{}Z"{}},\ \textcolor{stringliteral}{"{}-\/"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00333}00333\ \ \ \ \ n\ =\ flags.get(\textcolor{stringliteral}{"{}N"{}},\ \textcolor{stringliteral}{"{}-\/"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00334}00334\ \ \ \ \ h\ =\ flags.get(\textcolor{stringliteral}{"{}H"{}},\ \textcolor{stringliteral}{"{}-\/"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00335}00335\ \ \ \ \ cy\ =\ flags.get(\textcolor{stringliteral}{"{}CY"{}},\ \textcolor{stringliteral}{"{}-\/"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00336}00336\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00337}00337\ \ \ \ \ print(f\textcolor{stringliteral}{"{}Opcode\ \ \ \ \ \ :\ \{entry.get('opcode',\ '')\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00338}00338\ \ \ \ \ print(f\textcolor{stringliteral}{"{}Mnemonic\ \ \ \ :\ \{entry.get('mnemonic',\ '')\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00339}00339\ \ \ \ \ print(f\textcolor{stringliteral}{"{}Prefix\ \ \ \ \ \ :\ \{entry.get('prefix',\ '')\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00340}00340\ \ \ \ \ print(f\textcolor{stringliteral}{"{}Bytes\ \ \ \ \ \ \ :\ \{entry.get('bytes',\ '')\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00341}00341\ \ \ \ \ print(f\textcolor{stringliteral}{"{}Cycles\ \ \ \ \ \ :\ \{entry.get('cycles',\ '')\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00342}00342\ \ \ \ \ print(f\textcolor{stringliteral}{"{}Flags\ (ZNHC):\ \{z\}\ \{n\}\ \{h\}\ \{cy\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00343}00343\ \ \ \ \ print(\textcolor{stringliteral}{"{}Description\ :"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00344}00344\ \ \ \ \ print(f\textcolor{stringliteral}{"{}\ \ \{entry.get('description',\ '')\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00345}00345\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00346}00346\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00347}00347\ \textcolor{keyword}{def\ }build\_search\_text(entry:\ dict)\ -\/>\ str:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00348}00348\ \ \ \ \ parts\ =\ [}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00349}00349\ \ \ \ \ \ \ \ \ str(entry.get(\textcolor{stringliteral}{"{}opcode"{}},\ \textcolor{stringliteral}{"{}"{}})),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00350}00350\ \ \ \ \ \ \ \ \ str(entry.get(\textcolor{stringliteral}{"{}mnemonic"{}},\ \textcolor{stringliteral}{"{}"{}})),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00351}00351\ \ \ \ \ \ \ \ \ str(entry.get(\textcolor{stringliteral}{"{}prefix"{}},\ \textcolor{stringliteral}{"{}"{}})),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00352}00352\ \ \ \ \ \ \ \ \ str(entry.get(\textcolor{stringliteral}{"{}cycles"{}},\ \textcolor{stringliteral}{"{}"{}})),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00353}00353\ \ \ \ \ \ \ \ \ str(entry.get(\textcolor{stringliteral}{"{}bytes"{}},\ \textcolor{stringliteral}{"{}"{}})),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00354}00354\ \ \ \ \ \ \ \ \ str(entry.get(\textcolor{stringliteral}{"{}description"{}},\ \textcolor{stringliteral}{"{}"{}})),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00355}00355\ \ \ \ \ ]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00356}00356\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}\ "{}}.join(parts).lower()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00357}00357\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00358}00358\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00359}00359\ \textcolor{keyword}{def\ }filter\_entries(entries:\ list[dict],\ query:\ str)\ -\/>\ list[dict]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00360}00360\ \ \ \ \ needle\ =\ normalize\_spaces(query).lower()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00361}00361\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ needle:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00362}00362\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ entries}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00363}00363\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00364}00364\ \ \ \ \ opcode\ =\ parse\_query\_as\_opcode(needle)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00365}00365\ \ \ \ \ \textcolor{keywordflow}{if}\ opcode:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00366}00366\ \ \ \ \ \ \ \ \ key\ =\ opcode.upper()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00367}00367\ \ \ \ \ \ \ \ \ exact\ =\ [e\ \textcolor{keywordflow}{for}\ e\ \textcolor{keywordflow}{in}\ entries\ \textcolor{keywordflow}{if}\ str(e.get(\textcolor{stringliteral}{"{}opcode"{}},\ \textcolor{stringliteral}{"{}"{}})).upper()\ ==\ key]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00368}00368\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ exact:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00369}00369\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ exact}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00370}00370\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00371}00371\ \ \ \ \ tokens\ =\ [t\ \textcolor{keywordflow}{for}\ t\ \textcolor{keywordflow}{in}\ needle.split(\textcolor{stringliteral}{"{}\ "{}})\ \textcolor{keywordflow}{if}\ t]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00372}00372\ \ \ \ \ filtered\ =\ []}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00373}00373\ \ \ \ \ \textcolor{keywordflow}{for}\ entry\ \textcolor{keywordflow}{in}\ entries:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00374}00374\ \ \ \ \ \ \ \ \ haystack\ =\ build\_search\_text(entry)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00375}00375\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ all(token\ \textcolor{keywordflow}{in}\ haystack\ \textcolor{keywordflow}{for}\ token\ \textcolor{keywordflow}{in}\ tokens):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00376}00376\ \ \ \ \ \ \ \ \ \ \ \ \ filtered.append(entry)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00377}00377\ \ \ \ \ \textcolor{keywordflow}{return}\ filtered}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00378}00378\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00379}00379\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00380}00380\ \textcolor{keyword}{def\ }wrap\_lines(text:\ str,\ width:\ int)\ -\/>\ list[str]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00381}00381\ \ \ \ \ \textcolor{keywordflow}{if}\ width\ <=\ 1:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00382}00382\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ [text]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00383}00383\ \ \ \ \ out\ =\ []}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00384}00384\ \ \ \ \ \textcolor{keywordflow}{for}\ raw\ \textcolor{keywordflow}{in}\ (text\ \textcolor{keywordflow}{or}\ \textcolor{stringliteral}{"{}"{}}).splitlines()\ \textcolor{keywordflow}{or}\ [\textcolor{stringliteral}{"{}"{}}]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00385}00385\ \ \ \ \ \ \ \ \ chunks\ =\ textwrap.wrap(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00386}00386\ \ \ \ \ \ \ \ \ \ \ \ \ raw,\ width=width,\ replace\_whitespace=\textcolor{keyword}{False},\ drop\_whitespace=\textcolor{keyword}{False}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00387}00387\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00388}00388\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ chunks:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00389}00389\ \ \ \ \ \ \ \ \ \ \ \ \ out.extend(chunks)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00390}00390\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00391}00391\ \ \ \ \ \ \ \ \ \ \ \ \ out.append(\textcolor{stringliteral}{"{}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00392}00392\ \ \ \ \ \textcolor{keywordflow}{return}\ out}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00393}00393\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00394}00394\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00395}00395\ \textcolor{keyword}{def\ }init\_tui\_colors()\ -\/>\ dict[str,\ int]:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00396}00396\ \ \ \ \ palette\ =\ \{}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00397}00397\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}title"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00398}00398\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}label"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00399}00399\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}muted"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00400}00400\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}selected"{}}:\ curses.A\_REVERSE,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00401}00401\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}divider"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00402}00402\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}value"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00403}00403\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}good"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00404}00404\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}warn"{}}:\ 0,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00405}00405\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00406}00406\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00407}00407\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ curses.has\_colors():}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00408}00408\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ palette}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00409}00409\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00410}00410\ \ \ \ \ curses.start\_color()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00411}00411\ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00412}00412\ \ \ \ \ \ \ \ \ curses.use\_default\_colors()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00413}00413\ \ \ \ \ \ \ \ \ bg\ =\ -\/1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00414}00414\ \ \ \ \ \textcolor{keywordflow}{except}\ curses.error:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00415}00415\ \ \ \ \ \ \ \ \ bg\ =\ curses.COLOR\_BLACK}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00416}00416\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00417}00417\ \ \ \ \ curses.init\_pair(1,\ curses.COLOR\_CYAN,\ bg)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00418}00418\ \ \ \ \ curses.init\_pair(2,\ curses.COLOR\_WHITE,\ bg)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00419}00419\ \ \ \ \ curses.init\_pair(3,\ curses.COLOR\_BLUE,\ bg)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00420}00420\ \ \ \ \ curses.init\_pair(4,\ curses.COLOR\_BLACK,\ curses.COLOR\_CYAN)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00421}00421\ \ \ \ \ curses.init\_pair(5,\ curses.COLOR\_GREEN,\ bg)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00422}00422\ \ \ \ \ curses.init\_pair(6,\ curses.COLOR\_YELLOW,\ bg)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00423}00423\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00424}00424\ \ \ \ \ palette.update(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00425}00425\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00426}00426\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}title"{}}:\ curses.color\_pair(1)\ |\ curses.A\_BOLD,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00427}00427\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}label"{}}:\ curses.color\_pair(2)\ |\ curses.A\_BOLD,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00428}00428\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}muted"{}}:\ curses.color\_pair(3),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00429}00429\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}selected"{}}:\ curses.color\_pair(4)\ |\ curses.A\_BOLD,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00430}00430\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}divider"{}}:\ curses.color\_pair(3),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00431}00431\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}value"{}}:\ curses.color\_pair(2),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00432}00432\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}good"{}}:\ curses.color\_pair(5)\ |\ curses.A\_BOLD,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00433}00433\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}warn"{}}:\ curses.color\_pair(6)\ |\ curses.A\_BOLD,}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00434}00434\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00435}00435\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00436}00436\ \ \ \ \ \textcolor{keywordflow}{return}\ palette}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00437}00437\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00438}00438\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00439}00439\ \textcolor{keyword}{def\ }draw\_tui(stdscr,\ entries:\ list[dict])\ -\/>\ int:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00440}00440\ \ \ \ \ curses.curs\_set(0)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00441}00441\ \ \ \ \ stdscr.keypad(\textcolor{keyword}{True})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00442}00442\ \ \ \ \ palette\ =\ init\_tui\_colors()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00443}00443\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00444}00444\ \ \ \ \ query\ =\ \textcolor{stringliteral}{"{}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00445}00445\ \ \ \ \ selected\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00446}00446\ \ \ \ \ scroll\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00447}00447\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00448}00448\ \ \ \ \ \textcolor{keywordflow}{while}\ \textcolor{keyword}{True}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00449}00449\ \ \ \ \ \ \ \ \ height,\ width\ =\ stdscr.getmaxyx()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00450}00450\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ width\ <\ 70\ \textcolor{keywordflow}{or}\ height\ <\ 16:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00451}00451\ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.erase()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00452}00452\ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00453}00453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0,\ 0,\ \textcolor{stringliteral}{"{}Terminal\ too\ small.\ Resize\ to\ at\ least\ 70x16."{}},\ palette[\textcolor{stringliteral}{"{}warn"{}}]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00454}00454\ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00455}00455\ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(1,\ 0,\ \textcolor{stringliteral}{"{}Press\ q\ to\ quit."{}},\ palette[\textcolor{stringliteral}{"{}muted"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00456}00456\ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.refresh()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00457}00457\ \ \ \ \ \ \ \ \ \ \ \ \ ch\ =\ stdscr.getch()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00458}00458\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ch\ \textcolor{keywordflow}{in}\ (ord(\textcolor{stringliteral}{"{}q"{}}),\ ord(\textcolor{stringliteral}{"{}Q"{}})):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00459}00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00460}00460\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00461}00461\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00462}00462\ \ \ \ \ \ \ \ \ filtered\ =\ filter\_entries(entries,\ query)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00463}00463\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ filtered:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00464}00464\ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ max(0,\ min(selected,\ len(filtered)\ -\/\ 1))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00465}00465\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00466}00466\ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00467}00467\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00468}00468\ \ \ \ \ \ \ \ \ list\_width\ =\ max(30,\ min(44,\ width\ //\ 2\ -\/\ 2))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00469}00469\ \ \ \ \ \ \ \ \ detail\_x\ =\ list\_width\ +\ 2}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00470}00470\ \ \ \ \ \ \ \ \ detail\_width\ =\ width\ -\/\ detail\_x\ -\/\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00471}00471\ \ \ \ \ \ \ \ \ list\_rows\ =\ height\ -\/\ 5}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00472}00472\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00473}00473\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ selected\ <\ scroll:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00474}00474\ \ \ \ \ \ \ \ \ \ \ \ \ scroll\ =\ selected}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00475}00475\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ selected\ >=\ scroll\ +\ list\_rows:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00476}00476\ \ \ \ \ \ \ \ \ \ \ \ \ scroll\ =\ selected\ -\/\ list\_rows\ +\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00477}00477\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ scroll\ <\ 0:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00478}00478\ \ \ \ \ \ \ \ \ \ \ \ \ scroll\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00479}00479\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00480}00480\ \ \ \ \ \ \ \ \ stdscr.erase()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00481}00481\ \ \ \ \ \ \ \ \ stdscr.addstr(0,\ 0,\ \textcolor{stringliteral}{"{}GB\ Opcode\ Lookup\ Interface"{}},\ palette[\textcolor{stringliteral}{"{}title"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00482}00482\ \ \ \ \ \ \ \ \ stdscr.addstr(1,\ 0,\ \textcolor{stringliteral}{"{}Search:"{}},\ palette[\textcolor{stringliteral}{"{}label"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00483}00483\ \ \ \ \ \ \ \ \ stdscr.addstr(1,\ 8,\ f\textcolor{stringliteral}{"{}\{query\}"{}},\ palette[\textcolor{stringliteral}{"{}value"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00484}00484\ \ \ \ \ \ \ \ \ stdscr.addstr(2,\ 0,\ \textcolor{stringliteral}{"{}Matches:"{}},\ palette[\textcolor{stringliteral}{"{}label"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00485}00485\ \ \ \ \ \ \ \ \ stdscr.addstr(2,\ 9,\ f\textcolor{stringliteral}{"{}\{len(filtered)\}/\{len(entries)\}"{}},\ palette[\textcolor{stringliteral}{"{}good"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00486}00486\ \ \ \ \ \ \ \ \ stdscr.addstr(2,\ 22,\ \textcolor{stringliteral}{"{}[I]\ implemented"{}},\ palette[\textcolor{stringliteral}{"{}good"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00487}00487\ \ \ \ \ \ \ \ \ stdscr.addstr(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00488}00488\ \ \ \ \ \ \ \ \ \ \ \ \ 2,\ detail\_x,\ \textcolor{stringliteral}{"{}Keys:\ Up/Down\ PgUp/PgDn\ Backspace\ q"{}},\ palette[\textcolor{stringliteral}{"{}muted"{}}]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00489}00489\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00490}00490\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00491}00491\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ row\ \textcolor{keywordflow}{in}\ range(3,\ height\ -\/\ 2):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00492}00492\ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addch(row,\ list\_width\ +\ 1,\ \textcolor{stringliteral}{"{}|"{}},\ palette[\textcolor{stringliteral}{"{}divider"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00493}00493\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00494}00494\ \ \ \ \ \ \ \ \ visible\ =\ filtered[scroll\ :\ scroll\ +\ list\_rows]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00495}00495\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ idx,\ entry\ \textcolor{keywordflow}{in}\ enumerate(visible):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00496}00496\ \ \ \ \ \ \ \ \ \ \ \ \ y\ =\ 3\ +\ idx}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00497}00497\ \ \ \ \ \ \ \ \ \ \ \ \ absolute\_idx\ =\ scroll\ +\ idx}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00498}00498\ \ \ \ \ \ \ \ \ \ \ \ \ marker\ =\ \textcolor{stringliteral}{"{}I"{}}\ \textcolor{keywordflow}{if}\ entry.get(\textcolor{stringliteral}{"{}implemented"{}},\ \textcolor{keyword}{False})\ \textcolor{keywordflow}{else}\ \textcolor{stringliteral}{"{}\ "{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00499}00499\ \ \ \ \ \ \ \ \ \ \ \ \ label\ =\ (}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00500}00500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}[\{marker\}]\ \{entry.get('opcode',\ ''):<8\}\ \{entry.get('mnemonic',\ '')\}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00501}00501\ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00502}00502\ \ \ \ \ \ \ \ \ \ \ \ \ label\ =\ label[:\ list\_width\ -\/\ 1]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00503}00503\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ absolute\_idx\ ==\ selected:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00504}00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(y,\ 0,\ label.ljust(list\_width\ -\/\ 1),\ palette[\textcolor{stringliteral}{"{}selected"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00505}00505\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00506}00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ value\_attr\ =\ (}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00507}00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ palette[\textcolor{stringliteral}{"{}good"{}}]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00508}00508\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ entry.get(\textcolor{stringliteral}{"{}implemented"{}},\ \textcolor{keyword}{False})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00509}00509\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ palette[\textcolor{stringliteral}{"{}value"{}}]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00510}00510\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00511}00511\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(y,\ 0,\ label.ljust(list\_width\ -\/\ 1),\ value\_attr)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00512}00512\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00513}00513\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ filtered:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00514}00514\ \ \ \ \ \ \ \ \ \ \ \ \ current\ =\ filtered[selected]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00515}00515\ \ \ \ \ \ \ \ \ \ \ \ \ flags\ =\ current.get(\textcolor{stringliteral}{"{}flags"{}},\ \{\})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00516}00516\ \ \ \ \ \ \ \ \ \ \ \ \ flag\_line\ =\ (}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00517}00517\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}Z=\{flags.get('Z',\ '-\/')\}\ "{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00518}00518\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}N=\{flags.get('N',\ '-\/')\}\ "{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00519}00519\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}H=\{flags.get('H',\ '-\/')\}\ "{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00520}00520\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}CY=\{flags.get('CY',\ '-\/')\}"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00521}00521\ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00522}00522\ \ \ \ \ \ \ \ \ \ \ \ \ detail\_rows:\ list[tuple[str,\ str]]\ =\ [}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00523}00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{stringliteral}{"{}Opcode"{}},\ str(current.get(\textcolor{stringliteral}{"{}opcode"{}},\ \textcolor{stringliteral}{"{}"{}}))),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00524}00524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{stringliteral}{"{}Mnemonic"{}},\ str(current.get(\textcolor{stringliteral}{"{}mnemonic"{}},\ \textcolor{stringliteral}{"{}"{}}))),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00525}00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{stringliteral}{"{}Implemented"{}},\ \textcolor{stringliteral}{"{}Yes"{}}\ \textcolor{keywordflow}{if}\ current.get(\textcolor{stringliteral}{"{}implemented"{}},\ \textcolor{keyword}{False})\ \textcolor{keywordflow}{else}\ \textcolor{stringliteral}{"{}No"{}}),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00526}00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{stringliteral}{"{}Prefix"{}},\ str(current.get(\textcolor{stringliteral}{"{}prefix"{}},\ \textcolor{stringliteral}{"{}"{}}))),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00527}00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{stringliteral}{"{}Bytes"{}},\ str(current.get(\textcolor{stringliteral}{"{}bytes"{}},\ \textcolor{stringliteral}{"{}"{}}))),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00528}00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{stringliteral}{"{}Cycles"{}},\ str(current.get(\textcolor{stringliteral}{"{}cycles"{}},\ \textcolor{stringliteral}{"{}"{}}))),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00529}00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{stringliteral}{"{}Flags"{}},\ flag\_line),}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00530}00530\ \ \ \ \ \ \ \ \ \ \ \ \ ]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00531}00531\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00532}00532\ \ \ \ \ \ \ \ \ \ \ \ \ y\ =\ 3}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00533}00533\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ label,\ value\ \textcolor{keywordflow}{in}\ detail\_rows:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00534}00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ y\ >=\ height\ -\/\ 1:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00535}00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00536}00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(y,\ detail\_x,\ f\textcolor{stringliteral}{"{}\{label:<9\}"{}},\ palette[\textcolor{stringliteral}{"{}label"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00537}00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ label\ ==\ \textcolor{stringliteral}{"{}Implemented"{}}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00538}00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ value\_attr\ =\ palette[\textcolor{stringliteral}{"{}good"{}}]\ \textcolor{keywordflow}{if}\ value\ ==\ \textcolor{stringliteral}{"{}Yes"{}}\ \textcolor{keywordflow}{else}\ palette[\textcolor{stringliteral}{"{}warn"{}}]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00539}00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00540}00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ value\_attr\ =\ (}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00541}00541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ palette[\textcolor{stringliteral}{"{}good"{}}]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00542}00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ label\ \textcolor{keywordflow}{in}\ (\textcolor{stringliteral}{"{}Opcode"{}},\ \textcolor{stringliteral}{"{}Cycles"{}},\ \textcolor{stringliteral}{"{}Bytes"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00543}00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ palette[\textcolor{stringliteral}{"{}value"{}}]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00544}00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00545}00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00546}00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y,\ detail\_x\ +\ 10,\ value[:\ max(1,\ detail\_width\ -\/\ 11)],\ value\_attr}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00547}00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00548}00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y\ +=\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00549}00549\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00550}00550\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ y\ <\ height\ -\/\ 1:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00551}00551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y\ +=\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00552}00552\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ y\ <\ height\ -\/\ 1:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00553}00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(y,\ detail\_x,\ \textcolor{stringliteral}{"{}Description"{}},\ palette[\textcolor{stringliteral}{"{}label"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00554}00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y\ +=\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00555}00555\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00556}00556\ \ \ \ \ \ \ \ \ \ \ \ \ desc\_lines\ =\ wrap\_lines(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00557}00557\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ str(current.get(\textcolor{stringliteral}{"{}description"{}},\ \textcolor{stringliteral}{"{}"{}})),\ detail\_width\ -\/\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00558}00558\ \ \ \ \ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00559}00559\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ line\ \textcolor{keywordflow}{in}\ desc\_lines:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00560}00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ y\ >=\ height\ -\/\ 1:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00561}00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00562}00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(y,\ detail\_x,\ line[:\ detail\_width\ -\/\ 1],\ palette[\textcolor{stringliteral}{"{}value"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00563}00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ y\ +=\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00564}00564\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00565}00565\ \ \ \ \ \ \ \ \ \ \ \ \ stdscr.addstr(3,\ detail\_x,\ \textcolor{stringliteral}{"{}No\ matches."{}},\ palette[\textcolor{stringliteral}{"{}warn"{}}])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00566}00566\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00567}00567\ \ \ \ \ \ \ \ \ stdscr.refresh()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00568}00568\ \ \ \ \ \ \ \ \ ch\ =\ stdscr.getch()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00569}00569\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00570}00570\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ch\ \textcolor{keywordflow}{in}\ (ord(\textcolor{stringliteral}{"{}q"{}}),\ ord(\textcolor{stringliteral}{"{}Q"{}}),\ 27):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00571}00571\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00572}00572\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ch\ \textcolor{keywordflow}{in}\ (curses.KEY\_UP,\ ord(\textcolor{stringliteral}{"{}k"{}})):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00573}00573\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ filtered:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00574}00574\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ max(0,\ selected\ -\/\ 1)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00575}00575\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00576}00576\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ch\ \textcolor{keywordflow}{in}\ (curses.KEY\_DOWN,\ ord(\textcolor{stringliteral}{"{}j"{}})):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00577}00577\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ filtered:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00578}00578\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ min(len(filtered)\ -\/\ 1,\ selected\ +\ 1)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00579}00579\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00580}00580\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ch\ ==\ curses.KEY\_NPAGE:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00581}00581\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ filtered:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00582}00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ min(len(filtered)\ -\/\ 1,\ selected\ +\ max(1,\ list\_rows\ -\/\ 2))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00583}00583\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00584}00584\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ch\ ==\ curses.KEY\_PPAGE:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00585}00585\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ filtered:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00586}00586\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ max(0,\ selected\ -\/\ max(1,\ list\_rows\ -\/\ 2))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00587}00587\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00588}00588\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ch\ \textcolor{keywordflow}{in}\ (curses.KEY\_BACKSPACE,\ 127,\ 8):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00589}00589\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ query:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00590}00590\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ query\ =\ query[:-\/1]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00591}00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00592}00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ scroll\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00593}00593\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00594}00594\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ 32\ <=\ ch\ <=\ 126:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00595}00595\ \ \ \ \ \ \ \ \ \ \ \ \ query\ +=\ chr(ch)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00596}00596\ \ \ \ \ \ \ \ \ \ \ \ \ selected\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00597}00597\ \ \ \ \ \ \ \ \ \ \ \ \ scroll\ =\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00598}00598\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{continue}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00599}00599\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00600}00600\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00601}00601\ \textcolor{keyword}{def\ }run\_tui(index:\ dict)\ -\/>\ int:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00602}00602\ \ \ \ \ entries\ =\ index.get(\textcolor{stringliteral}{"{}entries"{}},\ [])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00603}00603\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ isinstance(entries,\ list):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00604}00604\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}Invalid\ index\ data"{}},\ file=sys.stderr)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00605}00605\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00606}00606\ \ \ \ \ annotate\_implementation\_status(entries)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00607}00607\ \ \ \ \ \textcolor{keywordflow}{return}\ curses.wrapper(\textcolor{keyword}{lambda}\ stdscr:\ draw\_tui(stdscr,\ entries))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00608}00608\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00609}00609\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00610}00610\ \textcolor{keyword}{def\ }main()\ -\/>\ int:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00611}00611\ \ \ \ \ parser\ =\ argparse.ArgumentParser(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00612}00612\ \ \ \ \ \ \ \ \ description=\textcolor{stringliteral}{"{}Lookup\ Game\ Boy\ opcodes\ from\ dist/index.html\ metadata"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00613}00613\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00614}00614\ \ \ \ \ parser.add\_argument(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00615}00615\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}query"{}},\ nargs=\textcolor{stringliteral}{"{}?"{}},\ help=\textcolor{stringliteral}{"{}opcode\ (e.g.\ 0x04,\ CB\ 11)\ or\ mnemonic"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00616}00616\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00617}00617\ \ \ \ \ parser.add\_argument(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00618}00618\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/build"{}},\ action=\textcolor{stringliteral}{"{}store\_true"{}},\ help=\textcolor{stringliteral}{"{}build\ dist/opcode\_lookup\_index.json"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00619}00619\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00620}00620\ \ \ \ \ parser.add\_argument(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00621}00621\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/json"{}},\ action=\textcolor{stringliteral}{"{}store\_true"{}},\ help=\textcolor{stringliteral}{"{}output\ JSON\ for\ query\ result"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00622}00622\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00623}00623\ \ \ \ \ parser.add\_argument(\textcolor{stringliteral}{"{}-\/-\/all"{}},\ action=\textcolor{stringliteral}{"{}store\_true"{}},\ help=\textcolor{stringliteral}{"{}show\ all\ mnemonic\ matches"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00624}00624\ \ \ \ \ parser.add\_argument(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00625}00625\ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}-\/-\/tui"{}},\ action=\textcolor{stringliteral}{"{}store\_true"{}},\ help=\textcolor{stringliteral}{"{}launch\ interactive\ terminal\ UI"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00626}00626\ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00627}00627\ \ \ \ \ args\ =\ parser.parse\_args()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00628}00628\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00629}00629\ \ \ \ \ \textcolor{keywordflow}{if}\ args.build:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00630}00630\ \ \ \ \ \ \ \ \ payload\ =\ build\_index()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00631}00631\ \ \ \ \ \ \ \ \ print(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00632}00632\ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}Built\ \{INDEX\_JSON.relative\_to(PROJECT\_ROOT)\}\ with\ \{payload.get('count',\ 0)\}\ entries"{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00633}00633\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00634}00634\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ args.query:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00635}00635\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00636}00636\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00637}00637\ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00638}00638\ \ \ \ \ \ \ \ \ index\ =\ load\_index()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00639}00639\ \ \ \ \ \textcolor{keywordflow}{except}\ Exception\ \textcolor{keyword}{as}\ exc:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00640}00640\ \ \ \ \ \ \ \ \ print(str(exc),\ file=sys.stderr)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00641}00641\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00642}00642\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00643}00643\ \ \ \ \ \textcolor{keywordflow}{if}\ args.tui\ \textcolor{keywordflow}{or}\ \textcolor{keywordflow}{not}\ args.query:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00644}00644\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ run\_tui(index)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00645}00645\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00646}00646\ \ \ \ \ results\ =\ find\_entries(index,\ args.query)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00647}00647\ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keywordflow}{not}\ results:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00648}00648\ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}No\ results\ for:\ \{args.query\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00649}00649\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00650}00650\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00651}00651\ \ \ \ \ \textcolor{keywordflow}{if}\ args.json:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00652}00652\ \ \ \ \ \ \ \ \ payload\ =\ results\ \textcolor{keywordflow}{if}\ (args.all\ \textcolor{keywordflow}{or}\ len(results)\ ==\ 1)\ \textcolor{keywordflow}{else}\ [results[0]]}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00653}00653\ \ \ \ \ \ \ \ \ print(json.dumps(payload,\ indent=2))}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00654}00654\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00655}00655\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00656}00656\ \ \ \ \ \textcolor{keywordflow}{if}\ len(results)\ >\ 1\ \textcolor{keywordflow}{and}\ \textcolor{keywordflow}{not}\ args.all:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00657}00657\ \ \ \ \ \ \ \ \ print(}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00658}00658\ \ \ \ \ \ \ \ \ \ \ \ \ f\textcolor{stringliteral}{"{}Found\ \{len(results)\}\ matches,\ showing\ best\ match.\ Use\ -\/-\/all\ to\ list\ all."{}}}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00659}00659\ \ \ \ \ \ \ \ \ )}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00660}00660\ \ \ \ \ \ \ \ \ print()}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00661}00661\ \ \ \ \ \ \ \ \ print\_entry(results[0])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00662}00662\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00663}00663\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00664}00664\ \ \ \ \ \textcolor{keywordflow}{if}\ len(results)\ >\ 1:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00665}00665\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ idx,\ entry\ \textcolor{keywordflow}{in}\ enumerate(results,\ start=1):}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00666}00666\ \ \ \ \ \ \ \ \ \ \ \ \ print(f\textcolor{stringliteral}{"{}[\{idx\}]\ \{entry.get('opcode',\ '')\}\ \ \{entry.get('mnemonic',\ '')\}"{}})}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00667}00667\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00668}00668\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00669}00669\ \ \ \ \ print\_entry(results[0])}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00670}00670\ \ \ \ \ \textcolor{keywordflow}{return}\ 0}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00671}00671\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00672}00672\ }
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00673}00673\ \textcolor{keywordflow}{if}\ \_\_name\_\_\ ==\ \textcolor{stringliteral}{"{}\_\_main\_\_"{}}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00674}00674\ \ \ \ \ \textcolor{keywordflow}{try}:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00675}00675\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ SystemExit(main())}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00676}00676\ \ \ \ \ \textcolor{keywordflow}{except}\ KeyboardInterrupt:}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00677}00677\ \ \ \ \ \ \ \ \ print(\textcolor{stringliteral}{"{}Interrupted"{}},\ file=sys.stderr)}
+\DoxyCodeLine{\Hypertarget{opcode__lookup_8py_source_l00678}00678\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{raise}\ SystemExit(130)}
+
+\end{DoxyCode}

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tirp_20ci_20workflow_0',['1) TIRP CI Workflow',['../index.html#autotoc_md6',1,'']]]
+  ['📐_20architecture_20overview_0',['📐 Architecture Overview',['../index.html#autotoc_md1',1,'']]]
 ];

@@ -4,17 +4,24 @@
 \Hypertarget{index_md_README}%
 
 
-Game Boy (DMG-\/01) emulator project focused on building an accurate LR35902 CPU core, memory subsystem, \doxylink{classPPU}{PPU} renderer, and a reliable CI/\+testing pipeline.
+A robust and accurate Game Boy (DMG-\/01) emulator featuring a fully-\/fledged LR35902 CPU core, high-\/performance SFML 3.\+0 renderer, integrated Debug AMOLED UI, and an advanced automated Testing/\+\+CI pipeline.\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{📐 Architecture Overview}{📐 Architecture Overview}}\label{index_autotoc_md1}
+The emulator follows a highly modular design built entirely in C++17, emphasizing tight component ownership and clear memory bus segregation.
 
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{❯\ ./utility\_scripts/opcode\_progress.py}
-\DoxyCodeLine{-\/\ Base\ Opcodes:\ [████████████████████]\ 100.0\%\ (256/256)}
-\DoxyCodeLine{-\/\ CB\ Opcodes:\ \ \ [████████████████████]\ 100.0\%\ (256/256)}
-\DoxyCodeLine{-\/\ Combined:\ \ \ \ \ [████████████████████]\ 100.0\%\ (512/512)}
+\DoxyCodeLine{graph\ TD}
+\DoxyCodeLine{\ \ \ \ A[Main\ Emulator\ Loop]\ -\/-\/>\ B(PPU\ /\ SFML\ 3.0\ Renderer)}
+\DoxyCodeLine{\ \ \ \ A\ -\/-\/>\ C(LR35902\ CPU)}
+\DoxyCodeLine{\ \ \ \ A\ -\/-\/>\ D(Timer)}
+\DoxyCodeLine{\ \ \ \ C\ <-\/-\/>\ E(MMU\ /\ Memory\ Bus)}
+\DoxyCodeLine{\ \ \ \ B\ <-\/-\/>\ E}
+\DoxyCodeLine{\ \ \ \ D\ <-\/-\/>\ E}
+\DoxyCodeLine{\ \ \ \ E\ <-\/-\/>\ F[Cartridge\ /\ ROM\ Metadata]}
+\DoxyCodeLine{\ \ \ \ E\ <-\/-\/>\ G[Interrupt\ Controller]}
+\DoxyCodeLine{\ \ \ \ G\ -\/.-\/>|Triggers|\ C}
 
 \end{DoxyCode}
-\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{Features \& Controls}{Features \& Controls}}\label{index_autotoc_md1}
+\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{🎮 Features \& Controls}{🎮 Features \& Controls}}\label{index_autotoc_md2}
 The emulator uses SFML 3.\+0 to render a robust UI in both standard mode and an advanced AMOLED Debug View. Both modes fully support the following features:\+
 
 
@@ -35,7 +42,7 @@ The emulator uses SFML 3.\+0 to render a robust UI in both standard mode and an 
 \end{DoxyItemize}
 \end{DoxyItemize}
 
-{\itshape Note:\+ In Normal mode, system hotkey triggers will display a temporary bright-\/red confirmation overlay.}\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{Display Modes}{Display Modes}}\label{index_autotoc_md2}
+{\itshape Note:\+ In Normal mode, system hotkey triggers will display a temporary bright-\/red confirmation overlay.}\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{🖥️ Display Modes}{🖥️ Display Modes}}\label{index_autotoc_md3}
 
 \begin{DoxyItemize}
 \item {\bfseries{Standard Mode}}:\+ Plays the ROM with a 1.\+0x native display.
@@ -49,38 +56,7 @@ The emulator uses SFML 3.\+0 to render a robust UI in both standard mode and an 
 \item Live ROM hex-\/byte monitoring
 \end{DoxyItemize}
 \item {\bfseries{Fullscreen ({\ttfamily -\/-\/fullscreen})}}:\+ Upscales both Normal and Debug modes to 1920x1080 without distorting the pixel aspect ratio.
-\end{DoxyItemize}\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{Current Focus}{Current Focus}}\label{index_autotoc_md3}
-
-\begin{DoxyItemize}
-\item {\bfseries{Timers \& Interrupts}}:\+ Integrating CPU/\+\+MMU flow through an advanced Interrupt Controller.
-\item {\bfseries{Memory/\+\+Bus Checkpoints}}:\+ Refactoring architecture boundaries to ensure clean class definitions for \doxylink{classPPU}{PPU} and CPU bus access.
-\item {\bfseries{CI/\+\+Quality Pipeline}}:\+ Integrating automated regression tests.
-\end{DoxyItemize}\hypertarget{index_autotoc_md4}{}\doxysection{\texorpdfstring{Current Code Structure}{Current Code Structure}}\label{index_autotoc_md4}
-
-\begin{DoxyCode}{0}
-\DoxyCodeLine{GB\_Emulator/}
-\DoxyCodeLine{├──\ include/}
-\DoxyCodeLine{│\ \ \ ├──\ ProcessingUnit.hpp}
-\DoxyCodeLine{│\ \ \ ├──\ mmu.hpp}
-\DoxyCodeLine{│\ \ \ ├──\ ppu.hpp}
-\DoxyCodeLine{│\ \ \ ├──\ opcode\_table.hpp}
-\DoxyCodeLine{│\ \ \ └──\ opcodes.hpp}
-\DoxyCodeLine{├──\ src/}
-\DoxyCodeLine{│\ \ \ ├──\ core/}
-\DoxyCodeLine{│\ \ \ │\ \ \ ├──\ cpu/}
-\DoxyCodeLine{│\ \ \ │\ \ \ ├──\ memory/}
-\DoxyCodeLine{│\ \ \ │\ \ \ └──\ ppu.cpp}
-\DoxyCodeLine{│\ \ \ ├──\ io/}
-\DoxyCodeLine{│\ \ \ └──\ main.cpp}
-\DoxyCodeLine{├──\ tests/}
-\DoxyCodeLine{│\ \ \ └──\ op\_tests/}
-\DoxyCodeLine{└──\ utility\_scripts/}
-\DoxyCodeLine{\ \ \ \ ├──\ build\_and\_test.sh}
-\DoxyCodeLine{\ \ \ \ ├──\ build\_and\_run.sh}
-\DoxyCodeLine{\ \ \ \ └──\ run\_debug.sh}
-
-\end{DoxyCode}
-\hypertarget{index_autotoc_md5}{}\doxysection{\texorpdfstring{Build and Run}{Build and Run}}\label{index_autotoc_md5}
+\end{DoxyItemize}\hypertarget{index_autotoc_md4}{}\doxysection{\texorpdfstring{🚀 Build and Run}{🚀 Build and Run}}\label{index_autotoc_md4}
 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\#\ Configure\ +\ build\ +\ run\ all\ tests}
@@ -93,6 +69,31 @@ The emulator uses SFML 3.\+0 to render a robust UI in both standard mode and an 
 \DoxyCodeLine{./build/bin/gb\_emu\ <path-\/to-\/rom.gb>\ -\/-\/debug\ -\/-\/fullscreen}
 
 \end{DoxyCode}
-\hypertarget{index_autotoc_md6}{}\doxysection{\texorpdfstring{Workflow and Pipeline}{Workflow and Pipeline}}\label{index_autotoc_md6}
-The project actively runs a highly automated {\bfseries{TIRP CI Workflow}} mapped to Discord webhooks and Git\+Hub Actions. All details regarding our cloud architecture can be found in {\ttfamily pipline/\+\+Set\+Up.\+md}.\hypertarget{index_autotoc_md7}{}\doxysection{\texorpdfstring{Contributing}{Contributing}}\label{index_autotoc_md7}
-See our Contribution Guidelines for branch naming rules, coding style, and PR requirements. 
+\hypertarget{index_autotoc_md5}{}\doxysection{\texorpdfstring{🔄 Workflow and TIRP Protocol}{🔄 Workflow and TIRP Protocol}}\label{index_autotoc_md5}
+The project actively runs a highly automated {\bfseries{TIRP CI Workflow}} mapped to Discord webhooks and Git\+Hub Actions. All details regarding our cloud architecture can be found in {\ttfamily pipline/\+\+Set\+Up.\+md} and the generated Doxygen files.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sequenceDiagram}
+\DoxyCodeLine{\ \ \ \ participant\ Dev\ as\ Developer}
+\DoxyCodeLine{\ \ \ \ participant\ Git\ as\ GitHub\ Actions}
+\DoxyCodeLine{\ \ \ \ participant\ Groq\ as\ AI\ Summary\ Engine}
+\DoxyCodeLine{\ \ \ \ participant\ Discord\ as\ Discord\ Webhook}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ Dev-\/>>Git:\ Push\ /\ Pull\ Request}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Run\ CMake\ Build}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Execute\ GTest\ Suite}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Run\ Valgrind\ Memcheck}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Groq:\ Send\ Git\ Diff\ \&\ Logs}
+\DoxyCodeLine{\ \ \ \ Groq-\/-\/>>Git:\ Generate\ Intelligent\ Summary}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Discord:\ Post\ Pass/Fail\ +\ Summary\ Webhook}
+
+\end{DoxyCode}
+\hypertarget{index_autotoc_md6}{}\doxysection{\texorpdfstring{🤝 Contributing \& Maintainers}{🤝 Contributing \& Maintainers}}\label{index_autotoc_md6}
+See our Contribution Guidelines for branch naming rules, coding style, and PR requirements.
+
+{\bfseries{Maintainers:\+}}
+\begin{DoxyItemize}
+\item Jayesh Puri (@\+Jayesh-\/Dev21)
+\item Swarit Srivastava (@\+Swarit,srivastava) 
+\end{DoxyItemize}

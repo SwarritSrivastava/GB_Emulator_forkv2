@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['structure_0',['Current Code Structure',['../index.html#autotoc_md4',1,'']]]
+  ['run_0',['🚀 Build and Run',['../index.html#autotoc_md4',1,'']]]
 ];

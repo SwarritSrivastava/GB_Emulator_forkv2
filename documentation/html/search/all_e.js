@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['workflow_20and_20pipeline_0',['Workflow and Pipeline',['../index.html#autotoc_md6',1,'']]]
+  ['🎮_20features_20controls_0',['🎮 Features &amp;amp; Controls',['../index.html#autotoc_md2',1,'']]]
 ];
