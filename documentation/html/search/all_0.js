@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['and_20run_0',['🚀 Build and Run',['../index.html#autotoc_md4',1,'']]],
-  ['and_20tirp_20protocol_1',['🔄 Workflow and TIRP Protocol',['../index.html#autotoc_md5',1,'']]],
-  ['architecture_20overview_2',['📐 Architecture Overview',['../index.html#autotoc_md1',1,'']]]
+  ['0_20renderer_0',['Pixel Processing Unit (PPU) &amp;amp; SFML 3.0 Renderer',['../index.html#autotoc_md5',1,'']]],
+  ['01_20architecture_20simulation_1',['GB_Emulator: A High-Fidelity Game Boy (DMG-01) Architecture Simulation',['../index.html',1,'']]]
 ];

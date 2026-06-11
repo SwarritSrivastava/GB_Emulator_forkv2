@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['rom_5fheader_0',['rom_header',['../structrom__header.html',1,'']]],
-  ['rominfo_1',['RomInfo',['../structPPU_1_1RomInfo.html',1,'PPU']]],
-  ['run_2',['🚀 Build and Run',['../index.html#autotoc_md4',1,'']]]
+  ['lr35902_20cpu_20core_0',['Custom LR35902 CPU Core',['../index.html#autotoc_md3',1,'']]]
 ];

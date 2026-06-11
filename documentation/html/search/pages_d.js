@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['📐_20architecture_20overview_0',['📐 Architecture Overview',['../index.html#autotoc_md1',1,'']]]
+  ['renderer_0',['Pixel Processing Unit (PPU) &amp;amp; SFML 3.0 Renderer',['../index.html#autotoc_md5',1,'']]]
 ];

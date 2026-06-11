@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "GameBoy Emulator", "index.html", [
-    [ "GB_Emulator", "index.html", "index" ],
+    [ "GB_Emulator: A High-Fidelity Game Boy (DMG-01) Architecture Simulation", "index.html", "index" ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ]

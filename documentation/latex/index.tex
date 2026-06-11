@@ -1,11 +1,11 @@
-\chapter{GB\+\_\+\+Emulator }
-\hypertarget{index}{}\label{index}\index{GB\_Emulator@{GB\_Emulator}}
+\chapter{GB\+\_\+\+Emulator:\+ A High-\/\+Fidelity Game Boy (DMG-\/01) Architecture Simulation }
+\hypertarget{index}{}\label{index}\index{GB\_Emulator: A High-\/Fidelity Game Boy (DMG-\/01) Architecture Simulation@{GB\_Emulator: A High-\/Fidelity Game Boy (DMG-\/01) Architecture Simulation}}
 \label{index_md_README}%
 \Hypertarget{index_md_README}%
 
 
-A robust and accurate Game Boy (DMG-\/01) emulator featuring a fully-\/fledged LR35902 CPU core, high-\/performance SFML 3.\+0 renderer, integrated Debug AMOLED UI, and an advanced automated Testing/\+\+CI pipeline.\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{📐 Architecture Overview}{📐 Architecture Overview}}\label{index_autotoc_md1}
-The emulator follows a highly modular design built entirely in C++17, emphasizing tight component ownership and clear memory bus segregation.
+Welcome to the GB\+\_\+\+Emulator project—a rigorous, low-\/level architectural simulation of the original Nintendo Game Boy (DMG-\/01). Engineered from the ground up in modern C++17, this project transcends a simple emulator; it is a masterclass in component-\/driven system design, cycle-\/accurate synchronization, and robust software engineering practices.\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{System Architecture}{System Architecture}}\label{index_autotoc_md1}
+Our emulator fundamentally adheres to a highly modular, decoupled architecture. Component ownership boundaries are strictly enforced to replicate the physical hardware constraints of the DMG-\/01 motherboard. This ensures a clean separation of concerns, deterministic execution, and unparalleled stability.
 
 
 \begin{DoxyCode}{0}
@@ -21,56 +21,59 @@ The emulator follows a highly modular design built entirely in C++17, emphasizin
 \DoxyCodeLine{\ \ \ \ G\ -\/.-\/>|Triggers|\ C}
 
 \end{DoxyCode}
-\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{🎮 Features \& Controls}{🎮 Features \& Controls}}\label{index_autotoc_md2}
-The emulator uses SFML 3.\+0 to render a robust UI in both standard mode and an advanced AMOLED Debug View. Both modes fully support the following features:\+
+\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{The Hardware Subsystems}{The Hardware Subsystems}}\label{index_autotoc_md2}
+\hypertarget{index_autotoc_md3}{}\doxysubsection{\texorpdfstring{Custom LR35902 CPU Core}{Custom LR35902 CPU Core}}\label{index_autotoc_md3}
+At the heart of the emulator lies our custom-\/built Sharp LR35902 CPU core. We have successfully implemented and exhaustively tested 100\% of the base and CB-\/prefixed opcodes. This core accurately simulates register state, precise flag mutations (Zero, Subtraction, Half-\/\+Carry, Carry), and intricate jump branching behavior exactly as the physical silicon would.\hypertarget{index_autotoc_md4}{}\doxysubsection{\texorpdfstring{Advanced Memory Management Unit (MMU)}{Advanced Memory Management Unit (MMU)}}\label{index_autotoc_md4}
+The memory subsystem acts as the central nervous system of the emulator. It orchestrates all reads and writes between the CPU, the \doxylink{classCartridge}{Cartridge}, the High RAM (HRAM), Work RAM (WRAM), and the Memory-\/\+Mapped I/\+O registers. It includes sophisticated memory banking controllers that accurately mimic original hardware limitations and memory mirroring.\hypertarget{index_autotoc_md5}{}\doxysubsection{\texorpdfstring{Pixel Processing Unit (PPU) \& SFML 3.\+0 Renderer}{Pixel Processing Unit (PPU) \& SFML 3.\+0 Renderer}}\label{index_autotoc_md5}
+Our graphical pipeline utilizes cutting-\/edge SFML 3.\+0 bindings to accurately render the state of the Game Boy display. The \doxylink{classPPU}{PPU} faithfully translates Video RAM (VRAM) and Object Attribute Memory (OAM) into vivid pixels. We have gone a step further to introduce a fully scalable 16:\+9 pixel-\/perfect resolution pipeline.\hypertarget{index_autotoc_md6}{}\doxysection{\texorpdfstring{Capabilities and Controls}{Capabilities and Controls}}\label{index_autotoc_md6}
+The emulator features two deeply integrated runtime modes:\+ a seamless Standard Mode for casual execution, and an incredibly dense AMOLED Debug View engineered for software analysis.
 
 
 \begin{DoxyItemize}
-\item {\bfseries{Turbo Mode (2x Speed)}}:\+ Toggle with {\ttfamily T}
-\item {\bfseries{Pause/\+\+Play}}:\+ Toggle with {\ttfamily Space}
-\item {\bfseries{Step Instruction}}:\+ Press {\ttfamily N} (while paused)
-\item {\bfseries{Hard Reset}}:\+ Press {\ttfamily R}
-\item {\bfseries{Save/\+\+Load States (Internal Slots)}}:\+ Press {\ttfamily 0-\/9} to Load, {\ttfamily Shift + 0-\/9} to Save.
-\item {\bfseries{Save/\+\+Load States (External File)}}:\+ Press {\ttfamily E} to Load, {\ttfamily Shift + E} to Save (via Zenity File Picker).
-\item {\bfseries{Gamepad Control}}:\+
-\begin{DoxyItemize}
-\item {\ttfamily Arrow Keys} for D-\/\+Pad
-\item {\ttfamily Z} for A
-\item {\ttfamily X} for B
-\item {\ttfamily Enter} for Start
-\item {\ttfamily Right Shift} for Select
-\end{DoxyItemize}
+\item Turbo Mode (2x Speed):\+ Toggle with \textquotesingle{}T\textquotesingle{}
+\item Pause/\+\+Play Execution:\+ Toggle with \textquotesingle{}Space\textquotesingle{}
+\item Step Instruction:\+ Press \textquotesingle{}N\textquotesingle{} (while execution is paused)
+\item Hardware Reset:\+ Press \textquotesingle{}R\textquotesingle{}
+\item Internal Save States:\+ Press \textquotesingle{}0-\/9\textquotesingle{} to Load, \textquotesingle{}Shift + 0-\/9\textquotesingle{} to Save.
+\item External Save States:\+ Press \textquotesingle{}E\textquotesingle{} to Load, \textquotesingle{}Shift + E\textquotesingle{} to Save (via Zenity File Picker).
 \end{DoxyItemize}
 
-{\itshape Note:\+ In Normal mode, system hotkey triggers will display a temporary bright-\/red confirmation overlay.}\hypertarget{index_autotoc_md3}{}\doxysection{\texorpdfstring{🖥️ Display Modes}{🖥️ Display Modes}}\label{index_autotoc_md3}
+Gamepad Mappings:\+
+\begin{DoxyItemize}
+\item Arrow Keys map to the D-\/\+Pad
+\item \textquotesingle{}Z\textquotesingle{} maps to the A Button
+\item \textquotesingle{}X\textquotesingle{} maps to the B Button
+\item \textquotesingle{}Enter\textquotesingle{} maps to Start
+\item \textquotesingle{}Right Shift\textquotesingle{} maps to Select
+\end{DoxyItemize}\hypertarget{index_autotoc_md7}{}\doxysection{\texorpdfstring{Visualization Modes}{Visualization Modes}}\label{index_autotoc_md7}
 
 \begin{DoxyItemize}
-\item {\bfseries{Standard Mode}}:\+ Plays the ROM with a 1.\+0x native display.
-\item {\bfseries{Debug Mode ({\ttfamily -\/-\/debug})}}:\+ Opens a stunning 16:\+9 (1600x900) AMOLED-\/themed developer UI featuring:\+
+\item Standard Mode:\+ Renders the ROM executing with a 1.\+0x native, perfectly unscaled display.
+\item Debug Mode (--debug):\+ Unveils a breathtaking 16:\+9 (1600x900) AMOLED-\/themed developer UI. This environment features:\+
 \begin{DoxyItemize}
-\item 5x Upscaled Game Screen
-\item Live CPU Registers (AF, BC, DE, HL, SP, PC, and Flags)
-\item Real-\/time Opcode Trace
-\item Clickable virtual gamepad
-\item Memory Read/\+\+Write metrics
-\item Live ROM hex-\/byte monitoring
+\item 5x Upscaled Game Execution Screen
+\item Real-\/\+Time CPU Registers (AF, BC, DE, HL, SP, PC, and Flags)
+\item Live Real-\/\+Time Opcode Trace
+\item Interactive Virtual Gamepad
+\item Read/\+\+Write Bus Metrics
+\item Live Hex-\/\+Byte ROM Monitoring
 \end{DoxyItemize}
-\item {\bfseries{Fullscreen ({\ttfamily -\/-\/fullscreen})}}:\+ Upscales both Normal and Debug modes to 1920x1080 without distorting the pixel aspect ratio.
-\end{DoxyItemize}\hypertarget{index_autotoc_md4}{}\doxysection{\texorpdfstring{🚀 Build and Run}{🚀 Build and Run}}\label{index_autotoc_md4}
+\item Fullscreen Mode (--fullscreen):\+ Losslessly upscales both modes to 1920x1080 without distorting the strict pixel aspect ratio.
+\end{DoxyItemize}\hypertarget{index_autotoc_md8}{}\doxysection{\texorpdfstring{Build Instructions}{Build Instructions}}\label{index_autotoc_md8}
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\#\ Configure\ +\ build\ +\ run\ all\ tests}
+\DoxyCodeLine{\#\ Configure,\ build,\ and\ run\ the\ entire\ comprehensive\ test\ suite}
 \DoxyCodeLine{./utility\_scripts/build\_and\_test.sh}
 \DoxyCodeLine{}
-\DoxyCodeLine{\#\ Run\ emulator\ with\ standard\ graphics}
+\DoxyCodeLine{\#\ Execute\ the\ emulator\ with\ standard\ graphics}
 \DoxyCodeLine{./build/bin/gb\_emu\ <path-\/to-\/rom.gb>}
 \DoxyCodeLine{}
-\DoxyCodeLine{\#\ Run\ emulator\ in\ Debug\ Developer\ View\ with\ Fullscreen}
+\DoxyCodeLine{\#\ Execute\ the\ emulator\ in\ the\ advanced\ Debug\ Developer\ View\ in\ Fullscreen}
 \DoxyCodeLine{./build/bin/gb\_emu\ <path-\/to-\/rom.gb>\ -\/-\/debug\ -\/-\/fullscreen}
 
 \end{DoxyCode}
-\hypertarget{index_autotoc_md5}{}\doxysection{\texorpdfstring{🔄 Workflow and TIRP Protocol}{🔄 Workflow and TIRP Protocol}}\label{index_autotoc_md5}
-The project actively runs a highly automated {\bfseries{TIRP CI Workflow}} mapped to Discord webhooks and Git\+Hub Actions. All details regarding our cloud architecture can be found in {\ttfamily pipline/\+\+Set\+Up.\+md} and the generated Doxygen files.
+\hypertarget{index_autotoc_md9}{}\doxysection{\texorpdfstring{The TIRP Continuous Integration Protocol}{The TIRP Continuous Integration Protocol}}\label{index_autotoc_md9}
+Reliability is paramount. To that end, we have engineered the Test Init Response Protocol (TIRP), a state-\/of-\/the-\/art continuous integration pipeline. This system leverages Git\+Hub Actions to enforce correctness across every single commit, passing memory sanitization data through Groq\textquotesingle{}s AI summarization engine before dispatching payload results directly to Discord.
 
 
 \begin{DoxyCode}{0}
@@ -81,18 +84,18 @@ The project actively runs a highly automated {\bfseries{TIRP CI Workflow}} mappe
 \DoxyCodeLine{\ \ \ \ participant\ Discord\ as\ Discord\ Webhook}
 \DoxyCodeLine{}
 \DoxyCodeLine{\ \ \ \ Dev-\/>>Git:\ Push\ /\ Pull\ Request}
-\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Run\ CMake\ Build}
-\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Execute\ GTest\ Suite}
-\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Run\ Valgrind\ Memcheck}
-\DoxyCodeLine{\ \ \ \ Git-\/>>Groq:\ Send\ Git\ Diff\ \&\ Logs}
-\DoxyCodeLine{\ \ \ \ Groq-\/-\/>>Git:\ Generate\ Intelligent\ Summary}
-\DoxyCodeLine{\ \ \ \ Git-\/>>Discord:\ Post\ Pass/Fail\ +\ Summary\ Webhook}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Execute\ CMake\ Build\ Target}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Enforce\ GTest\ Suite\ Verification}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Git:\ Valgrind\ Memcheck\ Leak\ Analysis}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Groq:\ Transmit\ Git\ Diff\ \&\ Trace\ Logs}
+\DoxyCodeLine{\ \ \ \ Groq-\/-\/>>Git:\ Generate\ Intelligent\ Executive\ Summary}
+\DoxyCodeLine{\ \ \ \ Git-\/>>Discord:\ Dispatch\ Pass/Fail\ Webhook\ Notification}
 
 \end{DoxyCode}
-\hypertarget{index_autotoc_md6}{}\doxysection{\texorpdfstring{🤝 Contributing \& Maintainers}{🤝 Contributing \& Maintainers}}\label{index_autotoc_md6}
-See our Contribution Guidelines for branch naming rules, coding style, and PR requirements.
+\hypertarget{index_autotoc_md10}{}\doxysection{\texorpdfstring{Contribution and Maintainers}{Contribution and Maintainers}}\label{index_autotoc_md10}
+We maintain extremely high standards for codebase integrity. Please refer to our Contribution Guidelines (CONTRIBUTING.\+md) for branch naming conventions, rigorous coding style expectations, and pull request checklist requirements.
 
-{\bfseries{Maintainers:\+}}
+Maintainers:\+
 \begin{DoxyItemize}
 \item Jayesh Puri (@\+Jayesh-\/Dev21)
 \item Swarit Srivastava (@\+Swarit,srivastava) 

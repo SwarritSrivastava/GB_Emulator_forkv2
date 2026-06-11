@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['maintainers_0',['🤝 Contributing &amp;amp; Maintainers',['../index.html#autotoc_md6',1,'']]],
-  ['modes_1',['🖥️ Display Modes',['../index.html#autotoc_md3',1,'']]]
+  ['fidelity_20game_20boy_20dmg_2001_20architecture_20simulation_0',['GB_Emulator: A High-Fidelity Game Boy (DMG-01) Architecture Simulation',['../index.html',1,'']]]
 ];
