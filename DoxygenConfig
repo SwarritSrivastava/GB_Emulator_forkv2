@@ -1152,7 +1152,10 @@ EXCLUDE_PATTERNS       = */build/* \
                          */dist/* \
                          */roms/* \
                          */Testing/* \
-                         */tests/*
+                         */tests/* \
+                         */_deps/* \
+                         */googletest* \
+                         */utility_scripts/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
@@ -1160,7 +1163,7 @@ EXCLUDE_PATTERNS       = */build/* \
 # wildcard * is used, a substring. Examples: ANamespace, AClass,
 # ANamespace::AClass, ANamespace::*Test
 
-EXCLUDE_SYMBOLS        =
+EXCLUDE_SYMBOLS        = testing::* *Test* *test*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
