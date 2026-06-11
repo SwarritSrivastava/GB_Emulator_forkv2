@@ -130,6 +130,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a53035da400cb1129a7ae10c5097b3410" id="r_a53035da400cb1129a7ae10c5097b3410"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a53035da400cb1129a7ae10c5097b3410">get_flag_h</a> () const</td></tr>
 <tr class="memitem:aec50a274190f3f07d1657cf63a167fb4" id="r_aec50a274190f3f07d1657cf63a167fb4"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#aec50a274190f3f07d1657cf63a167fb4">get_flag_c</a> () const</td></tr>
 <tr class="memitem:ae48833c17468a7337a58a2e4b8ae617a" id="r_ae48833c17468a7337a58a2e4b8ae617a"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ae48833c17468a7337a58a2e4b8ae617a">step</a> (<a class="el" href="classMMU.html">MMU</a> &amp;mmu)</td></tr>
+<tr class="memitem:ae1691d53b9cdc5dc659ed0eaa29b41f1" id="r_ae1691d53b9cdc5dc659ed0eaa29b41f1"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ae1691d53b9cdc5dc659ed0eaa29b41f1">check_interrupts</a> (<a class="el" href="classMMU.html">MMU</a> &amp;mmu)</td></tr>
+<tr class="memitem:a53461f497079cca58a0cba1cc0011ca6" id="r_a53461f497079cca58a0cba1cc0011ca6"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a53461f497079cca58a0cba1cc0011ca6">execute_interrupt</a> (<a class="el" href="classMMU.html">MMU</a> &amp;mmu, u16 address, int bit)</td></tr>
 <tr class="memitem:a16b8f78de239c4120945c7c6708cb737" id="r_a16b8f78de239c4120945c7c6708cb737"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a16b8f78de239c4120945c7c6708cb737">setHalt</a> (bool newValue)</td></tr>
 <tr class="memitem:a28c57f86b0a8adb41cfd2a967eedbfee" id="r_a28c57f86b0a8adb41cfd2a967eedbfee"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a28c57f86b0a8adb41cfd2a967eedbfee">isHalt</a> () const</td></tr>
 <tr class="memitem:aba5643b98c6753b0b4b60356fd922cff" id="r_aba5643b98c6753b0b4b60356fd922cff"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aba5643b98c6753b0b4b60356fd922cff">setIME</a> (bool newValue)</td></tr>
@@ -145,6 +147,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a64d02a93799d464426b1ad06be3ceb8d" id="r_a64d02a93799d464426b1ad06be3ceb8d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#a64d02a93799d464426b1ad06be3ceb8d">last_instr_cycles</a> = 0</td></tr>
+<tr class="memitem:af0c1236d6311ac07d5fcd1593dfe36ec" id="r_af0c1236d6311ac07d5fcd1593dfe36ec"><td class="memItemLeft">u16&#160;</td><td class="memItemRight"><a class="el" href="#af0c1236d6311ac07d5fcd1593dfe36ec">last_pc</a> = 0</td></tr>
 <tr class="memitem:aaebc999b2c2b6ab6ba794b78b73342be" id="r_aaebc999b2c2b6ab6ba794b78b73342be"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#aaebc999b2c2b6ab6ba794b78b73342be">stop</a> {}</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
@@ -171,7 +175,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00061">61</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00067">67</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
 
 </div>
 </div>
@@ -195,7 +199,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00055">55</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00061">61</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
 
 </div>
 </div>
@@ -220,6 +224,25 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
+<a id="ae1691d53b9cdc5dc659ed0eaa29b41f1" name="ae1691d53b9cdc5dc659ed0eaa29b41f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1691d53b9cdc5dc659ed0eaa29b41f1">&#9670;&#160;</a></span>check_interrupts()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProcessingUnit::check_interrupts </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classMMU.html">MMU</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mmu</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00034">34</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+
+</div>
+</div>
 <a id="aebebf75fb1ce5ab6553d8705e4c08a36" name="aebebf75fb1ce5ab6553d8705e4c08a36"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aebebf75fb1ce5ab6553d8705e4c08a36">&#9670;&#160;</a></span>clearFlags()</h2>
 
@@ -243,7 +266,35 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00077">77</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00083">83</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+
+</div>
+</div>
+<a id="a53461f497079cca58a0cba1cc0011ca6" name="a53461f497079cca58a0cba1cc0011ca6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53461f497079cca58a0cba1cc0011ca6">&#9670;&#160;</a></span>execute_interrupt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ProcessingUnit::execute_interrupt </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classMMU.html">MMU</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>mmu</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">u16</td>          <td class="paramname"><span class="paramname"><em>address</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>bit</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00052">52</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -486,7 +537,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00066">66</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00064">64</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -513,7 +564,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00071">71</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00065">65</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -540,7 +591,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00084">84</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00069">69</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -559,7 +610,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00111">111</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00080">80</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -586,7 +637,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00061">61</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00067">67</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -613,7 +664,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00094">94</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00100">100</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
 
 </div>
 </div>
@@ -640,7 +691,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00080">80</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00086">86</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
 
 </div>
 </div>
@@ -659,7 +710,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00026">26</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00063">63</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -678,7 +729,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00089">89</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00070">70</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -705,7 +756,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00106">106</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00079">79</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -809,7 +860,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00084">84</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00090">90</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
 
 </div>
 </div>
@@ -828,7 +879,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00076">76</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00066">66</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -847,7 +898,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00080">80</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00068">68</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
@@ -874,7 +925,7 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00093">93</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00099">99</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
 
 </div>
 </div>
@@ -893,11 +944,43 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00051">51</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8cpp_source.html#l00015">15</a> of file <a class="el" href="ProcessingUnit_8cpp_source.html">ProcessingUnit.cpp</a>.</p>
 
 </div>
 </div>
 <a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="a64d02a93799d464426b1ad06be3ceb8d" name="a64d02a93799d464426b1ad06be3ceb8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64d02a93799d464426b1ad06be3ceb8d">&#9670;&#160;</a></span>last_instr_cycles</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ProcessingUnit::last_instr_cycles = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00049">49</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+
+</div>
+</div>
+<a id="af0c1236d6311ac07d5fcd1593dfe36ec" name="af0c1236d6311ac07d5fcd1593dfe36ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0c1236d6311ac07d5fcd1593dfe36ec">&#9670;&#160;</a></span>last_pc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">u16 ProcessingUnit::last_pc = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00050">50</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+
+</div>
+</div>
 <a id="aaebc999b2c2b6ab6ba794b78b73342be" name="aaebc999b2c2b6ab6ba794b78b73342be"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaebc999b2c2b6ab6ba794b78b73342be">&#9670;&#160;</a></span>stop</h2>
 
@@ -910,7 +993,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00091">91</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ProcessingUnit_8hpp_source.html#l00097">97</a> of file <a class="el" href="ProcessingUnit_8hpp_source.html">ProcessingUnit.hpp</a>.</p>
 
 </div>
 </div>

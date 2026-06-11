@@ -1,0 +1,158 @@
+\doxysection{ppu.\+hpp}
+\hypertarget{ppu_8hpp_source}{}\label{ppu_8hpp_source}\index{include/ppu.hpp@{include/ppu.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00001}00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}ProcessingUnit.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}mmu.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}common.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}interrupt\_controller.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00007}00007\ \textcolor{preprocessor}{\#include\ <SFML/Graphics.hpp>}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00008}00008\ \textcolor{preprocessor}{\#include\ <array>}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <deque>}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00011}00011\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00014}00014\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{classMMU}{MMU}};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00016}\doxymbox{\hyperlink{classPPU}{00016}}\ \textcolor{keyword}{class\ }PPU\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00017}00017\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00018}\doxymbox{\hyperlink{structPPU_1_1RomInfo}{00018}}\ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{structPPU_1_1RomInfo}{RomInfo}}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00019}00019\ \ \ \ \ \ \ \ \ std::string\ title;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00020}00020\ \ \ \ \ \ \ \ \ u8\ type\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00021}00021\ \ \ \ \ \ \ \ \ u8\ rom\_size\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00022}00022\ \ \ \ \ \ \ \ \ u8\ ram\_size\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00023}00023\ \ \ \ \ \ \ \ \ std::string\ mbc\_name;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00024}00024\ \ \ \ \ \ \ \ \ std::vector<u8>\ rom\_bytes;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00025}00025\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00027}\doxymbox{\hyperlink{structPPU_1_1OpcodeTrace}{00027}}\ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{structPPU_1_1OpcodeTrace}{OpcodeTrace}}\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00028}00028\ \ \ \ \ \ \ \ \ u16\ pc\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00029}00029\ \ \ \ \ \ \ \ \ u8\ opcode\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00030}00030\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00032}00032\ \ \ \ \ PPU();}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00033}00033\ \ \ \ \ \textcolor{keyword}{explicit}\ PPU(\doxymbox{\hyperlink{classInterruptController}{InterruptController}}\&\ ic);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00035}00035\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_mmu(\doxymbox{\hyperlink{classMMU}{MMU}}*\ m)\ \{\ mmu\ =\ m;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00036}00036\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_cpu(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}*\ c)\ \{\ cpu\ =\ c;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00037}00037\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_rom\_info(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{structPPU_1_1RomInfo}{RomInfo}}\&\ info)\ \{\ romInfo\ =\ info;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00038}00038\ \ \ \ \ \textcolor{keywordtype}{void}\ step(\textcolor{keywordtype}{int}\ cycles);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00039}00039\ \ \ \ \ u8\ read(u16\ address)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00040}00040\ \ \ \ \ \textcolor{keywordtype}{void}\ write(u16\ address,\ u8\ value);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00042}00042\ \ \ \ \ \textcolor{keyword}{const}\ u32*\ get\_framebuffer()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ framebuffer.data();\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00043}00043\ \ \ \ \ \textcolor{keywordtype}{bool}\ is\_frame\_ready()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ frame\_ready;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00044}00044\ \ \ \ \ \textcolor{keywordtype}{void}\ clear\_frame\_ready()\ \{\ frame\_ready\ =\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00046}00046\ \ \ \ \ \textcolor{comment}{//\ Debug\ /\ Feature\ functions}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00047}00047\ \ \ \ \ \textcolor{keywordtype}{void}\ init\_window(\textcolor{keywordtype}{bool}\ debug,\ \textcolor{keyword}{const}\ std::string\&\ rom\_title,\ \textcolor{keywordtype}{bool}\ fullscreen\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00048}00048\ \ \ \ \ \textcolor{keywordtype}{bool}\ isOpen()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00049}00049\ \ \ \ \ \textcolor{keywordtype}{bool}\ isPaused()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ paused;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00050}00050\ \ \ \ \ \textcolor{keywordtype}{void}\ handleEvents(JoypadState\&\ joypad);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00051}00051\ \ \ \ \ \textcolor{keywordtype}{void}\ update(\textcolor{keywordtype}{float}\ dtSeconds,\ u64\ cyclesExecuted);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00052}00052\ \ \ \ \ \textcolor{keywordtype}{void}\ render();}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00054}00054\ \ \ \ \ \textcolor{keywordtype}{void}\ recordOpcode(u16\ pc,\ u8\ opcode);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00055}00055\ \ \ \ \ \textcolor{keywordtype}{void}\ checkBreakpoint(u16\ pc);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00057}00057\ \ \ \ \ \textcolor{keywordtype}{bool}\ isStepRequested()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ stepRequested;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00058}00058\ \ \ \ \ \textcolor{keywordtype}{void}\ clearStepRequest()\ \{\ stepRequested\ =\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00060}00060\ \ \ \ \ \textcolor{keywordtype}{bool}\ isTurbo()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ turbo;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00061}00061\ \ \ \ \ \textcolor{keywordtype}{void}\ setTurbo(\textcolor{keywordtype}{bool}\ val)\ \{\ turbo\ =\ val;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00062}00062\ \ \ \ \ \textcolor{keywordtype}{int}\ getActiveSlot()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ activeSlot;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00063}00063\ \ \ \ \ \textcolor{keywordtype}{void}\ setActiveSlot(\textcolor{keywordtype}{int}\ slot)\ \{\ activeSlot\ =\ slot;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00064}00064\ \ \ \ \ \textcolor{keywordtype}{void}\ reset();}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00065}00065\ \ \ \ \ \textcolor{keywordtype}{bool}\ isResetRequested()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ resetRequested;\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00066}00066\ \ \ \ \ \textcolor{keywordtype}{void}\ clearResetRequest()\ \{\ resetRequested\ =\ \textcolor{keyword}{false};\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00067}00067\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00068}00068\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00069}00069\ \ \ \ \ \textcolor{keywordtype}{bool}\ saveStateSlot(\textcolor{keywordtype}{int}\ slot);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00070}00070\ \ \ \ \ \textcolor{keywordtype}{bool}\ loadStateSlot(\textcolor{keywordtype}{int}\ slot);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00071}00071\ \ \ \ \ \textcolor{keywordtype}{bool}\ saveStatePath(\textcolor{keyword}{const}\ std::string\&\ filepath);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00072}00072\ \ \ \ \ \textcolor{keywordtype}{bool}\ loadStatePath(\textcolor{keyword}{const}\ std::string\&\ filepath);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00073}00073\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00074}00074\ \ \ \ \ \textcolor{keywordtype}{void}\ drawPanels();}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00075}00075\ \ \ \ \ \textcolor{keywordtype}{void}\ drawText(\textcolor{keyword}{const}\ sf::Vector2f\&\ pos,\ \textcolor{keyword}{const}\ std::string\&\ text,\ \textcolor{keywordtype}{unsigned}\ size,\ \textcolor{keyword}{const}\ sf::Color\&\ color);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00076}00076\ \ \ \ \ std::string\ toHex(u32\ value,\ \textcolor{keywordtype}{int}\ width)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00078}00078\ \ \ \ \ \textcolor{comment}{//\ Emulation\ components}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00079}00079\ \ \ \ \ std::unique\_ptr<InterruptController>\ dummy\_ic;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00080}00080\ \ \ \ \ InterruptController\&\ ic;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00081}00081\ \ \ \ \ ProcessingUnit*\ cpu\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00082}00082\ \ \ \ \ MMU*\ mmu\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00083}00083\ \ \ \ \ \doxymbox{\hyperlink{structPPU_1_1RomInfo}{RomInfo}}\ romInfo;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00085}00085\ \ \ \ \ \textcolor{comment}{//\ Rendering\ /\ SFML\ Window\ components}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00086}00086\ \ \ \ \ sf::RenderWindow\ window;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00087}00087\ \ \ \ \ sf::Font\ font;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00088}00088\ \ \ \ \ \textcolor{keywordtype}{bool}\ fontLoaded\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00089}00089\ \ \ \ \ \textcolor{keywordtype}{bool}\ debugMode\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00090}00090\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00091}00091\ \ \ \ \ sf::Texture\ screenTexture;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00092}00092\ \ \ \ \ sf::Sprite\ screenSprite;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00093}00093\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00094}00094\ \ \ \ \ \textcolor{comment}{//\ Emulation\ state}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00095}00095\ \ \ \ \ std::array<u8,\ 0x2000>\ vram\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00096}00096\ \ \ \ \ std::array<u8,\ 160>\ oam\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00097}00097\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00098}00098\ \ \ \ \ u8\ lcdc\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00099}00099\ \ \ \ \ u8\ stat\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00100}00100\ \ \ \ \ u8\ scy\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00101}00101\ \ \ \ \ u8\ scx\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00102}00102\ \ \ \ \ u8\ ly\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00103}00103\ \ \ \ \ u8\ lyc\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00104}00104\ \ \ \ \ u8\ dma\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00105}00105\ \ \ \ \ u8\ bgp\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00106}00106\ \ \ \ \ u8\ obp0\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00107}00107\ \ \ \ \ u8\ obp1\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00108}00108\ \ \ \ \ u8\ wy\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00109}00109\ \ \ \ \ u8\ wx\ =\ 0x00;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00110}00110\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00111}00111\ \ \ \ \ \textcolor{keywordtype}{int}\ mode\_clock\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00112}00112\ \ \ \ \ u8\ window\_line\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00113}00113\ \ \ \ \ \textcolor{keywordtype}{bool}\ frame\_ready\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00114}00114\ \ \ \ \ std::array<u32,\ 160\ *\ 144>\ framebuffer\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00115}00115\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00116}00116\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Mode\ \{}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00117}00117\ \ \ \ \ \ \ \ \ HBlank\ =\ 0,}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00118}00118\ \ \ \ \ \ \ \ \ VBlank\ =\ 1,}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00119}00119\ \ \ \ \ \ \ \ \ OAMSearch\ =\ 2,}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00120}00120\ \ \ \ \ \ \ \ \ PixelTransfer\ =\ 3}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00121}00121\ \ \ \ \ \};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00122}00122\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00123}00123\ \ \ \ \ Mode\ get\_mode()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}Mode\textcolor{keyword}{>}(stat\ \&\ 0x03);\ \}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00124}00124\ \ \ \ \ \textcolor{keywordtype}{void}\ set\_mode(Mode\ mode);}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00125}00125\ \ \ \ \ \textcolor{keywordtype}{void}\ update\_stat();}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00126}00126\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00127}00127\ \ \ \ \ \textcolor{keywordtype}{void}\ render\_scanline();}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00128}00128\ \ \ \ \ \textcolor{keywordtype}{void}\ render\_sprites();}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00129}00129\ \ \ \ \ u32\ get\_color(u8\ color\_id,\ u16\ palette\_address)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00130}00130\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00131}00131\ \ \ \ \ \textcolor{comment}{//\ Debugging\ state}}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00132}00132\ \ \ \ \ std::deque<OpcodeTrace>\ opcodeLog;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00133}00133\ \ \ \ \ std::vector<u16>\ breakpoints;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00134}00134\ \ \ \ \ \textcolor{keywordtype}{bool}\ paused\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00135}00135\ \ \ \ \ \textcolor{keywordtype}{bool}\ stepRequested\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00136}00136\ \ \ \ \ \textcolor{keywordtype}{bool}\ turbo\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00137}00137\ \ \ \ \ \textcolor{keywordtype}{int}\ activeSlot\{0\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00138}00138\ \ \ \ \ \textcolor{keywordtype}{bool}\ resetRequested\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00139}00139\ \ \ \ \ std::string\ externalStatePath;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00140}00140\ \ \ \ \ JoypadState\ clickableJoypad\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00141}00141\ \ \ \ \ JoypadState\ physicalJoypad\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00142}00142\ \ \ \ \ JoypadState\ currentJoypadState\{\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00143}00143\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00144}00144\ \ \ \ \ \textcolor{keywordtype}{float}\ timeAccumulator\{0.0f\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00145}00145\ \ \ \ \ u64\ lastCycles\{0\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00146}00146\ \ \ \ \ u64\ lastReads\{0\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00147}00147\ \ \ \ \ u64\ lastWrites\{0\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00148}00148\ }
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00149}00149\ \ \ \ \ std::string\ statusMessage;}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00150}00150\ \ \ \ \ \textcolor{keywordtype}{float}\ statusTimer\{0.0f\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00151}00151\ \ \ \ \ u32\ frameCounter\{0\};}
+\DoxyCodeLine{\Hypertarget{ppu_8hpp_source_l00152}00152\ \};}
+
+\end{DoxyCode}

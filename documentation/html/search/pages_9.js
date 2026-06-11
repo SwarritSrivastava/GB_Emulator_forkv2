@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['notes_0',['Notes',['../index.html#autotoc_md10',1,'']]]
+  ['structure_0',['Current Code Structure',['../index.html#autotoc_md4',1,'']]]
 ];

@@ -1,0 +1,66 @@
+\doxysection{timer.\+cpp}
+\hypertarget{timer_8cpp_source}{}\label{timer_8cpp_source}\index{src/core/timer.cpp@{src/core/timer.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}../../include/timer.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00002}00002\ \textcolor{preprocessor}{\#include\ "{}../../include/interrupt\_controller.hpp"{}}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00004}00004\ Timer::Timer(\doxymbox{\hyperlink{classInterruptController}{InterruptController}}\&\ interrupt\_controller)}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00005}00005\ \ \ \ \ :\ ic(interrupt\_controller)}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00006}00006\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00007}00007\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00009}00009\ \textcolor{keywordtype}{void}\ Timer::step(\textcolor{keywordtype}{int}\ cycles)\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00010}00010\ \ \ \ \ div\_counter\ +=\ cycles;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00011}00011\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00012}00012\ \ \ \ \ \textcolor{keywordflow}{if}\ (tac\ \&\ 0x04)\ \{\ \textcolor{comment}{//\ Timer\ enabled}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00013}00013\ \ \ \ \ \ \ \ \ tima\_counter\ +=\ cycles;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00014}00014\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ threshold\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00015}00015\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (tac\ \&\ 0x03)\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00016}00016\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:\ threshold\ =\ 1024;\ \textcolor{keywordflow}{break};\ \textcolor{comment}{//\ 4096\ Hz}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00017}00017\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:\ threshold\ =\ 16;\ \ \ \textcolor{keywordflow}{break};\ \textcolor{comment}{//\ 262144\ Hz}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00018}00018\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:\ threshold\ =\ 64;\ \ \ \textcolor{keywordflow}{break};\ \textcolor{comment}{//\ 65536\ Hz}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00019}00019\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 3:\ threshold\ =\ 256;\ \ \textcolor{keywordflow}{break};\ \textcolor{comment}{//\ 16384\ Hz}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00020}00020\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (tima\_counter\ >=\ threshold)\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00023}00023\ \ \ \ \ \ \ \ \ \ \ \ \ tima\_counter\ -\/=\ threshold;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00024}00024\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tima\ ==\ 0xFF)\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00025}00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tima\ =\ tma;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00026}00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Request\ Timer\ Interrupt}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ic.request\_interrupt(InterruptType::Timer);}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00029}00029\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tima++;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00030}00030\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00031}00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00032}00032\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00033}00033\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00035}00035\ u8\ Timer::read(u16\ address)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00036}00036\ \ \ \ \ \textcolor{keywordflow}{switch}\ (address)\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF04:\ \textcolor{keywordflow}{return}\ (div\_counter\ >>\ 8)\ \&\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00038}00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF05:\ \textcolor{keywordflow}{return}\ tima;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00039}00039\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF06:\ \textcolor{keywordflow}{return}\ tma;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF07:\ \textcolor{keywordflow}{return}\ tac;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00041}00041\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00042}00042\ \ \ \ \ \textcolor{keywordflow}{return}\ 0xFF;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00043}00043\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00045}00045\ \textcolor{keywordtype}{void}\ Timer::write(u16\ address,\ u8\ value)\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00046}00046\ \ \ \ \ \textcolor{keywordflow}{switch}\ (address)\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00047}00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF04:\ div\_counter\ =\ 0;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00048}00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF05:\ tima\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00049}00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF06:\ tma\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00050}00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0xFF07:\ tac\ =\ value;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00051}00051\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00052}00052\ \}}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00054}00054\ \textcolor{keywordtype}{void}\ Timer::reset()\ \{}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00055}00055\ \ \ \ \ div\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00056}00056\ \ \ \ \ tima\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00057}00057\ \ \ \ \ tma\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00058}00058\ \ \ \ \ tac\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00059}00059\ \ \ \ \ tima\_counter\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{timer_8cpp_source_l00060}00060\ \}}
+
+\end{DoxyCode}

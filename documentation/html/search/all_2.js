@@ -1,7 +1,9 @@
 var searchData=
 [
-  ['and_20pipeline_0',['Workflow and Pipeline',['../index.html#autotoc_md5',1,'']]],
-  ['and_20run_1',['Build and Run',['../index.html#autotoc_md4',1,'']]],
-  ['architecture_2',['Opcode Architecture',['../index.html#autotoc_md3',1,'']]],
-  ['automation_20setup_3',['Extended Automation Setup',['../index.html#autotoc_md8',1,'']]]
+  ['cartridge_0',['Cartridge',['../classCartridge.html',1,'']]],
+  ['code_20structure_1',['Current Code Structure',['../index.html#autotoc_md4',1,'']]],
+  ['contributing_2',['Contributing',['../index.html#autotoc_md7',1,'']]],
+  ['controls_3',['Features &amp;amp; Controls',['../index.html#autotoc_md1',1,'']]],
+  ['current_20code_20structure_4',['Current Code Structure',['../index.html#autotoc_md4',1,'']]],
+  ['current_20focus_5',['Current Focus',['../index.html#autotoc_md3',1,'']]]
 ];

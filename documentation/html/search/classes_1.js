@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['processingunit_0',['ProcessingUnit',['../classProcessingUnit.html',1,'']]]
+  ['interruptcontroller_0',['InterruptController',['../classInterruptController.html',1,'']]]
 ];

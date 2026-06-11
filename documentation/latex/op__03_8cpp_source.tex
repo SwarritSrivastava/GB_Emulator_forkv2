@@ -13,164 +13,160 @@
 \DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00009}00009\ }
 \DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00010}00010\ \textcolor{keywordtype}{int}\ op\_jr\_nc(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x30}}
 \DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00011}00011\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00012}00012\ \ \ \ \ cpu.inc\_pc();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00013}00013\ \ \ \ \ \textcolor{keyword}{const}\ int8\_t\ offset\ =\ \textcolor{keyword}{static\_cast<}int8\_t\textcolor{keyword}{>}(mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc()));}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00014}00014\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00015}00015\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu.get\_flag\_c())\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00016}00016\ \ \ \ \ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}(cpu.get\_pc()\ +\ offset));}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00017}00017\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00018}00018\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00019}00019\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00020}00020\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00021}00021\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00022}00022\ \textcolor{keywordtype}{int}\ op\_ld\_sp\_d16(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x31}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00023}00023\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00024}00024\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00025}00025\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00026}00026\ \ \ \ \ cpu.set\_sp(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo));}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00027}00027\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00028}00028\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00029}00029\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00030}00030\ \textcolor{keywordtype}{int}\ op\_ld\_hld\_a(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x32}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00031}00031\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00032}00032\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00033}00033\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(hl,\ cpu.reg(ProcessingUnit::Register::A));}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00034}00034\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00035}00035\ \ \ \ \ \textcolor{keyword}{const}\ u16\ newValue\ =\ hl\ -\/\ 1;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00036}00036\ \ \ \ \ cpu.reg(ProcessingUnit::Register::H)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}((newValue\ >>\ 8)\ \&\ 0xFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00037}00037\ \ \ \ \ cpu.reg(ProcessingUnit::Register::L)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(newValue\ \&\ 0xFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00038}00038\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00039}00039\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00040}00040\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00041}00041\ \textcolor{keywordtype}{int}\ op\_inc\_sp(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x33}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00042}00042\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00043}00043\ \ \ \ \ cpu.set\_sp(cpu.get\_sp()\ +\ 1);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00044}00044\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00045}00045\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00046}00046\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00047}00047\ \textcolor{keywordtype}{int}\ op\_inc\_hl\_ptr(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x34}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00048}00048\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00049}00049\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ cpu.get\_hl();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00050}00050\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(addr);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00051}00051\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ +\ 1;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00052}00052\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(addr,\ newValue);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00053}00053\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00054}00054\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00055}00055\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00056}00056\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x0F);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00057}00057\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00058}00058\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00059}00059\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00060}00060\ \textcolor{keywordtype}{int}\ op\_dec\_hl\_ptr(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x35}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00061}00061\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00062}00062\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ cpu.get\_hl();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00063}00063\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(addr);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00064}00064\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ -\/\ 1;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00065}00065\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(addr,\ newValue);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00066}00066\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00067}00067\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00068}00068\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{true});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00069}00069\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x00);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00070}00070\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00071}00071\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00072}00072\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00073}00073\ \textcolor{keywordtype}{int}\ op\_ld\_hl\_d8(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x36}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00074}00074\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00075}00075\ \ \ \ \ cpu.inc\_pc();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00076}00076\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(cpu.get\_hl(),\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc()));}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00077}00077\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00078}00078\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00079}00079\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00080}00080\ \textcolor{keywordtype}{int}\ op\_scf(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x37}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00081}00081\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00082}00082\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00083}00083\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00084}00084\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::C,\ \textcolor{keyword}{true});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00085}00085\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00086}00086\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00087}00087\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00088}00088\ \textcolor{keywordtype}{int}\ op\_jr\_c(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x38}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00089}00089\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00090}00090\ \ \ \ \ cpu.inc\_pc();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00091}00091\ \ \ \ \ \textcolor{keyword}{const}\ int8\_t\ offset\ =\ \textcolor{keyword}{static\_cast<}int8\_t\textcolor{keyword}{>}(mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc()));}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00092}00092\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00093}00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (cpu.get\_flag\_c())\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00094}00094\ \ \ \ \ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}(cpu.get\_pc()\ +\ offset));}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00095}00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00096}00096\ \ \ \ \ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00097}00097\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00098}00098\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00099}00099\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00100}00100\ \textcolor{keywordtype}{int}\ op\_add\_hl\_sp(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x39}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00101}00101\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00102}00102\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00103}00103\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00104}00104\ \ \ \ \ \textcolor{keyword}{const}\ u32\ sum\ =\ \textcolor{keyword}{static\_cast<}u32\textcolor{keyword}{>}(hl)\ +\ sp;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00012}00012\ \ \ \ \ \textcolor{keyword}{const}\ int8\_t\ offset\ =\ \textcolor{keyword}{static\_cast<}int8\_t\textcolor{keyword}{>}(mmu.read(cpu.inc\_pc()));}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00014}00014\ \ \ \ \ \textcolor{keywordflow}{if}\ (!cpu.get\_flag\_c())\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00015}00015\ \ \ \ \ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}(cpu.get\_pc()\ +\ offset));}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00016}00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00017}00017\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00019}00019\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00020}00020\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00021}00021\ \textcolor{keywordtype}{int}\ op\_ld\_sp\_d16(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x31}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00022}00022\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00023}00023\ \ \ \ \ \textcolor{keyword}{const}\ u8\ lo\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00024}00024\ \ \ \ \ \textcolor{keyword}{const}\ u8\ hi\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00025}00025\ \ \ \ \ cpu.set\_sp(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}((hi\ <<\ 8)\ |\ lo));}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00027}00027\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00028}00028\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00029}00029\ \textcolor{keywordtype}{int}\ op\_ld\_hld\_a(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x32}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00030}00030\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00031}00031\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00032}00032\ \ \ \ \ mmu.write(hl,\ cpu.reg(ProcessingUnit::Register::A));}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00034}00034\ \ \ \ \ \textcolor{keyword}{const}\ u16\ newValue\ =\ hl\ -\/\ 1;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00035}00035\ \ \ \ \ cpu.reg(ProcessingUnit::Register::H)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}((newValue\ >>\ 8)\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00036}00036\ \ \ \ \ cpu.reg(ProcessingUnit::Register::L)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(newValue\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00038}00038\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00039}00039\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00040}00040\ \textcolor{keywordtype}{int}\ op\_inc\_sp(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x33}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00041}00041\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00042}00042\ \ \ \ \ cpu.set\_sp(cpu.get\_sp()\ +\ 1);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00044}00044\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00045}00045\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00046}00046\ \textcolor{keywordtype}{int}\ op\_inc\_hl\_ptr(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x34}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00047}00047\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00048}00048\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ cpu.get\_hl();}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00049}00049\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ mmu.read(addr);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00050}00050\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ +\ 1;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00051}00051\ \ \ \ \ mmu.write(addr,\ newValue);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00053}00053\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00054}00054\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00055}00055\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x0F);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00057}00057\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00058}00058\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00059}00059\ \textcolor{keywordtype}{int}\ op\_dec\_hl\_ptr(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x35}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00060}00060\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00061}00061\ \ \ \ \ \textcolor{keyword}{const}\ u16\ addr\ =\ cpu.get\_hl();}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00062}00062\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ mmu.read(addr);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00063}00063\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ -\/\ 1;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00064}00064\ \ \ \ \ mmu.write(addr,\ newValue);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00066}00066\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00067}00067\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00068}00068\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x00);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00069}00069\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00070}00070\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00071}00071\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00072}00072\ \textcolor{keywordtype}{int}\ op\_ld\_hl\_d8(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x36}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00073}00073\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00074}00074\ \ \ \ \ mmu.write(cpu.get\_hl(),\ mmu.read(cpu.inc\_pc()));}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00075}00075\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00076}00076\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00077}00077\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00078}00078\ \textcolor{keywordtype}{int}\ op\_scf(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x37}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00079}00079\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00080}00080\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00081}00081\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00082}00082\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::C,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00083}00083\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00084}00084\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00085}00085\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00086}00086\ \textcolor{keywordtype}{int}\ op\_jr\_c(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x38}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00087}00087\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00088}00088\ \ \ \ \ \textcolor{keyword}{const}\ int8\_t\ offset\ =\ \textcolor{keyword}{static\_cast<}int8\_t\textcolor{keyword}{>}(mmu.read(cpu.inc\_pc()));}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00090}00090\ \ \ \ \ \textcolor{keywordflow}{if}\ (cpu.get\_flag\_c())\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00091}00091\ \ \ \ \ \ \ \ \ cpu.set\_pc(\textcolor{keyword}{static\_cast<}u16\textcolor{keyword}{>}(cpu.get\_pc()\ +\ offset));}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(3);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00093}00093\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00094}00094\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00095}00095\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00096}00096\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00097}00097\ \textcolor{keywordtype}{int}\ op\_add\_hl\_sp(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x39}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00098}00098\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00099}00099\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00100}00100\ \ \ \ \ \textcolor{keyword}{const}\ u16\ sp\ =\ cpu.get\_sp();}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00101}00101\ \ \ \ \ \textcolor{keyword}{const}\ u32\ sum\ =\ \textcolor{keyword}{static\_cast<}u32\textcolor{keyword}{>}(hl)\ +\ sp;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00102}00102\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00103}00103\ \ \ \ \ cpu.reg(ProcessingUnit::Register::H)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}((sum\ >>\ 8)\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00104}00104\ \ \ \ \ cpu.reg(ProcessingUnit::Register::L)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(sum\ \&\ 0xFF);}
 \DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00105}00105\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00106}00106\ \ \ \ \ cpu.reg(ProcessingUnit::Register::H)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}((sum\ >>\ 8)\ \&\ 0xFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00107}00107\ \ \ \ \ cpu.reg(ProcessingUnit::Register::L)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(sum\ \&\ 0xFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00108}00108\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00109}00109\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00110}00110\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ ((hl\ \&\ 0x0FFF)\ +\ (sp\ \&\ 0x0FFF))\ >\ 0x0FFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00111}00111\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::C,\ sum\ >\ 0xFFFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00112}00112\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00113}00113\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00114}00114\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00115}00115\ \textcolor{keywordtype}{int}\ op\_ld\_a\_hld(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3A}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00116}00116\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00117}00117\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00118}00118\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(hl);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00119}00119\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00120}00120\ \ \ \ \ \textcolor{keyword}{const}\ u16\ newValue\ =\ hl\ -\/\ 1;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00121}00121\ \ \ \ \ cpu.reg(ProcessingUnit::Register::H)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}((newValue\ >>\ 8)\ \&\ 0xFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00122}00122\ \ \ \ \ cpu.reg(ProcessingUnit::Register::L)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(newValue\ \&\ 0xFF);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00123}00123\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00124}00124\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00125}00125\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00126}00126\ \textcolor{keywordtype}{int}\ op\_dec\_sp(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3B}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00127}00127\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00128}00128\ \ \ \ \ cpu.set\_sp(cpu.get\_sp()\ -\/\ 1);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00129}00129\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00130}00130\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00131}00131\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00132}00132\ \textcolor{keywordtype}{int}\ op\_inc\_a(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3C}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00133}00133\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00134}00134\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ cpu.reg(ProcessingUnit::Register::A);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00135}00135\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ +\ 1;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00136}00136\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ newValue;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00137}00137\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00138}00138\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00139}00139\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00140}00140\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x0F);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00141}00141\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00142}00142\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00143}00143\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00144}00144\ \textcolor{keywordtype}{int}\ op\_dec\_a(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3D}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00145}00145\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00146}00146\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ cpu.reg(ProcessingUnit::Register::A);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00147}00147\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ -\/\ 1;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00148}00148\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ newValue;}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00149}00149\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00150}00150\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00151}00151\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{true});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00152}00152\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x00);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00153}00153\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00154}00154\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00155}00155\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00156}00156\ \textcolor{keywordtype}{int}\ op\_ld\_a\_d8(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3E}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00157}00157\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00158}00158\ \ \ \ \ cpu.inc\_pc();}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00159}00159\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(cpu.inc\_pc());}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00160}00160\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00161}00161\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00162}00162\ \}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00163}00163\ \textcolor{keywordtype}{int}\ op\_ccf(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3F}}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00164}00164\ \{}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00165}00165\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00166}00166\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ \textcolor{keyword}{false});}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00167}00167\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::C,\ !cpu.get\_flag\_c());}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00168}00168\ }
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00169}00169\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
-\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00170}00170\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00106}00106\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00107}00107\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ ((hl\ \&\ 0x0FFF)\ +\ (sp\ \&\ 0x0FFF))\ >\ 0x0FFF);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00108}00108\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::C,\ sum\ >\ 0xFFFF);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00109}00109\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00110}00110\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00111}00111\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00112}00112\ \textcolor{keywordtype}{int}\ op\_ld\_a\_hld(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3A}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00113}00113\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00114}00114\ \ \ \ \ \textcolor{keyword}{const}\ u16\ hl\ =\ cpu.get\_hl();}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00115}00115\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ mmu.read(hl);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00117}00117\ \ \ \ \ \textcolor{keyword}{const}\ u16\ newValue\ =\ hl\ -\/\ 1;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00118}00118\ \ \ \ \ cpu.reg(ProcessingUnit::Register::H)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}((newValue\ >>\ 8)\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00119}00119\ \ \ \ \ cpu.reg(ProcessingUnit::Register::L)\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(newValue\ \&\ 0xFF);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00120}00120\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00121}00121\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00122}00122\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00123}00123\ \textcolor{keywordtype}{int}\ op\_dec\_sp(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3B}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00124}00124\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00125}00125\ \ \ \ \ cpu.set\_sp(cpu.get\_sp()\ -\/\ 1);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00126}00126\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00127}00127\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00128}00128\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00129}00129\ \textcolor{keywordtype}{int}\ op\_inc\_a(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3C}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00130}00130\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00131}00131\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ cpu.reg(ProcessingUnit::Register::A);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00132}00132\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ +\ 1;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00133}00133\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ newValue;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00134}00134\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00135}00135\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00136}00136\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00137}00137\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x0F);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00138}00138\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00139}00139\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00140}00140\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00141}00141\ \textcolor{keywordtype}{int}\ op\_dec\_a(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3D}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00142}00142\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00143}00143\ \ \ \ \ \textcolor{keyword}{const}\ u8\ oldValue\ =\ cpu.reg(ProcessingUnit::Register::A);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00144}00144\ \ \ \ \ \textcolor{keyword}{const}\ u8\ newValue\ =\ oldValue\ -\/\ 1;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00145}00145\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ newValue;}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00146}00146\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00147}00147\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ newValue\ ==\ 0);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00148}00148\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00149}00149\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ (oldValue\ \&\ 0x0F)\ ==\ 0x00);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00150}00150\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00151}00151\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00152}00152\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00153}00153\ \textcolor{keywordtype}{int}\ op\_ld\_a\_d8(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3E}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00154}00154\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00155}00155\ \ \ \ \ cpu.reg(ProcessingUnit::Register::A)\ =\ mmu.read(cpu.inc\_pc());}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00156}00156\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00157}00157\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(2);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00158}00158\ \}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00159}00159\ \textcolor{keywordtype}{int}\ op\_ccf(\doxymbox{\hyperlink{classProcessingUnit}{ProcessingUnit}}\&\ cpu,\ \doxymbox{\hyperlink{classMMU}{MMU}}\&\ mmu)\ \textcolor{comment}{//\ 0x3F}}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00160}00160\ \{}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00161}00161\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00162}00162\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::H,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00163}00163\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::C,\ !cpu.get\_flag\_c());}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00164}00164\ }
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00165}00165\ \ \ \ \ \textcolor{keywordflow}{return}\ totalMachineCycles(1);}
+\DoxyCodeLine{\Hypertarget{op__03_8cpp_source_l00166}00166\ \}}
 
 \end{DoxyCode}

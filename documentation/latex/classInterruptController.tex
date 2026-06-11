@@ -1,0 +1,142 @@
+\doxysection{Interrupt\+Controller Class Reference}
+\hypertarget{classInterruptController}{}\label{classInterruptController}\index{InterruptController@{InterruptController}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+u8 \doxymbox{\hyperlink{classInterruptController_abfb0b213b2847daa2a95ec03eb61ce7d}{read}} (u16 address) const
+\item 
+void \doxymbox{\hyperlink{classInterruptController_a9e6f9bec9140bffea5a309436af37917}{write}} (u16 address, u8 value)
+\item 
+void \doxymbox{\hyperlink{classInterruptController_a8fe08edb99887d9bb1f0966047635e48}{request\+\_\+interrupt}} (Interrupt\+Type type)
+\item 
+void \doxymbox{\hyperlink{classInterruptController_afcc3b284f30b9aa5bc1c7eef6c3a6844}{clear\+\_\+interrupt\+\_\+flag}} (Interrupt\+Type type)
+\item 
+bool \doxymbox{\hyperlink{classInterruptController_a092a7027b0a8c480a5576cd0cffeddcb}{has\+\_\+pending\+\_\+interrupts}} () const
+\item 
+u8 \doxymbox{\hyperlink{classInterruptController_a48a50a83c64e7292c04f7c2525d7d480}{get\+\_\+if}} () const
+\item 
+u8 \doxymbox{\hyperlink{classInterruptController_a0eb03c741f137c062ad5ae44cbf598aa}{get\+\_\+ie}} () const
+\item 
+void \doxymbox{\hyperlink{classInterruptController_a3e127b7234fd8b09c517d532f7a9ba6c}{set\+\_\+if}} (u8 value)
+\item 
+void \doxymbox{\hyperlink{classInterruptController_a54c54658596892efda3009774ac84ed1}{set\+\_\+ie}} (u8 value)
+\item 
+void \doxymbox{\hyperlink{classInterruptController_aab3494dacc2bc7e0e9e7c4394a9b1bc6}{reset}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00012}{12}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{classInterruptController_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classInterruptController_afcc3b284f30b9aa5bc1c7eef6c3a6844}\index{InterruptController@{InterruptController}!clear\_interrupt\_flag@{clear\_interrupt\_flag}}
+\index{clear\_interrupt\_flag@{clear\_interrupt\_flag}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{clear\_interrupt\_flag()}{clear\_interrupt\_flag()}}
+{\footnotesize\ttfamily \label{classInterruptController_afcc3b284f30b9aa5bc1c7eef6c3a6844} 
+void Interrupt\+Controller::\+clear\+\_\+interrupt\+\_\+flag (\begin{DoxyParamCaption}\item[{Interrupt\+Type}]{type}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00035}{35}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_a0eb03c741f137c062ad5ae44cbf598aa}\index{InterruptController@{InterruptController}!get\_ie@{get\_ie}}
+\index{get\_ie@{get\_ie}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{get\_ie()}{get\_ie()}}
+{\footnotesize\ttfamily \label{classInterruptController_a0eb03c741f137c062ad5ae44cbf598aa} 
+u8 Interrupt\+Controller::\+get\+\_\+ie (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00044}{44}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_a48a50a83c64e7292c04f7c2525d7d480}\index{InterruptController@{InterruptController}!get\_if@{get\_if}}
+\index{get\_if@{get\_if}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{get\_if()}{get\_if()}}
+{\footnotesize\ttfamily \label{classInterruptController_a48a50a83c64e7292c04f7c2525d7d480} 
+u8 Interrupt\+Controller::\+get\+\_\+if (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00043}{43}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_a092a7027b0a8c480a5576cd0cffeddcb}\index{InterruptController@{InterruptController}!has\_pending\_interrupts@{has\_pending\_interrupts}}
+\index{has\_pending\_interrupts@{has\_pending\_interrupts}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{has\_pending\_interrupts()}{has\_pending\_interrupts()}}
+{\footnotesize\ttfamily \label{classInterruptController_a092a7027b0a8c480a5576cd0cffeddcb} 
+bool Interrupt\+Controller::\+has\+\_\+pending\+\_\+interrupts (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00039}{39}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_abfb0b213b2847daa2a95ec03eb61ce7d}\index{InterruptController@{InterruptController}!read@{read}}
+\index{read@{read}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{classInterruptController_abfb0b213b2847daa2a95ec03eb61ce7d} 
+u8 Interrupt\+Controller::\+read (\begin{DoxyParamCaption}\item[{u16}]{address}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00017}{17}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_a8fe08edb99887d9bb1f0966047635e48}\index{InterruptController@{InterruptController}!request\_interrupt@{request\_interrupt}}
+\index{request\_interrupt@{request\_interrupt}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{request\_interrupt()}{request\_interrupt()}}
+{\footnotesize\ttfamily \label{classInterruptController_a8fe08edb99887d9bb1f0966047635e48} 
+void Interrupt\+Controller::\+request\+\_\+interrupt (\begin{DoxyParamCaption}\item[{Interrupt\+Type}]{type}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00031}{31}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_aab3494dacc2bc7e0e9e7c4394a9b1bc6}\index{InterruptController@{InterruptController}!reset@{reset}}
+\index{reset@{reset}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{classInterruptController_aab3494dacc2bc7e0e9e7c4394a9b1bc6} 
+void Interrupt\+Controller::\+reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00049}{49}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_a54c54658596892efda3009774ac84ed1}\index{InterruptController@{InterruptController}!set\_ie@{set\_ie}}
+\index{set\_ie@{set\_ie}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{set\_ie()}{set\_ie()}}
+{\footnotesize\ttfamily \label{classInterruptController_a54c54658596892efda3009774ac84ed1} 
+void Interrupt\+Controller::\+set\+\_\+ie (\begin{DoxyParamCaption}\item[{u8}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00047}{47}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_a3e127b7234fd8b09c517d532f7a9ba6c}\index{InterruptController@{InterruptController}!set\_if@{set\_if}}
+\index{set\_if@{set\_if}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{set\_if()}{set\_if()}}
+{\footnotesize\ttfamily \label{classInterruptController_a3e127b7234fd8b09c517d532f7a9ba6c} 
+void Interrupt\+Controller::\+set\+\_\+if (\begin{DoxyParamCaption}\item[{u8}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00046}{46}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+\Hypertarget{classInterruptController_a9e6f9bec9140bffea5a309436af37917}\index{InterruptController@{InterruptController}!write@{write}}
+\index{write@{write}!InterruptController@{InterruptController}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily \label{classInterruptController_a9e6f9bec9140bffea5a309436af37917} 
+void Interrupt\+Controller::\+write (\begin{DoxyParamCaption}\item[{u16}]{address}{, }\item[{u8}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{interrupt__controller_8hpp_source_l00023}{23}} of file \doxymbox{\hyperlink{interrupt__controller_8hpp_source}{interrupt\+\_\+controller.\+hpp}}.
+
+
+
+The documentation for this class was generated from the following file:\+\begin{DoxyCompactItemize}
+\item 
+include/\+interrupt\+\_\+controller.\+hpp\end{DoxyCompactItemize}

@@ -200,7 +200,7 @@ $(function(){initNavTree('op__09_8cpp_source.html','',''); });
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="keywordtype">int</span> op_sub_hl(<a class="code hl_class" href="classProcessingUnit.html">ProcessingUnit</a> &amp;cpu, <a class="code hl_class" href="classMMU.html">MMU</a> &amp;mmu) <span class="comment">// 0x96</span></div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>{</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">const</span> u8 a = cpu.reg(ProcessingUnit::Register::A);</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">const</span> u8 value = mmu.<a class="code hl_function" href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a>(cpu.get_hl());</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">const</span> u8 value = mmu.read(cpu.get_hl());</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> result = a - value;</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> half_carry = (a &amp; 0x0F) - (value &amp; 0x0F);</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
@@ -333,7 +333,7 @@ $(function(){initNavTree('op__09_8cpp_source.html','',''); });
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="keywordtype">int</span> op_sbc_a_hl(<a class="code hl_class" href="classProcessingUnit.html">ProcessingUnit</a> &amp;cpu, <a class="code hl_class" href="classMMU.html">MMU</a> &amp;mmu) <span class="comment">// 0x9E</span></div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>{</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    <span class="keyword">const</span> u8 a = cpu.reg(ProcessingUnit::Register::A);</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keyword">const</span> u8 value = mmu.<a class="code hl_function" href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a>(cpu.get_hl());</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>    <span class="keyword">const</span> u8 value = mmu.read(cpu.get_hl());</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>    <span class="keyword">const</span> u8 carry = cpu.get_flag_c() ? 1 : 0;</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> result = a - value - carry;</div>
 <div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> half_carry = (a &amp; 0x0F) - (value &amp; 0x0F) - carry;</div>
@@ -362,8 +362,7 @@ $(function(){initNavTree('op__09_8cpp_source.html','',''); });
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    cpu.reg(ProcessingUnit::Register::A) = <span class="keyword">static_cast&lt;</span>u8<span class="keyword">&gt;</span>(result);</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    <span class="keywordflow">return</span> totalMachineCycles(1);</div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>}</div>
-<div class="ttc" id="aclassMMU_html"><div class="ttname"><a href="classMMU.html">MMU</a></div><div class="ttdef"><b>Definition</b> <a href="mmu_8hpp_source.html#l00006">mmu.hpp:6</a></div></div>
-<div class="ttc" id="aclassMMU_html_ac3dbb6955cd9e630ab8c6b5f184d31b7"><div class="ttname"><a href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">MMU::read</a></div><div class="ttdeci">u8 read(u16 address) const</div><div class="ttdoc">Reads a single byte from the emulated memory bus.</div><div class="ttdef"><b>Definition</b> <a href="mmu_8cpp_source.html#l00011">mmu.cpp:11</a></div></div>
+<div class="ttc" id="aclassMMU_html"><div class="ttname"><a href="classMMU.html">MMU</a></div><div class="ttdef"><b>Definition</b> <a href="mmu_8hpp_source.html#l00012">mmu.hpp:12</a></div></div>
 <div class="ttc" id="aclassProcessingUnit_html"><div class="ttname"><a href="classProcessingUnit.html">ProcessingUnit</a></div><div class="ttdef"><b>Definition</b> <a href="ProcessingUnit_8hpp_source.html#l00007">ProcessingUnit.hpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

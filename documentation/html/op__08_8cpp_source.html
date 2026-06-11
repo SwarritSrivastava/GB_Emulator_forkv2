@@ -206,7 +206,7 @@ $(function(){initNavTree('op__08_8cpp_source.html','',''); });
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>{</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">const</span> u8 a = cpu.reg(ProcessingUnit::Register::A);</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <span class="keyword">const</span> u16 hl = cpu.get_hl();</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">const</span> u8 value = mmu.<a class="code hl_function" href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a>(hl);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">const</span> u8 value = mmu.read(hl);</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <span class="keyword">const</span> u16 sum = a + value;</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keyword">const</span> u8 result = <span class="keyword">static_cast&lt;</span>u8<span class="keyword">&gt;</span>(sum &amp; 0xFF);</div>
@@ -348,7 +348,7 @@ $(function(){initNavTree('op__08_8cpp_source.html','',''); });
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>{</div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    <span class="keyword">const</span> u8 a = cpu.reg(ProcessingUnit::Register::A);</div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keyword">const</span> u16 hl = cpu.get_hl();</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keyword">const</span> u8 value = mmu.<a class="code hl_function" href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a>(hl);</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    <span class="keyword">const</span> u8 value = mmu.read(hl);</div>
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    <span class="keyword">const</span> <span class="keywordtype">bool</span> carry = cpu.get_flag_c();</div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keyword">const</span> u16 sum = a + value + carry;</div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
@@ -379,8 +379,7 @@ $(function(){initNavTree('op__08_8cpp_source.html','',''); });
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span> </div>
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    <span class="keywordflow">return</span> totalMachineCycles(1);</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>}</div>
-<div class="ttc" id="aclassMMU_html"><div class="ttname"><a href="classMMU.html">MMU</a></div><div class="ttdef"><b>Definition</b> <a href="mmu_8hpp_source.html#l00006">mmu.hpp:6</a></div></div>
-<div class="ttc" id="aclassMMU_html_ac3dbb6955cd9e630ab8c6b5f184d31b7"><div class="ttname"><a href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">MMU::read</a></div><div class="ttdeci">u8 read(u16 address) const</div><div class="ttdoc">Reads a single byte from the emulated memory bus.</div><div class="ttdef"><b>Definition</b> <a href="mmu_8cpp_source.html#l00011">mmu.cpp:11</a></div></div>
+<div class="ttc" id="aclassMMU_html"><div class="ttname"><a href="classMMU.html">MMU</a></div><div class="ttdef"><b>Definition</b> <a href="mmu_8hpp_source.html#l00012">mmu.hpp:12</a></div></div>
 <div class="ttc" id="aclassProcessingUnit_html"><div class="ttname"><a href="classProcessingUnit.html">ProcessingUnit</a></div><div class="ttdef"><b>Definition</b> <a href="ProcessingUnit_8hpp_source.html#l00007">ProcessingUnit.hpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

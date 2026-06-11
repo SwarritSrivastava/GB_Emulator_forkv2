@@ -1,0 +1,242 @@
+\doxysection{Cartridge Class Reference}
+\hypertarget{classCartridge}{}\label{classCartridge}\index{Cartridge@{Cartridge}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{classCartridge_ab8267b0ee7054809d0c90e7978f6e1bb}{Cartridge}} (const std::\+vector$<$ u8 $>$ \&rom\+\_\+data)
+\item 
+bool \doxymbox{\hyperlink{classCartridge_a64d4ba811c97ddd7a0d02dca72ebbecd}{load\+\_\+rom}} (const std::\+vector$<$ u8 $>$ \&rom\+\_\+data)
+\item 
+u8 \doxymbox{\hyperlink{classCartridge_a003824abb28bc344357fb0638d518746}{read}} (u16 address) const
+\item 
+void \doxymbox{\hyperlink{classCartridge_a0458b5fb2eaf1d5aa42f92eb88f3403f}{write}} (u16 address, u8 value)
+\item 
+void \doxymbox{\hyperlink{classCartridge_a169ac9dcda0664c4af7415a0185f7d5e}{reset}} ()
+\item 
+std::\+string \doxymbox{\hyperlink{classCartridge_a5bbb33aabb6df736663432149244e16f}{get\+\_\+title}} () const
+\item 
+u8 \doxymbox{\hyperlink{classCartridge_ac2e4103a17e64ed9ad9a746eaea61a5f}{get\+\_\+mbc\+\_\+type}} () const
+\item 
+u8 \doxymbox{\hyperlink{classCartridge_a06f3101b2f521e0eb4d33e3d4e038922}{get\+\_\+rom\+\_\+size\+\_\+code}} () const
+\item 
+u8 \doxymbox{\hyperlink{classCartridge_ab50a857f4b74641ba44d0b48a9005237}{get\+\_\+ram\+\_\+size\+\_\+code}} () const
+\item 
+const std::\+vector$<$ u8 $>$ \& \doxymbox{\hyperlink{classCartridge_a14e4a058d8757765a3fa2f98e9b61d78}{get\+\_\+rom\+\_\+bytes}} () const
+\item 
+u8 \doxymbox{\hyperlink{classCartridge_a5a2958c1cca1cb966ea0cb9c66d5fdf1}{get\+\_\+current\+\_\+rom\+\_\+bank}} () const
+\item 
+void \doxymbox{\hyperlink{classCartridge_a39785467c4142e01903ab22de71ab9d5}{set\+\_\+current\+\_\+rom\+\_\+bank}} (u8 bank)
+\item 
+const std::\+vector$<$ u8 $>$ \& \doxymbox{\hyperlink{classCartridge_ad6dcd05801709edfe96ad26cf262f44b}{get\+\_\+ram\+\_\+bytes}} () const
+\item 
+std::\+vector$<$ u8 $>$ \& \doxymbox{\hyperlink{classCartridge_a22db245485fc4cd99529bc5d996994ea}{get\+\_\+ram\+\_\+bytes\+\_\+mutable}} ()
+\item 
+void \doxymbox{\hyperlink{classCartridge_a07f0c05dfe1b9fba4bd35d19e14c0750}{set\+\_\+ram\+\_\+bytes}} (const std::\+vector$<$ u8 $>$ \&ram\+\_\+data)
+\item 
+bool \doxymbox{\hyperlink{classCartridge_aad96f58ba92e521cee6f5a4a91e080a7}{is\+\_\+ram\+\_\+enabled}} () const
+\item 
+void \doxymbox{\hyperlink{classCartridge_ae3c22936db0a0b9f3afcdadcc2bac235}{set\+\_\+ram\+\_\+enabled}} (bool enabled)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00023}{23}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{classCartridge_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classCartridge_ab550b4ef60b8e1a0949879981f529064}\index{Cartridge@{Cartridge}!Cartridge@{Cartridge}}
+\index{Cartridge@{Cartridge}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{Cartridge()}{Cartridge()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \label{classCartridge_ab550b4ef60b8e1a0949879981f529064} 
+Cartridge::\+\+Cartridge (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8cpp_source_l00006}{6}} of file \doxymbox{\hyperlink{cartridge_8cpp_source}{cartridge.\+cpp}}.
+
+\Hypertarget{classCartridge_ab8267b0ee7054809d0c90e7978f6e1bb}\index{Cartridge@{Cartridge}!Cartridge@{Cartridge}}
+\index{Cartridge@{Cartridge}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{Cartridge()}{Cartridge()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classCartridge_ab8267b0ee7054809d0c90e7978f6e1bb} 
+Cartridge::\+\+Cartridge (\begin{DoxyParamCaption}\item[{const std::\+vector$<$ u8 $>$ \&}]{rom\+\_\+data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8cpp_source_l00014}{14}} of file \doxymbox{\hyperlink{cartridge_8cpp_source}{cartridge.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{classCartridge_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classCartridge_a5a2958c1cca1cb966ea0cb9c66d5fdf1}\index{Cartridge@{Cartridge}!get\_current\_rom\_bank@{get\_current\_rom\_bank}}
+\index{get\_current\_rom\_bank@{get\_current\_rom\_bank}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_current\_rom\_bank()}{get\_current\_rom\_bank()}}
+{\footnotesize\ttfamily \label{classCartridge_a5a2958c1cca1cb966ea0cb9c66d5fdf1} 
+u8 Cartridge::\+get\+\_\+current\+\_\+rom\+\_\+bank (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00041}{41}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_ac2e4103a17e64ed9ad9a746eaea61a5f}\index{Cartridge@{Cartridge}!get\_mbc\_type@{get\_mbc\_type}}
+\index{get\_mbc\_type@{get\_mbc\_type}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_mbc\_type()}{get\_mbc\_type()}}
+{\footnotesize\ttfamily \label{classCartridge_ac2e4103a17e64ed9ad9a746eaea61a5f} 
+u8 Cartridge::\+get\+\_\+mbc\+\_\+type (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00036}{36}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_ad6dcd05801709edfe96ad26cf262f44b}\index{Cartridge@{Cartridge}!get\_ram\_bytes@{get\_ram\_bytes}}
+\index{get\_ram\_bytes@{get\_ram\_bytes}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_ram\_bytes()}{get\_ram\_bytes()}}
+{\footnotesize\ttfamily \label{classCartridge_ad6dcd05801709edfe96ad26cf262f44b} 
+const std::\+vector$<$ u8 $>$ \& Cartridge::\+get\+\_\+ram\+\_\+bytes (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00044}{44}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_a22db245485fc4cd99529bc5d996994ea}\index{Cartridge@{Cartridge}!get\_ram\_bytes\_mutable@{get\_ram\_bytes\_mutable}}
+\index{get\_ram\_bytes\_mutable@{get\_ram\_bytes\_mutable}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_ram\_bytes\_mutable()}{get\_ram\_bytes\_mutable()}}
+{\footnotesize\ttfamily \label{classCartridge_a22db245485fc4cd99529bc5d996994ea} 
+std::\+vector$<$ u8 $>$ \& Cartridge::\+get\+\_\+ram\+\_\+bytes\+\_\+mutable (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00045}{45}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_ab50a857f4b74641ba44d0b48a9005237}\index{Cartridge@{Cartridge}!get\_ram\_size\_code@{get\_ram\_size\_code}}
+\index{get\_ram\_size\_code@{get\_ram\_size\_code}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_ram\_size\_code()}{get\_ram\_size\_code()}}
+{\footnotesize\ttfamily \label{classCartridge_ab50a857f4b74641ba44d0b48a9005237} 
+u8 Cartridge::\+get\+\_\+ram\+\_\+size\+\_\+code (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00038}{38}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_a14e4a058d8757765a3fa2f98e9b61d78}\index{Cartridge@{Cartridge}!get\_rom\_bytes@{get\_rom\_bytes}}
+\index{get\_rom\_bytes@{get\_rom\_bytes}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_rom\_bytes()}{get\_rom\_bytes()}}
+{\footnotesize\ttfamily \label{classCartridge_a14e4a058d8757765a3fa2f98e9b61d78} 
+const std::\+vector$<$ u8 $>$ \& Cartridge::\+get\+\_\+rom\+\_\+bytes (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00039}{39}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_a06f3101b2f521e0eb4d33e3d4e038922}\index{Cartridge@{Cartridge}!get\_rom\_size\_code@{get\_rom\_size\_code}}
+\index{get\_rom\_size\_code@{get\_rom\_size\_code}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_rom\_size\_code()}{get\_rom\_size\_code()}}
+{\footnotesize\ttfamily \label{classCartridge_a06f3101b2f521e0eb4d33e3d4e038922} 
+u8 Cartridge::\+get\+\_\+rom\+\_\+size\+\_\+code (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00037}{37}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_a5bbb33aabb6df736663432149244e16f}\index{Cartridge@{Cartridge}!get\_title@{get\_title}}
+\index{get\_title@{get\_title}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{get\_title()}{get\_title()}}
+{\footnotesize\ttfamily \label{classCartridge_a5bbb33aabb6df736663432149244e16f} 
+std::\+string Cartridge::\+get\+\_\+title (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00035}{35}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_aad96f58ba92e521cee6f5a4a91e080a7}\index{Cartridge@{Cartridge}!is\_ram\_enabled@{is\_ram\_enabled}}
+\index{is\_ram\_enabled@{is\_ram\_enabled}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{is\_ram\_enabled()}{is\_ram\_enabled()}}
+{\footnotesize\ttfamily \label{classCartridge_aad96f58ba92e521cee6f5a4a91e080a7} 
+bool Cartridge::\+is\+\_\+ram\+\_\+enabled (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00048}{48}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_a64d4ba811c97ddd7a0d02dca72ebbecd}\index{Cartridge@{Cartridge}!load\_rom@{load\_rom}}
+\index{load\_rom@{load\_rom}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{load\_rom()}{load\_rom()}}
+{\footnotesize\ttfamily \label{classCartridge_a64d4ba811c97ddd7a0d02dca72ebbecd} 
+bool Cartridge::\+load\+\_\+rom (\begin{DoxyParamCaption}\item[{const std::\+vector$<$ u8 $>$ \&}]{rom\+\_\+data}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8cpp_source_l00018}{18}} of file \doxymbox{\hyperlink{cartridge_8cpp_source}{cartridge.\+cpp}}.
+
+\Hypertarget{classCartridge_a003824abb28bc344357fb0638d518746}\index{Cartridge@{Cartridge}!read@{read}}
+\index{read@{read}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{read()}{read()}}
+{\footnotesize\ttfamily \label{classCartridge_a003824abb28bc344357fb0638d518746} 
+u8 Cartridge::\+read (\begin{DoxyParamCaption}\item[{u16}]{address}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8cpp_source_l00075}{75}} of file \doxymbox{\hyperlink{cartridge_8cpp_source}{cartridge.\+cpp}}.
+
+\Hypertarget{classCartridge_a169ac9dcda0664c4af7415a0185f7d5e}\index{Cartridge@{Cartridge}!reset@{reset}}
+\index{reset@{reset}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{classCartridge_a169ac9dcda0664c4af7415a0185f7d5e} 
+void Cartridge::\+reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8cpp_source_l00169}{169}} of file \doxymbox{\hyperlink{cartridge_8cpp_source}{cartridge.\+cpp}}.
+
+\Hypertarget{classCartridge_a39785467c4142e01903ab22de71ab9d5}\index{Cartridge@{Cartridge}!set\_current\_rom\_bank@{set\_current\_rom\_bank}}
+\index{set\_current\_rom\_bank@{set\_current\_rom\_bank}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{set\_current\_rom\_bank()}{set\_current\_rom\_bank()}}
+{\footnotesize\ttfamily \label{classCartridge_a39785467c4142e01903ab22de71ab9d5} 
+void Cartridge::\+set\+\_\+current\+\_\+rom\+\_\+bank (\begin{DoxyParamCaption}\item[{u8}]{bank}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00042}{42}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_a07f0c05dfe1b9fba4bd35d19e14c0750}\index{Cartridge@{Cartridge}!set\_ram\_bytes@{set\_ram\_bytes}}
+\index{set\_ram\_bytes@{set\_ram\_bytes}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{set\_ram\_bytes()}{set\_ram\_bytes()}}
+{\footnotesize\ttfamily \label{classCartridge_a07f0c05dfe1b9fba4bd35d19e14c0750} 
+void Cartridge::\+set\+\_\+ram\+\_\+bytes (\begin{DoxyParamCaption}\item[{const std::\+vector$<$ u8 $>$ \&}]{ram\+\_\+data}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00046}{46}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_ae3c22936db0a0b9f3afcdadcc2bac235}\index{Cartridge@{Cartridge}!set\_ram\_enabled@{set\_ram\_enabled}}
+\index{set\_ram\_enabled@{set\_ram\_enabled}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{set\_ram\_enabled()}{set\_ram\_enabled()}}
+{\footnotesize\ttfamily \label{classCartridge_ae3c22936db0a0b9f3afcdadcc2bac235} 
+void Cartridge::\+set\+\_\+ram\+\_\+enabled (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8hpp_source_l00049}{49}} of file \doxymbox{\hyperlink{cartridge_8hpp_source}{cartridge.\+hpp}}.
+
+\Hypertarget{classCartridge_a0458b5fb2eaf1d5aa42f92eb88f3403f}\index{Cartridge@{Cartridge}!write@{write}}
+\index{write@{write}!Cartridge@{Cartridge}}
+\doxysubsubsection{\texorpdfstring{write()}{write()}}
+{\footnotesize\ttfamily \label{classCartridge_a0458b5fb2eaf1d5aa42f92eb88f3403f} 
+void Cartridge::\+write (\begin{DoxyParamCaption}\item[{u16}]{address}{, }\item[{u8}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{cartridge_8cpp_source_l00107}{107}} of file \doxymbox{\hyperlink{cartridge_8cpp_source}{cartridge.\+cpp}}.
+
+
+
+The documentation for this class was generated from the following files:\+\begin{DoxyCompactItemize}
+\item 
+include/\+cartridge.\+hpp\item 
+src/\+core/\+cartridge.\+cpp\end{DoxyCompactItemize}

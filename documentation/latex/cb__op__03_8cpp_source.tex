@@ -105,10 +105,10 @@
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00101}00101\ \{}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00102}00102\ \ \ \ \ u16\ address\ =\ cpu.get\_hl();}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00103}00103\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00104}00104\ \ \ \ \ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(address);}
+\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00104}00104\ \ \ \ \ u8\ value\ =\ mmu.read(address);}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00105}00105\ \ \ \ \ u8\ result\ =\ (value\ >>\ 4)\ |\ (value\ <<\ 4);}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00106}00106\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00107}00107\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(address,\ result);}
+\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00107}00107\ \ \ \ \ mmu.write(address,\ result);}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00108}00108\ \ \ \ \ }
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00109}00109\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ result\ ==\ 0);}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00110}00110\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}
@@ -233,11 +233,11 @@
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00229}00229\ \{}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00230}00230\ \ \ \ \ u16\ address\ =\ cpu.get\_hl();}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00231}00231\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00232}00232\ \ \ \ \ u8\ value\ =\ mmu.\doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}}(address);}
+\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00232}00232\ \ \ \ \ u8\ value\ =\ mmu.read(address);}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00233}00233\ \ \ \ \ u8\ carry\ =\ value\ \&\ 0x01;}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00234}00234\ \ \ \ \ u8\ result\ =\ value\ >>\ 1;}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00235}00235\ \ \ \ \ }
-\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00236}00236\ \ \ \ \ mmu.\doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}}(address,\ result);}
+\DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00236}00236\ \ \ \ \ mmu.write(address,\ result);}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00237}00237\ \ \ \ \ }
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00238}00238\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::Z,\ result\ ==\ 0);}
 \DoxyCodeLine{\Hypertarget{cb__op__03_8cpp_source_l00239}00239\ \ \ \ \ cpu.setFlag(ProcessingUnit::Flag::N,\ \textcolor{keyword}{false});}

@@ -96,28 +96,72 @@ $(function(){initNavTree('mmu_8hpp_source.html','',''); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &quot;common.hpp&quot;</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="classMMU.html">    6</a></span><span class="keyword">class </span>MMU {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>        u8 memory[0x10000]; <span class="comment">// old flat memory array, will be phased out eventually</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>        <span class="comment">// 8KB wram chip init to 0</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>        std::array&lt;u8, 0x2000&gt; wram{}; <span class="comment">// (0xC000 - 0xDFFF)</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">public</span>:</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        MMU();</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keywordtype">bool</span> <a class="code hl_function" href="classMMU.html#a4a7b8a9bb3d11a612b7c9ec6e5bef7d9">map_rom</a>(<span class="keyword">const</span> std::vector&lt;u8&gt;&amp; rom_data);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        u8 <a class="code hl_function" href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">read</a>(u16 address) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keywordtype">void</span> <a class="code hl_function" href="classMMU.html#a5df9ab9c4ac566decef576fc819ad4a1">write</a>(u16 address, u8 value);</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>};</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">class </span><a class="code hl_class" href="classCartridge.html">Cartridge</a>;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">class </span><a class="code hl_class" href="classPPU.html">PPU</a>;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">class </span><a class="code hl_class" href="classTimer.html">Timer</a>;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">class </span><a class="code hl_class" href="classInterruptController.html">InterruptController</a>;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="foldopen" id="foldopen00012" data-start="{" data-end="};">
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="classMMU.html">   12</a></span><span class="keyword">class </span>MMU {</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="comment">// Ownership pointers for default constructor fallbacks</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    std::unique_ptr&lt;Cartridge&gt; dummy_cartridge;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    std::unique_ptr&lt;InterruptController&gt; dummy_ic;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    std::unique_ptr&lt;Timer&gt; dummy_timer;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    std::unique_ptr&lt;PPU&gt; dummy_ppu;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="comment">// References used for routing</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <a class="code hl_class" href="classCartridge.html">Cartridge</a>* cartridge = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <a class="code hl_class" href="classPPU.html">PPU</a>* ppu = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <a class="code hl_class" href="classTimer.html">Timer</a>* timer = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <a class="code hl_class" href="classInterruptController.html">InterruptController</a>* ic = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    std::array&lt;u8, 0x2000&gt; wram{}; <span class="comment">// Work RAM (0xC000 - 0xDFFF)</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    std::array&lt;u8, 0x7F&gt; hram{};   <span class="comment">// High RAM (0xFF80 - 0xFFFE)</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    std::array&lt;u8, 0x80&gt; io_regs{}; <span class="comment">// Other IO registers (0xFF00 - 0xFF7F)</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    u8 joypad_select = 0x30;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    u8 action_buttons = 0x0F;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    u8 direction_buttons = 0x0F;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">mutable</span> u64 read_count = 0;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keyword">mutable</span> u64 write_count = 0;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordtype">void</span> perform_dma(u8 value);</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    MMU();</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    MMU(<a class="code hl_class" href="classCartridge.html">Cartridge</a>&amp; cartridge, <a class="code hl_class" href="classPPU.html">PPU</a>&amp; ppu, <a class="code hl_class" href="classTimer.html">Timer</a>&amp; timer, <a class="code hl_class" href="classInterruptController.html">InterruptController</a>&amp; ic);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    ~MMU();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    u8 read(u16 address) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">void</span> write(u16 address, u8 value);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keywordtype">bool</span> map_rom(<span class="keyword">const</span> std::vector&lt;u8&gt;&amp; rom_data);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordtype">void</span> reset();</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordtype">void</span> step_timer(<span class="keywordtype">int</span> cycles);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="comment">// Joypad state interface</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keywordtype">void</span> set_joypad_state(u8 action, u8 direction);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    u8 get_joypad_state() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">// Statistics</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    u64 get_read_count()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> read_count; }</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    u64 get_write_count()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> write_count; }</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    u8 get_current_rom_bank() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="comment">// Serialization</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    std::vector&lt;u8&gt; dump_memory() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordtype">bool</span> load_memory(<span class="keyword">const</span> std::vector&lt;u8&gt;&amp; dump);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>};</div>
 </div>
-<div class="ttc" id="aclassMMU_html_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9"><div class="ttname"><a href="classMMU.html#a4a7b8a9bb3d11a612b7c9ec6e5bef7d9">MMU::map_rom</a></div><div class="ttdeci">bool map_rom(const std::vector&lt; u8 &gt; &amp;rom_data)</div><div class="ttdoc">Maps a loaded ROM vector into the Game Boy&#39;s physical ROM space.</div><div class="ttdef"><b>Definition</b> <a href="mmu_8cpp_source.html#l00035">mmu.cpp:35</a></div></div>
-<div class="ttc" id="aclassMMU_html_a5df9ab9c4ac566decef576fc819ad4a1"><div class="ttname"><a href="classMMU.html#a5df9ab9c4ac566decef576fc819ad4a1">MMU::write</a></div><div class="ttdeci">void write(u16 address, u8 value)</div><div class="ttdoc">Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the p...</div><div class="ttdef"><b>Definition</b> <a href="mmu_8cpp_source.html#l00020">mmu.cpp:20</a></div></div>
-<div class="ttc" id="aclassMMU_html_ac3dbb6955cd9e630ab8c6b5f184d31b7"><div class="ttname"><a href="classMMU.html#ac3dbb6955cd9e630ab8c6b5f184d31b7">MMU::read</a></div><div class="ttdeci">u8 read(u16 address) const</div><div class="ttdoc">Reads a single byte from the emulated memory bus.</div><div class="ttdef"><b>Definition</b> <a href="mmu_8cpp_source.html#l00011">mmu.cpp:11</a></div></div>
+<div class="ttc" id="aclassCartridge_html"><div class="ttname"><a href="classCartridge.html">Cartridge</a></div><div class="ttdef"><b>Definition</b> <a href="cartridge_8hpp_source.html#l00023">cartridge.hpp:23</a></div></div>
+<div class="ttc" id="aclassInterruptController_html"><div class="ttname"><a href="classInterruptController.html">InterruptController</a></div><div class="ttdef"><b>Definition</b> <a href="interrupt__controller_8hpp_source.html#l00012">interrupt_controller.hpp:12</a></div></div>
+<div class="ttc" id="aclassPPU_html"><div class="ttname"><a href="classPPU.html">PPU</a></div><div class="ttdef"><b>Definition</b> <a href="ppu_8hpp_source.html#l00016">ppu.hpp:16</a></div></div>
+<div class="ttc" id="aclassTimer_html"><div class="ttname"><a href="classTimer.html">Timer</a></div><div class="ttdef"><b>Definition</b> <a href="timer_8hpp_source.html#l00007">timer.hpp:7</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

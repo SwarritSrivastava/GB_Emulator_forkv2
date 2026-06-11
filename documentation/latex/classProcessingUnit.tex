@@ -54,6 +54,10 @@ bool \doxymbox{\hyperlink{classProcessingUnit_aec50a274190f3f07d1657cf63a167fb4}
 \item 
 int \doxymbox{\hyperlink{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a}{step}} (\doxymbox{\hyperlink{classMMU}{MMU}} \&mmu)
 \item 
+void \doxymbox{\hyperlink{classProcessingUnit_ae1691d53b9cdc5dc659ed0eaa29b41f1}{check\+\_\+interrupts}} (\doxymbox{\hyperlink{classMMU}{MMU}} \&mmu)
+\item 
+void \doxymbox{\hyperlink{classProcessingUnit_a53461f497079cca58a0cba1cc0011ca6}{execute\+\_\+interrupt}} (\doxymbox{\hyperlink{classMMU}{MMU}} \&mmu, u16 address, int bit)
+\item 
 void \doxymbox{\hyperlink{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737}{set\+Halt}} (bool new\+Value)
 \item 
 bool \doxymbox{\hyperlink{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee}{is\+Halt}} () const
@@ -81,6 +85,10 @@ bool \doxymbox{\hyperlink{classProcessingUnit_a00c4d85de5e338f79e13bb8dd8d775d3}
 \doxysubsubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
+int \doxymbox{\hyperlink{classProcessingUnit_a64d02a93799d464426b1ad06be3ceb8d}{last\+\_\+instr\+\_\+cycles}} = 0
+\item 
+u16 \doxymbox{\hyperlink{classProcessingUnit_af0c1236d6311ac07d5fcd1593dfe36ec}{last\+\_\+pc}} = 0
+\item 
 bool \doxymbox{\hyperlink{classProcessingUnit_aaebc999b2c2b6ab6ba794b78b73342be}{stop}} \{\}
 \end{DoxyCompactItemize}
 
@@ -103,7 +111,7 @@ enum class Processing\+Unit::\+\+Flag\hspace{0.3cm}{\ttfamily [strong]}}
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00061}{61}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00067}{67}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
 
 \Hypertarget{classProcessingUnit_af3210d732345cef08b6b81c7bed7256b}\index{ProcessingUnit@{ProcessingUnit}!Register@{Register}}
 \index{Register@{Register}!ProcessingUnit@{ProcessingUnit}}
@@ -113,7 +121,7 @@ enum class Processing\+Unit::\+\+Register\hspace{0.3cm}{\ttfamily [strong]}}
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00055}{55}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00061}{61}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
 
 
 
@@ -135,6 +143,16 @@ Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00005}{5}} o
 \label{doc-func-members}
 \Hypertarget{classProcessingUnit_doc-func-members}
 \doxysubsection{Member Function Documentation}
+\Hypertarget{classProcessingUnit_ae1691d53b9cdc5dc659ed0eaa29b41f1}\index{ProcessingUnit@{ProcessingUnit}!check\_interrupts@{check\_interrupts}}
+\index{check\_interrupts@{check\_interrupts}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{check\_interrupts()}{check\_interrupts()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_ae1691d53b9cdc5dc659ed0eaa29b41f1} 
+void Processing\+Unit::\+check\+\_\+interrupts (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classMMU}{MMU}} \&}]{mmu}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00034}{34}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+
 \Hypertarget{classProcessingUnit_aebebf75fb1ce5ab6553d8705e4c08a36}\index{ProcessingUnit@{ProcessingUnit}!clearFlags@{clearFlags}}
 \index{clearFlags@{clearFlags}!ProcessingUnit@{ProcessingUnit}}
 \doxysubsubsection{\texorpdfstring{clearFlags()}{clearFlags()}}
@@ -143,7 +161,17 @@ void Processing\+Unit::\+clear\+Flags (\begin{DoxyParamCaption}{}{}\end{DoxyPara
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00077}{77}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00083}{83}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_a53461f497079cca58a0cba1cc0011ca6}\index{ProcessingUnit@{ProcessingUnit}!execute\_interrupt@{execute\_interrupt}}
+\index{execute\_interrupt@{execute\_interrupt}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{execute\_interrupt()}{execute\_interrupt()}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a53461f497079cca58a0cba1cc0011ca6} 
+void Processing\+Unit::\+execute\+\_\+interrupt (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classMMU}{MMU}} \&}]{mmu}{, }\item[{u16}]{address}{, }\item[{int}]{bit}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00052}{52}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_adba812708fa35a06bfa475d7fa0f66be}\index{ProcessingUnit@{ProcessingUnit}!get\_af@{get\_af}}
 \index{get\_af@{get\_af}!ProcessingUnit@{ProcessingUnit}}
@@ -233,7 +261,7 @@ u16 Processing\+Unit::\+get\+\_\+pc (\begin{DoxyParamCaption}{}{}\end{DoxyParamC
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00066}{66}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00064}{64}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_a7385e5ac33afa5cace8a6e36023a777d}\index{ProcessingUnit@{ProcessingUnit}!get\_sp@{get\_sp}}
 \index{get\_sp@{get\_sp}!ProcessingUnit@{ProcessingUnit}}
@@ -243,7 +271,7 @@ u16 Processing\+Unit::\+get\+\_\+sp (\begin{DoxyParamCaption}{}{}\end{DoxyParamC
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00071}{71}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00065}{65}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_a6f26e586cd129a1ffcec49c1e3ca641e}\index{ProcessingUnit@{ProcessingUnit}!getIME@{getIME}}
 \index{getIME@{getIME}!ProcessingUnit@{ProcessingUnit}}
@@ -253,7 +281,7 @@ bool Processing\+Unit::\+get\+IME (\begin{DoxyParamCaption}{}{}\end{DoxyParamCap
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00084}{84}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00069}{69}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_aac98159ed863ce2db0888167232b9693}\index{ProcessingUnit@{ProcessingUnit}!inc\_pc@{inc\_pc}}
 \index{inc\_pc@{inc\_pc}!ProcessingUnit@{ProcessingUnit}}
@@ -263,7 +291,7 @@ u16 Processing\+Unit::\+inc\+\_\+pc (\begin{DoxyParamCaption}{}{}\end{DoxyParamC
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00111}{111}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00080}{80}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_a28c57f86b0a8adb41cfd2a967eedbfee}\index{ProcessingUnit@{ProcessingUnit}!isHalt@{isHalt}}
 \index{isHalt@{isHalt}!ProcessingUnit@{ProcessingUnit}}
@@ -273,7 +301,7 @@ bool Processing\+Unit::\+is\+Halt (\begin{DoxyParamCaption}{}{}\end{DoxyParamCap
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00061}{61}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00067}{67}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_a00c4d85de5e338f79e13bb8dd8d775d3}\index{ProcessingUnit@{ProcessingUnit}!isStop@{isStop}}
 \index{isStop@{isStop}!ProcessingUnit@{ProcessingUnit}}
@@ -283,7 +311,7 @@ bool Processing\+Unit::\+is\+Stop (\begin{DoxyParamCaption}{}{}\end{DoxyParamCap
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00094}{94}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00100}{100}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
 
 \Hypertarget{classProcessingUnit_ab7cf9fa208301479b20e7e0faa24e49e}\index{ProcessingUnit@{ProcessingUnit}!normalizeFlags@{normalizeFlags}}
 \index{normalizeFlags@{normalizeFlags}!ProcessingUnit@{ProcessingUnit}}
@@ -293,7 +321,7 @@ void Processing\+Unit::\+normalize\+Flags (\begin{DoxyParamCaption}{}{}\end{Doxy
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00080}{80}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00086}{86}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
 
 \Hypertarget{classProcessingUnit_acf986523a07d7a8929e513465e240f4b}\index{ProcessingUnit@{ProcessingUnit}!printStatus@{printStatus}}
 \index{printStatus@{printStatus}!ProcessingUnit@{ProcessingUnit}}
@@ -303,7 +331,7 @@ void Processing\+Unit::\+print\+Status (\begin{DoxyParamCaption}{}{}\end{DoxyPar
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00026}{26}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00063}{63}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_a098a374bf6e855389ad46a3da5d4dfed}\index{ProcessingUnit@{ProcessingUnit}!reg@{reg}}
 \index{reg@{reg}!ProcessingUnit@{ProcessingUnit}}
@@ -313,7 +341,7 @@ u8 \& Processing\+Unit::\+reg (\begin{DoxyParamCaption}\item[{Register}]{r}{}\en
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00089}{89}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00070}{70}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_a51874c42f96be2abc9ad0cd1296074ad}\index{ProcessingUnit@{ProcessingUnit}!reg@{reg}}
 \index{reg@{reg}!ProcessingUnit@{ProcessingUnit}}
@@ -323,7 +351,7 @@ const u8 \& Processing\+Unit::\+reg (\begin{DoxyParamCaption}\item[{Register}]{r
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00106}{106}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00079}{79}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_ab173ae78f65807f5677f403c9448d7ea}\index{ProcessingUnit@{ProcessingUnit}!reset@{reset}}
 \index{reset@{reset}!ProcessingUnit@{ProcessingUnit}}
@@ -363,7 +391,7 @@ void Processing\+Unit::\+set\+Flag (\begin{DoxyParamCaption}\item[{Flag}]{flag}{
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00084}{84}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00090}{90}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
 
 \Hypertarget{classProcessingUnit_a16b8f78de239c4120945c7c6708cb737}\index{ProcessingUnit@{ProcessingUnit}!setHalt@{setHalt}}
 \index{setHalt@{setHalt}!ProcessingUnit@{ProcessingUnit}}
@@ -373,7 +401,7 @@ void Processing\+Unit::\+set\+Halt (\begin{DoxyParamCaption}\item[{bool}]{new\+V
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00076}{76}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00066}{66}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_aba5643b98c6753b0b4b60356fd922cff}\index{ProcessingUnit@{ProcessingUnit}!setIME@{setIME}}
 \index{setIME@{setIME}!ProcessingUnit@{ProcessingUnit}}
@@ -383,7 +411,7 @@ void Processing\+Unit::\+set\+IME (\begin{DoxyParamCaption}\item[{bool}]{new\+Va
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00080}{80}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00068}{68}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 \Hypertarget{classProcessingUnit_a513c8305d835e925c6e89b0e496c4033}\index{ProcessingUnit@{ProcessingUnit}!setStop@{setStop}}
 \index{setStop@{setStop}!ProcessingUnit@{ProcessingUnit}}
@@ -393,7 +421,7 @@ void Processing\+Unit::\+set\+Stop (\begin{DoxyParamCaption}\item[{const bool}]{
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00093}{93}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00099}{99}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
 
 \Hypertarget{classProcessingUnit_ae48833c17468a7337a58a2e4b8ae617a}\index{ProcessingUnit@{ProcessingUnit}!step@{step}}
 \index{step@{step}!ProcessingUnit@{ProcessingUnit}}
@@ -403,13 +431,33 @@ int Processing\+Unit::\+step (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlin
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00051}{51}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8cpp_source_l00015}{15}} of file \doxymbox{\hyperlink{ProcessingUnit_8cpp_source}{Processing\+Unit.\+cpp}}.
 
 
 
 \label{doc-variable-members}
 \Hypertarget{classProcessingUnit_doc-variable-members}
 \doxysubsection{Member Data Documentation}
+\Hypertarget{classProcessingUnit_a64d02a93799d464426b1ad06be3ceb8d}\index{ProcessingUnit@{ProcessingUnit}!last\_instr\_cycles@{last\_instr\_cycles}}
+\index{last\_instr\_cycles@{last\_instr\_cycles}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{last\_instr\_cycles}{last\_instr\_cycles}}
+{\footnotesize\ttfamily \label{classProcessingUnit_a64d02a93799d464426b1ad06be3ceb8d} 
+int Processing\+Unit::\+last\+\_\+instr\+\_\+cycles = 0}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00049}{49}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
+\Hypertarget{classProcessingUnit_af0c1236d6311ac07d5fcd1593dfe36ec}\index{ProcessingUnit@{ProcessingUnit}!last\_pc@{last\_pc}}
+\index{last\_pc@{last\_pc}!ProcessingUnit@{ProcessingUnit}}
+\doxysubsubsection{\texorpdfstring{last\_pc}{last\_pc}}
+{\footnotesize\ttfamily \label{classProcessingUnit_af0c1236d6311ac07d5fcd1593dfe36ec} 
+u16 Processing\+Unit::\+last\+\_\+pc = 0}
+
+
+
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00050}{50}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+
 \Hypertarget{classProcessingUnit_aaebc999b2c2b6ab6ba794b78b73342be}\index{ProcessingUnit@{ProcessingUnit}!stop@{stop}}
 \index{stop@{stop}!ProcessingUnit@{ProcessingUnit}}
 \doxysubsubsection{\texorpdfstring{stop}{stop}}
@@ -418,7 +466,7 @@ bool Processing\+Unit::\+stop \{\}}
 
 
 
-Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00091}{91}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{ProcessingUnit_8hpp_source_l00097}{97}} of file \doxymbox{\hyperlink{ProcessingUnit_8hpp_source}{Processing\+Unit.\+hpp}}.
 
 
 

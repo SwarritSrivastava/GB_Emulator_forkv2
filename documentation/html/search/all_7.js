@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['focus_0',['Current Focus',['../index.html#autotoc_md1',1,'']]]
+  ['joypadstate_0',['JoypadState',['../structJoypadState.html',1,'']]]
 ];

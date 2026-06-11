@@ -3,18 +3,38 @@
 \doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-bool \doxymbox{\hyperlink{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9}{map\+\_\+rom}} (const std::\+vector$<$ u8 $>$ \&rom\+\_\+data)
-\begin{DoxyCompactList}\small\item\em Maps a loaded ROM vector into the Game Boy\textquotesingle{}s physical ROM space. \end{DoxyCompactList}\item 
+\doxymbox{\hyperlink{classMMU_ab877951e16280c884e080d98f82b9a3b}{MMU}} (\doxymbox{\hyperlink{classCartridge}{Cartridge}} \&cartridge, \doxymbox{\hyperlink{classPPU}{PPU}} \&ppu, \doxymbox{\hyperlink{classTimer}{Timer}} \&timer, \doxymbox{\hyperlink{classInterruptController}{Interrupt\+Controller}} \&ic)
+\item 
 u8 \doxymbox{\hyperlink{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}{read}} (u16 address) const
-\begin{DoxyCompactList}\small\item\em Reads a single byte from the emulated memory bus. \end{DoxyCompactList}\item 
+\item 
 void \doxymbox{\hyperlink{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}{write}} (u16 address, u8 value)
-\begin{DoxyCompactList}\small\item\em Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the physical ROM. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\item 
+bool \doxymbox{\hyperlink{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9}{map\+\_\+rom}} (const std::\+vector$<$ u8 $>$ \&rom\+\_\+data)
+\item 
+void \doxymbox{\hyperlink{classMMU_aa6a9a149d1a9ce15fdb04ce1b0b7b2d0}{reset}} ()
+\item 
+void \doxymbox{\hyperlink{classMMU_a0de8e519fcac7e31e8a19e98728939d7}{step\+\_\+timer}} (int cycles)
+\item 
+void \doxymbox{\hyperlink{classMMU_a0b04242fe5472d9f01d7e2b57aca0d84}{set\+\_\+joypad\+\_\+state}} (u8 action, u8 direction)
+\item 
+u8 \doxymbox{\hyperlink{classMMU_a7d312874d41eb012638db8ed17bcf3b7}{get\+\_\+joypad\+\_\+state}} () const
+\item 
+u64 \doxymbox{\hyperlink{classMMU_a407d409361770e170e78143bd8d344a6}{get\+\_\+read\+\_\+count}} () const
+\item 
+u64 \doxymbox{\hyperlink{classMMU_ae468da48ec6292614023a55f2e9fb98b}{get\+\_\+write\+\_\+count}} () const
+\item 
+u8 \doxymbox{\hyperlink{classMMU_a616cd250747a4318d09bdbb78544c547}{get\+\_\+current\+\_\+rom\+\_\+bank}} () const
+\item 
+std::\+vector$<$ u8 $>$ \doxymbox{\hyperlink{classMMU_a06014e0a5888fdde065710a47eba3749}{dump\+\_\+memory}} () const
+\item 
+bool \doxymbox{\hyperlink{classMMU_ae0a2816fd2ca6b4663e4f77fc252d9a0}{load\+\_\+memory}} (const std::\+vector$<$ u8 $>$ \&dump)
+\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
 
 
-Definition at line \doxymbox{\hyperlink{mmu_8hpp_source_l00006}{6}} of file \doxymbox{\hyperlink{mmu_8hpp_source}{mmu.\+hpp}}.
+Definition at line \doxymbox{\hyperlink{mmu_8hpp_source_l00012}{12}} of file \doxymbox{\hyperlink{mmu_8hpp_source}{mmu.\+hpp}}.
 
 
 
@@ -23,19 +43,89 @@ Definition at line \doxymbox{\hyperlink{mmu_8hpp_source_l00006}{6}} of file \dox
 \doxysubsection{Constructor \& Destructor Documentation}
 \Hypertarget{classMMU_a3cc26755183540beee71619d7549b189}\index{MMU@{MMU}!MMU@{MMU}}
 \index{MMU@{MMU}!MMU@{MMU}}
-\doxysubsubsection{\texorpdfstring{MMU()}{MMU()}}
+\doxysubsubsection{\texorpdfstring{MMU()}{MMU()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily \label{classMMU_a3cc26755183540beee71619d7549b189} 
 MMU::\+\+MMU (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
 
-Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00006}{6}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00009}{9}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+\Hypertarget{classMMU_ab877951e16280c884e080d98f82b9a3b}\index{MMU@{MMU}!MMU@{MMU}}
+\index{MMU@{MMU}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{MMU()}{MMU()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \label{classMMU_ab877951e16280c884e080d98f82b9a3b} 
+MMU::\+\+MMU (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{classCartridge}{Cartridge}} \&}]{cartridge}{, }\item[{\doxymbox{\hyperlink{classPPU}{PPU}} \&}]{ppu}{, }\item[{\doxymbox{\hyperlink{classTimer}{Timer}} \&}]{timer}{, }\item[{\doxymbox{\hyperlink{classInterruptController}{Interrupt\+Controller}} \&}]{ic}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00045}{45}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
 
 
 
 \label{doc-func-members}
 \Hypertarget{classMMU_doc-func-members}
 \doxysubsection{Member Function Documentation}
+\Hypertarget{classMMU_a06014e0a5888fdde065710a47eba3749}\index{MMU@{MMU}!dump\_memory@{dump\_memory}}
+\index{dump\_memory@{dump\_memory}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{dump\_memory()}{dump\_memory()}}
+{\footnotesize\ttfamily \label{classMMU_a06014e0a5888fdde065710a47eba3749} 
+std::\+vector$<$ u8 $>$ MMU::\+dump\+\_\+memory (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00212}{212}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+\Hypertarget{classMMU_a616cd250747a4318d09bdbb78544c547}\index{MMU@{MMU}!get\_current\_rom\_bank@{get\_current\_rom\_bank}}
+\index{get\_current\_rom\_bank@{get\_current\_rom\_bank}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{get\_current\_rom\_bank()}{get\_current\_rom\_bank()}}
+{\footnotesize\ttfamily \label{classMMU_a616cd250747a4318d09bdbb78544c547} 
+u8 MMU::\+get\+\_\+current\+\_\+rom\+\_\+bank (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00175}{175}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+\Hypertarget{classMMU_a7d312874d41eb012638db8ed17bcf3b7}\index{MMU@{MMU}!get\_joypad\_state@{get\_joypad\_state}}
+\index{get\_joypad\_state@{get\_joypad\_state}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{get\_joypad\_state()}{get\_joypad\_state()}}
+{\footnotesize\ttfamily \label{classMMU_a7d312874d41eb012638db8ed17bcf3b7} 
+u8 MMU::\+get\+\_\+joypad\+\_\+state (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00194}{194}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+\Hypertarget{classMMU_a407d409361770e170e78143bd8d344a6}\index{MMU@{MMU}!get\_read\_count@{get\_read\_count}}
+\index{get\_read\_count@{get\_read\_count}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{get\_read\_count()}{get\_read\_count()}}
+{\footnotesize\ttfamily \label{classMMU_a407d409361770e170e78143bd8d344a6} 
+u64 MMU::\+get\+\_\+read\+\_\+count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8hpp_source_l00057}{57}} of file \doxymbox{\hyperlink{mmu_8hpp_source}{mmu.\+hpp}}.
+
+\Hypertarget{classMMU_ae468da48ec6292614023a55f2e9fb98b}\index{MMU@{MMU}!get\_write\_count@{get\_write\_count}}
+\index{get\_write\_count@{get\_write\_count}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{get\_write\_count()}{get\_write\_count()}}
+{\footnotesize\ttfamily \label{classMMU_ae468da48ec6292614023a55f2e9fb98b} 
+u64 MMU::\+get\+\_\+write\+\_\+count (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8hpp_source_l00058}{58}} of file \doxymbox{\hyperlink{mmu_8hpp_source}{mmu.\+hpp}}.
+
+\Hypertarget{classMMU_ae0a2816fd2ca6b4663e4f77fc252d9a0}\index{MMU@{MMU}!load\_memory@{load\_memory}}
+\index{load\_memory@{load\_memory}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{load\_memory()}{load\_memory()}}
+{\footnotesize\ttfamily \label{classMMU_ae0a2816fd2ca6b4663e4f77fc252d9a0} 
+bool MMU::\+load\+\_\+memory (\begin{DoxyParamCaption}\item[{const std::\+vector$<$ u8 $>$ \&}]{dump}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00245}{245}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
 \Hypertarget{classMMU_a4a7b8a9bb3d11a612b7c9ec6e5bef7d9}\index{MMU@{MMU}!map\_rom@{map\_rom}}
 \index{map\_rom@{map\_rom}!MMU@{MMU}}
 \doxysubsubsection{\texorpdfstring{map\_rom()}{map\_rom()}}
@@ -44,19 +134,7 @@ bool MMU::\+map\+\_\+rom (\begin{DoxyParamCaption}\item[{const std::\+vector$<$ 
 
 
 
-Maps a loaded ROM vector into the Game Boy\textquotesingle{}s physical ROM space. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em rom\+\_\+data} & A vector containing the raw bytes of the .gb file. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-true if successfully mapped, false if the vector was empty. 
-\end{DoxyReturn}
-
-
-Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00035}{35}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00183}{183}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
 
 \Hypertarget{classMMU_ac3dbb6955cd9e630ab8c6b5f184d31b7}\index{MMU@{MMU}!read@{read}}
 \index{read@{read}!MMU@{MMU}}
@@ -66,19 +144,37 @@ u8 MMU::\+read (\begin{DoxyParamCaption}\item[{u16}]{address}{}\end{DoxyParamCap
 
 
 
-Reads a single byte from the emulated memory bus. 
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00076}{76}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+\Hypertarget{classMMU_aa6a9a149d1a9ce15fdb04ce1b0b7b2d0}\index{MMU@{MMU}!reset@{reset}}
+\index{reset@{reset}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{classMMU_aa6a9a149d1a9ce15fdb04ce1b0b7b2d0} 
+void MMU::\+reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
 
 
-\begin{DoxyParams}{Parameters}
-{\em address} & The 16-\/bit memory address to read from. \\
-\hline
-\end{DoxyParams}
-\begin{DoxyReturn}{Returns}
-The 8-\/bit value at the specified address. 
-\end{DoxyReturn}
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00280}{280}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+\Hypertarget{classMMU_a0b04242fe5472d9f01d7e2b57aca0d84}\index{MMU@{MMU}!set\_joypad\_state@{set\_joypad\_state}}
+\index{set\_joypad\_state@{set\_joypad\_state}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{set\_joypad\_state()}{set\_joypad\_state()}}
+{\footnotesize\ttfamily \label{classMMU_a0b04242fe5472d9f01d7e2b57aca0d84} 
+void MMU::\+set\+\_\+joypad\+\_\+state (\begin{DoxyParamCaption}\item[{u8}]{action}{, }\item[{u8}]{direction}{}\end{DoxyParamCaption})}
 
 
-Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00011}{11}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00201}{201}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+
+\Hypertarget{classMMU_a0de8e519fcac7e31e8a19e98728939d7}\index{MMU@{MMU}!step\_timer@{step\_timer}}
+\index{step\_timer@{step\_timer}!MMU@{MMU}}
+\doxysubsubsection{\texorpdfstring{step\_timer()}{step\_timer()}}
+{\footnotesize\ttfamily \label{classMMU_a0de8e519fcac7e31e8a19e98728939d7} 
+void MMU::\+step\+\_\+timer (\begin{DoxyParamCaption}\item[{int}]{cycles}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00179}{179}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
 
 \Hypertarget{classMMU_a5df9ab9c4ac566decef576fc819ad4a1}\index{MMU@{MMU}!write@{write}}
 \index{write@{write}!MMU@{MMU}}
@@ -88,18 +184,7 @@ void MMU::\+write (\begin{DoxyParamCaption}\item[{u16}]{address}{, }\item[{u8}]{
 
 
 
-Writes a single byte to the emulated memory bus. Safeguards are in place to prevent overwriting the physical ROM. 
-
-
-\begin{DoxyParams}{Parameters}
-{\em address} & The 16-\/bit memory address to write to. \\
-\hline
-{\em value} & The 8-\/bit value to store. \\
-\hline
-\end{DoxyParams}
-
-
-Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00020}{20}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
+Definition at line \doxymbox{\hyperlink{mmu_8cpp_source_l00123}{123}} of file \doxymbox{\hyperlink{mmu_8cpp_source}{mmu.\+cpp}}.
 
 
 

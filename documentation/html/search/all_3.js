@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['build_20and_20run_0',['Build and Run',['../index.html#autotoc_md4',1,'']]]
+  ['display_20modes_0',['Display Modes',['../index.html#autotoc_md2',1,'']]]
 ];
