@@ -2,6 +2,8 @@
 
 Welcome to the GB_Emulator project—a rigorous, low-level architectural simulation of the original Nintendo Game Boy (DMG-01). Engineered from the ground up in modern C++17, this project transcends a simple emulator; it is a masterclass in component-driven system design, cycle-accurate synchronization, and robust software engineering practices.
 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c319c351-3592-4a4c-943c-8008b0df7bc3" />
+
 ## System Architecture
 
 Our emulator fundamentally adheres to a highly modular, decoupled architecture. Component ownership boundaries are strictly enforced to replicate the physical hardware constraints of the DMG-01 motherboard. This ensures a clean separation of concerns, deterministic execution, and unparalleled stability.
