@@ -32,10 +32,13 @@ static void update_joypad(MMU& mmu, const JoypadState& joy) {
 int main(const int argc, char **argv)
 {
     bool debug_mode = false;
+    bool fullscreen_mode = false;
     std::string rom_path;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--debug") == 0 || std::strcmp(argv[i], "-d") == 0) {
             debug_mode = true;
+        } else if (std::strcmp(argv[i], "--fullscreen") == 0 || std::strcmp(argv[i], "-f") == 0) {
+            fullscreen_mode = true;
         } else {
             rom_path = argv[i];
         }
@@ -72,7 +75,7 @@ int main(const int argc, char **argv)
         info.rom_bytes = rom_data;
         ppu.set_rom_info(info);
 
-        ppu.init_window(debug_mode, title);
+        ppu.init_window(debug_mode, title, fullscreen_mode);
         std::cout << "Running in " << (debug_mode ? "Debug/Feature" : "Simple") << " Mode...\n";
 
         JoypadState joypad;

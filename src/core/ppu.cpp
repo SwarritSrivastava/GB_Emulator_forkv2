@@ -271,16 +271,28 @@ u32 PPU::get_color(u8 color_id, u16 palette_address) const {
 // Debug / UI Features
 // ----------------------------------------------------
 
-void PPU::init_window(bool debug, const std::string& rom_title) {
+void PPU::init_window(bool debug, const std::string& rom_title, bool fullscreen) {
     debugMode = debug;
+    sf::State state = fullscreen ? sf::State::Fullscreen : sf::State::Windowed;
+
     if (debugMode) {
-        window.create(sf::VideoMode({window_width, window_height}), "GB Emulator - Debug View");
+        sf::VideoMode mode = fullscreen ? sf::VideoMode({1920, 1080}) : sf::VideoMode({window_width, window_height});
+        window.create(mode, "GB Emulator - Debug View", state);
+        
+        sf::View view(sf::FloatRect({0.0f, 0.0f}, {static_cast<float>(window_width), static_cast<float>(window_height)}));
+        window.setView(view);
+
         screenSprite.setPosition(sf::Vector2f(32.0f, 216.0f));
         screenSprite.setScale(sf::Vector2f(3.0f, 3.0f));
     } else {
-        window.create(sf::VideoMode({screen_width * 4, screen_height * 4}), "GB Emulator");
+        sf::VideoMode mode = fullscreen ? sf::VideoMode({1920, 1080}) : sf::VideoMode({screen_width * 4, screen_height * 4});
+        window.create(mode, "GB Emulator", state);
+        
+        sf::View view(sf::FloatRect({0.0f, 0.0f}, {static_cast<float>(screen_width), static_cast<float>(screen_height)}));
+        window.setView(view);
+
         screenSprite.setPosition(sf::Vector2f(0.0f, 0.0f));
-        screenSprite.setScale(sf::Vector2f(4.0f, 4.0f));
+        screenSprite.setScale(sf::Vector2f(1.0f, 1.0f));
     }
     window.setFramerateLimit(60);
 

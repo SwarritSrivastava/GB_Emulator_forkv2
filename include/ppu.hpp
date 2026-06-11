@@ -44,7 +44,7 @@ public:
     void clear_frame_ready() { frame_ready = false; }
 
     // Debug / Feature functions
-    void init_window(bool debug, const std::string& rom_title);
+    void init_window(bool debug, const std::string& rom_title, bool fullscreen = false);
     bool isOpen() const;
     bool isPaused() const { return paused; }
     void handleEvents(JoypadState& joypad);
