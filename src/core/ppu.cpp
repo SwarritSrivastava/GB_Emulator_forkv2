@@ -363,75 +363,68 @@ void PPU::handleEvents(JoypadState& joypad) {
                 
                 // Debug actions
                 case sf::Keyboard::Key::Space:
-                    if (debugMode) {
-                        paused = !paused;
-                        statusMessage = paused ? "Paused" : "Running";
-                        statusTimer = status_display_seconds;
-                    }
+                    paused = !paused;
+                    statusMessage = paused ? "Paused" : "Running";
+                    statusTimer = status_display_seconds;
                     break;
                 case sf::Keyboard::Key::N:
-                    if (debugMode && paused) {
+                    if (paused) {
                         stepRequested = true;
                         statusMessage = "Step";
                         statusTimer = status_display_seconds;
                     }
                     break;
                 case sf::Keyboard::Key::T:
-                    if (debugMode) {
-                        turbo = !turbo;
-                        statusMessage = turbo ? "Turbo Mode 2x" : "Normal Mode 1x";
-                        statusTimer = status_display_seconds;
-                    }
+                    turbo = !turbo;
+                    statusMessage = turbo ? "Turbo Mode 2x" : "Normal Mode 1x";
+                    statusTimer = status_display_seconds;
                     break;
                 case sf::Keyboard::Key::R:
-                    if (debugMode) {
-                        resetRequested = true;
-                        statusMessage = "Reset requested";
-                        statusTimer = status_display_seconds;
-                    }
+                    resetRequested = true;
+                    statusMessage = "Reset requested";
+                    statusTimer = status_display_seconds;
                     break;
-                case sf::Keyboard::Key::E:
-                    if (debugMode) {
-                        activeSlot = -1; // -1 represents 'e'
-                        bool ok = false;
-                        if (keyPressed->shift || keyPressed->control) {
-                            std::string filepath = "savestates/external.bin";
-                            FILE* f = popen("zenity --file-selection --save --confirm-overwrite --file-filter='Save States (*.bin) | *.bin' 2>/dev/null", "r");
-                            if (f) {
-                                char buf[1024];
-                                if (fgets(buf, sizeof(buf), f)) {
-                                    std::string s(buf);
-                                    if (!s.empty() && s.back() == '\n') s.pop_back();
-                                    if (!s.empty()) filepath = s;
-                                }
-                                pclose(f);
+                case sf::Keyboard::Key::E: {
+                    activeSlot = -1; // -1 represents 'e'
+                    bool ok = false;
+                    if (keyPressed->shift || keyPressed->control) {
+                        std::string filepath = "savestates/external.bin";
+                        FILE* f = popen("zenity --file-selection --save --confirm-overwrite --file-filter='Save States (*.bin) | *.bin' 2>/dev/null", "r");
+                        if (f) {
+                            char buf[1024];
+                            if (fgets(buf, sizeof(buf), f)) {
+                                std::string s(buf);
+                                if (!s.empty() && s.back() == '\n') s.pop_back();
+                                if (!s.empty()) filepath = s;
                             }
-                            externalStatePath = filepath;
-                            ok = saveStatePath(filepath);
-                            std::string filename = std::filesystem::path(filepath).filename().string();
-                            statusMessage = ok ? "Saved: " + filename : "Save failed";
-                        } else {
-                            std::string filepath = "savestates/external.bin";
-                            FILE* f = popen("zenity --file-selection --file-filter='Save States (*.bin) | *.bin' 2>/dev/null", "r");
-                            if (f) {
-                                char buf[1024];
-                                if (fgets(buf, sizeof(buf), f)) {
-                                    std::string s(buf);
-                                    if (!s.empty() && s.back() == '\n') s.pop_back();
-                                    if (!s.empty()) filepath = s;
-                                }
-                                pclose(f);
-                            }
-                            externalStatePath = filepath;
-                            ok = loadStatePath(filepath);
-                            std::string filename = std::filesystem::path(filepath).filename().string();
-                            statusMessage = ok ? "Loaded: " + filename : "Load failed";
+                            pclose(f);
                         }
-                        statusTimer = status_display_seconds;
+                        externalStatePath = filepath;
+                        ok = saveStatePath(filepath);
+                        std::string filename = std::filesystem::path(filepath).filename().string();
+                        statusMessage = ok ? "Saved: " + filename : "Save failed";
+                    } else {
+                        std::string filepath = "savestates/external.bin";
+                        FILE* f = popen("zenity --file-selection --file-filter='Save States (*.bin) | *.bin' 2>/dev/null", "r");
+                        if (f) {
+                            char buf[1024];
+                            if (fgets(buf, sizeof(buf), f)) {
+                                std::string s(buf);
+                                if (!s.empty() && s.back() == '\n') s.pop_back();
+                                if (!s.empty()) filepath = s;
+                            }
+                            pclose(f);
+                        }
+                        externalStatePath = filepath;
+                        ok = loadStatePath(filepath);
+                        std::string filename = std::filesystem::path(filepath).filename().string();
+                        statusMessage = ok ? "Loaded: " + filename : "Load failed";
                     }
+                    statusTimer = status_display_seconds;
                     break;
+                }
                 default:
-                    if (debugMode && keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
+                    if (keyPressed->code >= sf::Keyboard::Key::Num0 && keyPressed->code <= sf::Keyboard::Key::Num9) {
                         int slot = static_cast<int>(keyPressed->code) - static_cast<int>(sf::Keyboard::Key::Num0);
                         activeSlot = slot;
                         bool ok = false;
@@ -531,6 +524,12 @@ void PPU::render() {
         window.clear();
         screenTexture.update(reinterpret_cast<const uint8_t*>(framebuffer.data()));
         window.draw(screenSprite);
+        if (!statusMessage.empty()) {
+            window.setView(window.getDefaultView());
+            drawText(sf::Vector2f(20.0f, 20.0f), statusMessage, 28, sf::Color(255, 50, 50));
+            sf::View view(sf::FloatRect({0.0f, 0.0f}, {static_cast<float>(screen_width), static_cast<float>(screen_height)}));
+            window.setView(view);
+        }
         window.display();
     }
 }
