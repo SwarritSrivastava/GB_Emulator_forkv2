@@ -13,7 +13,7 @@ constexpr u32 screen_width = 160;
 constexpr u32 screen_height = 144;
 constexpr u32 ui_width = 600;
 constexpr u32 ui_height = 420;
-constexpr u32 window_width = screen_width + ui_width + 64;
+constexpr u32 window_width = 1600;
 constexpr u32 window_height = 900;
 constexpr size_t opcode_log_size = 28;
 constexpr float status_display_seconds = 2.5f;
@@ -282,8 +282,8 @@ void PPU::init_window(bool debug, const std::string& rom_title, bool fullscreen)
         sf::View view(sf::FloatRect({0.0f, 0.0f}, {static_cast<float>(window_width), static_cast<float>(window_height)}));
         window.setView(view);
 
-        screenSprite.setPosition(sf::Vector2f(32.0f, 216.0f));
-        screenSprite.setScale(sf::Vector2f(3.0f, 3.0f));
+        screenSprite.setPosition(sf::Vector2f(32.0f, 32.0f));
+        screenSprite.setScale(sf::Vector2f(5.0f, 5.0f));
     } else {
         sf::VideoMode mode = fullscreen ? sf::VideoMode({1920, 1080}) : sf::VideoMode({screen_width * 4, screen_height * 4});
         window.create(mode, "GB Emulator", state);
@@ -467,38 +467,23 @@ void PPU::handleEvents(JoypadState& joypad) {
         if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (mousePressed->button == sf::Mouse::Button::Left) {
                 sf::Vector2f mPos = window.mapPixelToCoords(mousePressed->position);
-                const float gamepadPanelStartX = 32.0f;
-                const float gamepadPanelTop = 216.0f + screen_height * 3.0f + 24.0f;
-                const float gpX = gamepadPanelStartX + 100.0f;
+                const float rp2X = 1238.0f; 
+                const float rp2W = window_width - rp2X - 32.0f;
+                const float gpX = rp2X + (rp2W - 220.0f) / 2.0f;
+                const float gpY = 32.0f + 60.0f;
 
                 auto rectContains = [](float rx, float ry, float rw, float rh, float px, float py) {
                     return px >= rx && px <= rx + rw && py >= ry && py <= ry + rh;
                 };
 
-                if (rectContains(gpX + 40.0f, gamepadPanelTop + 40.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.up = !clickableJoypad.up;
-                }
-                if (rectContains(gpX + 40.0f, gamepadPanelTop + 100.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.down = !clickableJoypad.down;
-                }
-                if (rectContains(gpX + 10.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.left = !clickableJoypad.left;
-                }
-                if (rectContains(gpX + 70.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.right = !clickableJoypad.right;
-                }
-                if (rectContains(gpX + 175.0f, gamepadPanelTop + 60.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.a = !clickableJoypad.a;
-                }
-                if (rectContains(gpX + 140.0f, gamepadPanelTop + 85.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.b = !clickableJoypad.b;
-                }
-                if (rectContains(gpX + 35.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.select = !clickableJoypad.select;
-                }
-                if (rectContains(gpX + 110.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
-                    clickableJoypad.start = !clickableJoypad.start;
-                }
+                if (rectContains(gpX + 40.0f, gpY + 0.0f, 30.0f, 30.0f, mPos.x, mPos.y)) { clickableJoypad.up = !clickableJoypad.up; }
+                if (rectContains(gpX + 40.0f, gpY + 80.0f, 30.0f, 30.0f, mPos.x, mPos.y)) { clickableJoypad.down = !clickableJoypad.down; }
+                if (rectContains(gpX + 0.0f, gpY + 40.0f, 30.0f, 30.0f, mPos.x, mPos.y)) { clickableJoypad.left = !clickableJoypad.left; }
+                if (rectContains(gpX + 80.0f, gpY + 40.0f, 30.0f, 30.0f, mPos.x, mPos.y)) { clickableJoypad.right = !clickableJoypad.right; }
+                if (rectContains(gpX + 185.0f, gpY + 20.0f, 34.0f, 34.0f, mPos.x, mPos.y)) { clickableJoypad.a = !clickableJoypad.a; }
+                if (rectContains(gpX + 140.0f, gpY + 50.0f, 34.0f, 34.0f, mPos.x, mPos.y)) { clickableJoypad.b = !clickableJoypad.b; }
+                if (rectContains(gpX + 30.0f, gpY + 140.0f, 70.0f, 24.0f, mPos.x, mPos.y)) { clickableJoypad.select = !clickableJoypad.select; }
+                if (rectContains(gpX + 120.0f, gpY + 140.0f, 70.0f, 24.0f, mPos.x, mPos.y)) { clickableJoypad.start = !clickableJoypad.start; }
             }
         }
     }
@@ -537,7 +522,7 @@ void PPU::update(const float dtSeconds, const u64 cyclesExecuted) {
 
 void PPU::render() {
     if (debugMode) {
-        window.clear(sf::Color(18, 20, 24));
+        window.clear(sf::Color(0, 0, 0));
         screenTexture.update(reinterpret_cast<const uint8_t*>(framebuffer.data()));
         window.draw(screenSprite);
         drawPanels();
@@ -715,81 +700,142 @@ bool PPU::loadStatePath(const std::string& filepath) {
 
 bool PPU::loadStateSlot(const int slot) {
     std::ostringstream path;
-    path << "savestates/slot_" << slot << ".bin";
+path << "savestates/slot_" << slot << ".bin";
     return loadStatePath(path.str());
 }
 
 void PPU::drawPanels() {
-    const float panelStartX = 32.0f + screen_width * 3.0f + 32.0f;
-    const float panelTop = 24.0f;
-    const float panelWidth = window_width - panelStartX - 24.0f;
-
-    sf::RectangleShape panelBg(sf::Vector2f(panelWidth, window_height - 48.0f));
-    panelBg.setPosition(sf::Vector2f(panelStartX, panelTop));
-    panelBg.setFillColor(sf::Color(26, 29, 35));
-    panelBg.setOutlineColor(sf::Color(50, 55, 70));
-    panelBg.setOutlineThickness(1.0f);
-    window.draw(panelBg);
-
     if (!cpu) return;
 
-    float cursorY = panelTop + 16.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "CPU Registers", 16, sf::Color(220, 220, 230));
-    cursorY += 26.0f;
+    const sf::Color panelBgColor(12, 12, 15);
+    const sf::Color panelBorderColor(40, 40, 50);
+    const sf::Color titleColor(0, 255, 128); // Neon Green
+    const sf::Color textColor(200, 200, 200);
+    const sf::Color highlightColor(0, 200, 255); // Neon Blue
+    const sf::Color errorColor(255, 50, 50); // Neon Red
 
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "AF: " + toHex(cpu->get_af(), 4), 14, sf::Color(180, 200, 240));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "BC: " + toHex(cpu->get_bc(), 4), 14, sf::Color(180, 200, 240));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "DE: " + toHex(cpu->get_de(), 4), 14, sf::Color(180, 200, 240));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "HL: " + toHex(cpu->get_hl(), 4), 14, sf::Color(180, 200, 240));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "SP: " + toHex(cpu->get_sp(), 4) + "  PC: " + toHex(cpu->get_pc(), 4), 14, sf::Color(180, 200, 240));
-    cursorY += 22.0f;
+    // Right Panel 1 (CPU, ROM, Memory, Trace)
+    const float rp1X = 32.0f + 800.0f + 32.0f; // 864.0f
+    const float rp1Y = 32.0f;
+    const float rp1W = 350.0f;
+    const float rp1H = window_height - 64.0f; // 836.0f
 
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Flags: Z=" + std::to_string(cpu->get_flag_z()) +
-                                          " N=" + std::to_string(cpu->get_flag_n()) +
-                                          " H=" + std::to_string(cpu->get_flag_h()) +
-                                          " C=" + std::to_string(cpu->get_flag_c()), 14, sf::Color(190, 190, 200));
-    cursorY += 24.0f;
+    sf::RectangleShape rp1Bg(sf::Vector2f(rp1W, rp1H));
+    rp1Bg.setPosition(sf::Vector2f(rp1X, rp1Y));
+    rp1Bg.setFillColor(panelBgColor);
+    rp1Bg.setOutlineColor(panelBorderColor);
+    rp1Bg.setOutlineThickness(1.0f);
+    window.draw(rp1Bg);
 
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "ROM", 16, sf::Color(220, 220, 230));
-    cursorY += 24.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Title: " + romInfo.title, 14, sf::Color(180, 200, 240));
-    cursorY += 18.0f;
+    float cursorY = rp1Y + 16.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "CPU Registers", 18, titleColor);
+    cursorY += 28.0f;
+
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "AF: " + toHex(cpu->get_af(), 4), 14, highlightColor);
+    cursorY += 20.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "BC: " + toHex(cpu->get_bc(), 4), 14, highlightColor);
+    cursorY += 20.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "DE: " + toHex(cpu->get_de(), 4), 14, highlightColor);
+    cursorY += 20.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "HL: " + toHex(cpu->get_hl(), 4), 14, highlightColor);
+    cursorY += 20.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "SP: " + toHex(cpu->get_sp(), 4) + "  PC: " + toHex(cpu->get_pc(), 4), 14, highlightColor);
+    cursorY += 20.0f;
     
-    // Shorten MBC name if too long to fit
-    std::string shortMbc = romInfo.mbc_name;
-    if (shortMbc.length() > 16) {
-        shortMbc = shortMbc.substr(0, 13) + "...";
-    }
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Type: 0x" + toHex(romInfo.type, 2) + " (" + shortMbc + ")", 14, sf::Color(180, 200, 240));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "ROM: 0x" + toHex(romInfo.rom_size, 2) + "  RAM: 0x" + toHex(romInfo.ram_size, 2), 14, sf::Color(180, 200, 240));
-    cursorY += 24.0f;
+    std::string flags = "Z=" + std::to_string(cpu->get_flag_z()) +
+                        " N=" + std::to_string(cpu->get_flag_n()) +
+                        " H=" + std::to_string(cpu->get_flag_h()) +
+                        " C=" + std::to_string(cpu->get_flag_c());
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "Flags: " + flags, 14, textColor);
+    cursorY += 28.0f;
 
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Memory/Bus", 16, sf::Color(220, 220, 230));
-    cursorY += 24.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Rds: " + std::to_string(lastReads) + "  Wrs: " + std::to_string(lastWrites), 14, sf::Color(180, 200, 240));
-    cursorY += 18.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Cycles: " + std::to_string(lastCycles), 14, sf::Color(180, 200, 240));
-    cursorY += 24.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "ROM Info", 18, titleColor);
+    cursorY += 28.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "Title: " + romInfo.title, 14, textColor);
+    cursorY += 20.0f;
+    std::string shortMbc = mbcNameFromType(romInfo.type);
+    if (shortMbc.length() > 15) shortMbc = shortMbc.substr(0, 12) + "...";
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "Type: 0x" + toHex(romInfo.type, 2) + " (" + shortMbc + ")", 14, textColor);
+    cursorY += 20.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "ROM: 0x" + toHex(romInfo.rom_size, 2) + "  RAM: 0x" + toHex(romInfo.ram_size, 2), 14, textColor);
+    cursorY += 28.0f;
 
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "Opcode Trace", 16, sf::Color(220, 220, 230));
-    cursorY += 22.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "Memory/Bus", 18, titleColor);
+    cursorY += 28.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "Rds: " + std::to_string(lastReads) + "  Wrs: " + std::to_string(lastWrites), 14, textColor);
+    cursorY += 20.0f;
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "Cycles: " + std::to_string(lastCycles), 14, textColor);
+    cursorY += 28.0f;
+
+    drawText(sf::Vector2f(rp1X + 16.0f, cursorY), "Opcode Trace", 18, titleColor);
+    cursorY += 26.0f;
     int shown = 0;
     for (const auto& trace : opcodeLog) {
-        if (shown++ >= 10) break;
-        drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), toHex(trace.pc, 4) + ": " + toHex(trace.opcode, 2), 13, sf::Color(180, 200, 240));
-        cursorY += 16.0f;
+        if (shown++ >= 14) break; 
+        drawText(sf::Vector2f(rp1X + 16.0f, cursorY), toHex(trace.pc, 4) + ": " + toHex(trace.opcode, 2), 14, highlightColor);
+        cursorY += 18.0f;
     }
 
-    cursorY += 10.0f;
-    drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), "ROM Bytes", 16, sf::Color(220, 220, 230));
-    cursorY += 22.0f;
+    if (!statusMessage.empty()) {
+        drawText(sf::Vector2f(rp1X + 16.0f, rp1Y + rp1H - 24.0f), statusMessage, 14, errorColor);
+    }
+
+    // Right Panel 2 (Gamepad, ROM Bytes)
+    const float rp2X = rp1X + rp1W + 24.0f; // 1238.0f
+    const float rp2Y = 32.0f;
+    const float rp2W = window_width - rp2X - 32.0f; // 330.0f
+    const float rp2H = window_height - 64.0f; // 836.0f
+
+    sf::RectangleShape rp2Bg(sf::Vector2f(rp2W, rp2H));
+    rp2Bg.setPosition(sf::Vector2f(rp2X, rp2Y));
+    rp2Bg.setFillColor(panelBgColor);
+    rp2Bg.setOutlineColor(panelBorderColor);
+    rp2Bg.setOutlineThickness(1.0f);
+    window.draw(rp2Bg);
+
+    drawText(sf::Vector2f(rp2X + 16.0f, rp2Y + 16.0f), "Virtual Gamepad", 18, titleColor);
+    
+    const float gpX = rp2X + (rp2W - 220.0f) / 2.0f;
+    const float gpY = rp2Y + 60.0f;
+
+    auto drawButton = [&](float x, float y, float w, float h, const std::string& label, bool isActive) {
+        sf::RectangleShape btn(sf::Vector2f(w, h));
+        btn.setPosition(sf::Vector2f(x, y));
+        if (isActive) {
+            btn.setFillColor(titleColor); 
+            btn.setOutlineColor(sf::Color(255, 255, 255));
+        } else {
+            btn.setFillColor(sf::Color(20, 20, 25)); 
+            btn.setOutlineColor(highlightColor);
+        }
+        btn.setOutlineThickness(1.0f);
+        window.draw(btn);
+
+        float textX = x + (w - label.length() * 7.5f) / 2.0f;
+        float textY = y + (h - 14.0f) / 2.0f - 1.0f;
+        drawText(sf::Vector2f(textX, textY), label, 12, isActive ? sf::Color(0, 0, 0) : textColor);
+    };
+
+    // D-Pad
+    drawButton(gpX + 40.0f, gpY + 0.0f, 30.0f, 30.0f, "U", currentJoypadState.up);
+    drawButton(gpX + 0.0f, gpY + 40.0f, 30.0f, 30.0f, "L", currentJoypadState.left);
+    drawButton(gpX + 80.0f, gpY + 40.0f, 30.0f, 30.0f, "R", currentJoypadState.right);
+    drawButton(gpX + 40.0f, gpY + 80.0f, 30.0f, 30.0f, "D", currentJoypadState.down);
+
+    // Action
+    drawButton(gpX + 140.0f, gpY + 50.0f, 34.0f, 34.0f, "B", currentJoypadState.b);
+    drawButton(gpX + 185.0f, gpY + 20.0f, 34.0f, 34.0f, "A", currentJoypadState.a);
+
+    // Select/Start
+    drawButton(gpX + 30.0f, gpY + 140.0f, 70.0f, 24.0f, "SELECT", currentJoypadState.select);
+    drawButton(gpX + 120.0f, gpY + 140.0f, 70.0f, 24.0f, "START", currentJoypadState.start);
+
+    // ROM Bytes
+    float romY = gpY + 200.0f;
+    drawText(sf::Vector2f(rp2X + 16.0f, romY), "ROM Bytes", 18, titleColor);
+    romY += 28.0f;
     if (!romInfo.rom_bytes.empty()) {
-        const size_t maxRows = std::min(rom_rows_visible, romInfo.rom_bytes.size() / rom_bytes_per_row + 1);
+        const size_t maxRows = std::min(rom_rows_visible * 3, romInfo.rom_bytes.size() / rom_bytes_per_row + 1);
         for (size_t row = 0; row < maxRows; ++row) {
             std::ostringstream line;
             const size_t offset = row * rom_bytes_per_row;
@@ -797,108 +843,46 @@ void PPU::drawPanels() {
             for (size_t i = 0; i < rom_bytes_per_row && offset + i < romInfo.rom_bytes.size(); ++i) {
                 line << toHex(romInfo.rom_bytes[offset + i], 2) << " ";
             }
-            drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), line.str(), 12, sf::Color(170, 190, 210));
-            cursorY += 14.0f;
+            drawText(sf::Vector2f(rp2X + 16.0f, romY), line.str(), 14, highlightColor);
+            romY += 18.0f;
         }
     }
 
-    cursorY = std::max(cursorY + 16.0f, window_height - 64.0f);
-    if (!statusMessage.empty()) {
-        drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), statusMessage, 13, sf::Color(220, 140, 140));
-    }
+    // Emulator Control Panel (Below Game Screen)
+    const float cpX = 32.0f;
+    const float cpY = 32.0f + 720.0f + 24.0f; // 776.0f
+    const float cpW = 800.0f;
+    const float cpH = window_height - cpY - 32.0f; // 92.0f
 
-    // Draw Control Panel Box ABOVE the game screen
-    const float ctrlStartX = 32.0f;
-    const float ctrlTop = 32.0f;
-    const float ctrlWidth = screen_width * 3.0f;
-    const float ctrlHeight = 160.0f;
+    sf::RectangleShape cpBg(sf::Vector2f(cpW, cpH));
+    cpBg.setPosition(sf::Vector2f(cpX, cpY));
+    cpBg.setFillColor(panelBgColor);
+    cpBg.setOutlineColor(panelBorderColor);
+    cpBg.setOutlineThickness(1.0f);
+    window.draw(cpBg);
 
-    sf::RectangleShape ctrlBg(sf::Vector2f(ctrlWidth, ctrlHeight));
-    ctrlBg.setPosition(sf::Vector2f(ctrlStartX, ctrlTop));
-    ctrlBg.setFillColor(sf::Color(26, 29, 35));
-    ctrlBg.setOutlineColor(sf::Color(50, 55, 70));
-    ctrlBg.setOutlineThickness(1.0f);
-    window.draw(ctrlBg);
-
-    float ctrlY = ctrlTop + 12.0f;
-    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "Emulator Control Panel", 16, sf::Color(100, 220, 200));
-    ctrlY += 24.0f;
-
-    std::string speedStr = turbo ? "Turbo Mode (2x)" : "Normal Mode (1x)";
-    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "Speed:  " + speedStr + "  (Toggle: Press 'T')", 13, sf::Color(180, 200, 240));
-    ctrlY += 18.0f;
-
+    float col1X = cpX + 16.0f;
+    drawText(sf::Vector2f(col1X, cpY + 12.0f), "Emulator Status", 16, titleColor);
+    std::string speedStr = turbo ? "2x (Turbo)" : "1x (Normal)";
+    drawText(sf::Vector2f(col1X, cpY + 36.0f), "Speed: " + speedStr, 14, textColor);
     std::string slotStr = (activeSlot == -1) ? "E (External)" : std::to_string(activeSlot);
-    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "Active State Slot:  [" + slotStr + "]", 13, sf::Color(180, 200, 240));
-    ctrlY += 16.0f;
+    drawText(sf::Vector2f(col1X, cpY + 56.0f), "Slot:  [" + slotStr + "]", 14, textColor);
+    
     if (activeSlot == -1 && !externalStatePath.empty()) {
         std::string filename = std::filesystem::path(externalStatePath).filename().string();
-        if (filename.length() > 37) filename = filename.substr(0, 34) + "...";
-        drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "File: " + filename, 11, sf::Color(140, 160, 180));
-        ctrlY += 14.0f;
-    } else {
-        ctrlY += 14.0f;
+        if (filename.length() > 20) filename = filename.substr(0, 17) + "...";
+        drawText(sf::Vector2f(col1X + 120.0f, cpY + 56.0f), "File: " + filename, 12, sf::Color(140, 160, 180));
     }
 
-    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "State Hotkeys:", 13, sf::Color(210, 210, 210));
-    ctrlY += 14.0f;
-    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Load / Save Slot: Press 0-9 / Shift + 0-9", 11, sf::Color(170, 190, 210));
-    ctrlY += 14.0f;
-    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Load / Save External: Press E / Shift + E", 11, sf::Color(170, 190, 210));
-    ctrlY += 18.0f;
+    float col2X = cpX + 260.0f;
+    drawText(sf::Vector2f(col2X, cpY + 12.0f), "State Hotkeys", 16, titleColor);
+    drawText(sf::Vector2f(col2X, cpY + 36.0f), "0-9 / Shift+0-9: Load/Save Slot", 13, highlightColor);
+    drawText(sf::Vector2f(col2X, cpY + 56.0f), "E / Shift+E: Load/Save External", 13, highlightColor);
 
-    drawText(sf::Vector2f(ctrlStartX + 16.0f, ctrlY), "System Hotkeys:", 13, sf::Color(210, 210, 210));
-    ctrlY += 14.0f;
-    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Reset Emulator: Press 'R'  |  Pause/Play: Press Space", 11, sf::Color(170, 190, 210));
-    ctrlY += 14.0f;
-    drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Single Step (when paused): Press 'N'", 11, sf::Color(170, 190, 210));
-
-    // Draw Gamepad Panel Box BELOW the game screen
-    const float gamepadPanelStartX = 32.0f;
-    const float gamepadPanelTop = 216.0f + screen_height * 3.0f + 24.0f;
-    const float gamepadPanelWidth = screen_width * 3.0f;
-    const float gamepadPanelHeight = window_height - gamepadPanelTop - 24.0f;
-
-    sf::RectangleShape gamepadBg(sf::Vector2f(gamepadPanelWidth, gamepadPanelHeight));
-    gamepadBg.setPosition(sf::Vector2f(gamepadPanelStartX, gamepadPanelTop));
-    gamepadBg.setFillColor(sf::Color(26, 29, 35));
-    gamepadBg.setOutlineColor(sf::Color(50, 55, 70));
-    gamepadBg.setOutlineThickness(1.0f);
-    window.draw(gamepadBg);
-
-    const float gamepadStartX = gamepadPanelStartX + 100.0f;
-    drawText(sf::Vector2f(gamepadPanelStartX + 16.0f, gamepadPanelTop + 12.0f), "Gamepad (Clickable)", 16, sf::Color(100, 220, 200));
-
-    auto drawButton = [&](float x, float y, float w, float h, const std::string& label, bool isActive) {
-        sf::RectangleShape btn(sf::Vector2f(w, h));
-        btn.setPosition(sf::Vector2f(x, y));
-        if (isActive) {
-            btn.setFillColor(sf::Color(100, 220, 200));
-        } else {
-            btn.setFillColor(sf::Color(50, 55, 65));
-        }
-        btn.setOutlineColor(sf::Color(80, 85, 100));
-        btn.setOutlineThickness(1.0f);
-        window.draw(btn);
-
-        float textX = x + (w - label.length() * 6.5f) / 2.0f;
-        float textY = y + (h - 11.0f) / 2.0f - 1.0f;
-        drawText(sf::Vector2f(textX, textY), label, 10, isActive ? sf::Color(20, 20, 20) : sf::Color(220, 220, 220));
-    };
-
-    // Render D-Pad
-    drawButton(gamepadStartX + 40.0f, gamepadPanelTop + 40.0f, 24.0f, 24.0f, "U", currentJoypadState.up);
-    drawButton(gamepadStartX + 10.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, "L", currentJoypadState.left);
-    drawButton(gamepadStartX + 70.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, "R", currentJoypadState.right);
-    drawButton(gamepadStartX + 40.0f, gamepadPanelTop + 100.0f, 24.0f, 24.0f, "D", currentJoypadState.down);
-
-    // Render Action Buttons
-    drawButton(gamepadStartX + 140.0f, gamepadPanelTop + 85.0f, 26.0f, 26.0f, "B", currentJoypadState.b);
-    drawButton(gamepadStartX + 175.0f, gamepadPanelTop + 60.0f, 26.0f, 26.0f, "A", currentJoypadState.a);
-
-    // Render Select and Start
-    drawButton(gamepadStartX + 35.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, "SELECT", currentJoypadState.select);
-    drawButton(gamepadStartX + 110.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, "START", currentJoypadState.start);
+    float col3X = cpX + 540.0f;
+    drawText(sf::Vector2f(col3X, cpY + 12.0f), "System Hotkeys", 16, titleColor);
+    drawText(sf::Vector2f(col3X, cpY + 36.0f), "R: Reset Emulator", 13, highlightColor);
+    drawText(sf::Vector2f(col3X, cpY + 56.0f), "Space: Pause | N: Step", 13, highlightColor);
 }
 
 void PPU::drawText(const sf::Vector2f& pos, const std::string& text, const unsigned size, const sf::Color& color) {
