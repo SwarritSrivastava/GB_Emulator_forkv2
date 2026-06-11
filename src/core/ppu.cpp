@@ -14,7 +14,7 @@ constexpr u32 screen_height = 144;
 constexpr u32 ui_width = 600;
 constexpr u32 ui_height = 420;
 constexpr u32 window_width = screen_width + ui_width + 64;
-constexpr u32 window_height = 720;
+constexpr u32 window_height = 900;
 constexpr size_t opcode_log_size = 28;
 constexpr float status_display_seconds = 2.5f;
 constexpr size_t rom_bytes_per_row = 8;
@@ -275,7 +275,7 @@ void PPU::init_window(bool debug, const std::string& rom_title) {
     debugMode = debug;
     if (debugMode) {
         window.create(sf::VideoMode({window_width, window_height}), "GB Emulator - Debug View");
-        screenSprite.setPosition(sf::Vector2f(32.0f, 32.0f));
+        screenSprite.setPosition(sf::Vector2f(32.0f, 216.0f));
         screenSprite.setScale(sf::Vector2f(3.0f, 3.0f));
     } else {
         window.create(sf::VideoMode({screen_width * 4, screen_height * 4}), "GB Emulator");
@@ -455,36 +455,36 @@ void PPU::handleEvents(JoypadState& joypad) {
         if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (mousePressed->button == sf::Mouse::Button::Left) {
                 sf::Vector2f mPos = window.mapPixelToCoords(mousePressed->position);
-                const float ctrlStartX = 32.0f;
-                const float ctrlTop = 32.0f + screen_height * 3.0f + 20.0f;
-                const float gpX = ctrlStartX + 300.0f;
+                const float gamepadPanelStartX = 32.0f;
+                const float gamepadPanelTop = 216.0f + screen_height * 3.0f + 24.0f;
+                const float gpX = gamepadPanelStartX + 100.0f;
 
                 auto rectContains = [](float rx, float ry, float rw, float rh, float px, float py) {
                     return px >= rx && px <= rx + rw && py >= ry && py <= ry + rh;
                 };
 
-                if (rectContains(gpX + 40.0f, ctrlTop + 30.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 40.0f, gamepadPanelTop + 40.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
                     clickableJoypad.up = !clickableJoypad.up;
                 }
-                if (rectContains(gpX + 40.0f, ctrlTop + 90.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 40.0f, gamepadPanelTop + 100.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
                     clickableJoypad.down = !clickableJoypad.down;
                 }
-                if (rectContains(gpX + 10.0f, ctrlTop + 60.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 10.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
                     clickableJoypad.left = !clickableJoypad.left;
                 }
-                if (rectContains(gpX + 70.0f, ctrlTop + 60.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 70.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, mPos.x, mPos.y)) {
                     clickableJoypad.right = !clickableJoypad.right;
                 }
-                if (rectContains(gpX + 145.0f, ctrlTop + 50.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 175.0f, gamepadPanelTop + 60.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
                     clickableJoypad.a = !clickableJoypad.a;
                 }
-                if (rectContains(gpX + 110.0f, ctrlTop + 75.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 140.0f, gamepadPanelTop + 85.0f, 26.0f, 26.0f, mPos.x, mPos.y)) {
                     clickableJoypad.b = !clickableJoypad.b;
                 }
-                if (rectContains(gpX + 15.0f, ctrlTop + 140.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 35.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
                     clickableJoypad.select = !clickableJoypad.select;
                 }
-                if (rectContains(gpX + 90.0f, ctrlTop + 140.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
+                if (rectContains(gpX + 110.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, mPos.x, mPos.y)) {
                     clickableJoypad.start = !clickableJoypad.start;
                 }
             }
@@ -795,11 +795,11 @@ void PPU::drawPanels() {
         drawText(sf::Vector2f(panelStartX + 16.0f, cursorY), statusMessage, 13, sf::Color(220, 140, 140));
     }
 
-    // Draw Control Panel Box below the game screen
+    // Draw Control Panel Box ABOVE the game screen
     const float ctrlStartX = 32.0f;
-    const float ctrlTop = 32.0f + screen_height * 3.0f + 20.0f;
+    const float ctrlTop = 32.0f;
     const float ctrlWidth = screen_width * 3.0f;
-    const float ctrlHeight = window_height - ctrlTop - 24.0f;
+    const float ctrlHeight = 160.0f;
 
     sf::RectangleShape ctrlBg(sf::Vector2f(ctrlWidth, ctrlHeight));
     ctrlBg.setPosition(sf::Vector2f(ctrlStartX, ctrlTop));
@@ -821,7 +821,7 @@ void PPU::drawPanels() {
     ctrlY += 16.0f;
     if (activeSlot == -1 && !externalStatePath.empty()) {
         std::string filename = std::filesystem::path(externalStatePath).filename().string();
-        if (filename.length() > 20) filename = filename.substr(0, 17) + "...";
+        if (filename.length() > 37) filename = filename.substr(0, 34) + "...";
         drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "File: " + filename, 11, sf::Color(140, 160, 180));
         ctrlY += 14.0f;
     } else {
@@ -841,9 +841,21 @@ void PPU::drawPanels() {
     ctrlY += 14.0f;
     drawText(sf::Vector2f(ctrlStartX + 28.0f, ctrlY), "- Single Step (when paused): Press 'N'", 11, sf::Color(170, 190, 210));
 
-    // Gamepad Interactive Overlay
-    const float gamepadStartX = ctrlStartX + 300.0f;
-    drawText(sf::Vector2f(gamepadStartX, ctrlTop + 12.0f), "Gamepad (Clickable)", 14, sf::Color(100, 220, 200));
+    // Draw Gamepad Panel Box BELOW the game screen
+    const float gamepadPanelStartX = 32.0f;
+    const float gamepadPanelTop = 216.0f + screen_height * 3.0f + 24.0f;
+    const float gamepadPanelWidth = screen_width * 3.0f;
+    const float gamepadPanelHeight = window_height - gamepadPanelTop - 24.0f;
+
+    sf::RectangleShape gamepadBg(sf::Vector2f(gamepadPanelWidth, gamepadPanelHeight));
+    gamepadBg.setPosition(sf::Vector2f(gamepadPanelStartX, gamepadPanelTop));
+    gamepadBg.setFillColor(sf::Color(26, 29, 35));
+    gamepadBg.setOutlineColor(sf::Color(50, 55, 70));
+    gamepadBg.setOutlineThickness(1.0f);
+    window.draw(gamepadBg);
+
+    const float gamepadStartX = gamepadPanelStartX + 100.0f;
+    drawText(sf::Vector2f(gamepadPanelStartX + 16.0f, gamepadPanelTop + 12.0f), "Gamepad (Clickable)", 16, sf::Color(100, 220, 200));
 
     auto drawButton = [&](float x, float y, float w, float h, const std::string& label, bool isActive) {
         sf::RectangleShape btn(sf::Vector2f(w, h));
@@ -863,18 +875,18 @@ void PPU::drawPanels() {
     };
 
     // Render D-Pad
-    drawButton(gamepadStartX + 40.0f, ctrlTop + 30.0f, 24.0f, 24.0f, "U", currentJoypadState.up);
-    drawButton(gamepadStartX + 10.0f, ctrlTop + 60.0f, 24.0f, 24.0f, "L", currentJoypadState.left);
-    drawButton(gamepadStartX + 70.0f, ctrlTop + 60.0f, 24.0f, 24.0f, "R", currentJoypadState.right);
-    drawButton(gamepadStartX + 40.0f, ctrlTop + 90.0f, 24.0f, 24.0f, "D", currentJoypadState.down);
+    drawButton(gamepadStartX + 40.0f, gamepadPanelTop + 40.0f, 24.0f, 24.0f, "U", currentJoypadState.up);
+    drawButton(gamepadStartX + 10.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, "L", currentJoypadState.left);
+    drawButton(gamepadStartX + 70.0f, gamepadPanelTop + 70.0f, 24.0f, 24.0f, "R", currentJoypadState.right);
+    drawButton(gamepadStartX + 40.0f, gamepadPanelTop + 100.0f, 24.0f, 24.0f, "D", currentJoypadState.down);
 
     // Render Action Buttons
-    drawButton(gamepadStartX + 110.0f, ctrlTop + 75.0f, 26.0f, 26.0f, "B", currentJoypadState.b);
-    drawButton(gamepadStartX + 145.0f, ctrlTop + 50.0f, 26.0f, 26.0f, "A", currentJoypadState.a);
+    drawButton(gamepadStartX + 140.0f, gamepadPanelTop + 85.0f, 26.0f, 26.0f, "B", currentJoypadState.b);
+    drawButton(gamepadStartX + 175.0f, gamepadPanelTop + 60.0f, 26.0f, 26.0f, "A", currentJoypadState.a);
 
     // Render Select and Start
-    drawButton(gamepadStartX + 15.0f, ctrlTop + 140.0f, 65.0f, 18.0f, "SELECT", currentJoypadState.select);
-    drawButton(gamepadStartX + 90.0f, ctrlTop + 140.0f, 65.0f, 18.0f, "START", currentJoypadState.start);
+    drawButton(gamepadStartX + 35.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, "SELECT", currentJoypadState.select);
+    drawButton(gamepadStartX + 110.0f, gamepadPanelTop + 150.0f, 65.0f, 18.0f, "START", currentJoypadState.start);
 }
 
 void PPU::drawText(const sf::Vector2f& pos, const std::string& text, const unsigned size, const sf::Color& color) {
