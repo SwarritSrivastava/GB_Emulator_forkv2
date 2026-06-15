@@ -13,12 +13,15 @@ graph TD
     A[Main Emulator Loop] --> B(PPU / SFML 3.0 Renderer)
     A --> C(LR35902 CPU)
     A --> D(Timer)
+    A --> H(APU / Audio Processing Unit)
     C <--> E(MMU / Memory Bus)
     B <--> E
     D <--> E
+    H <--> E
     E <--> F[Cartridge / ROM Metadata]
     E <--> G[Interrupt Controller]
     G -.->|Triggers| C
+    H --> I(GBSoundStream / SFML Audio)
 ```
 
 ## The Hardware Subsystems
@@ -34,6 +37,10 @@ The memory subsystem acts as the central nervous system of the emulator. It orch
 ### Pixel Processing Unit (PPU) & SFML 3.0 Renderer
 
 Our graphical pipeline utilizes cutting-edge SFML 3.0 bindings to accurately render the state of the Game Boy display. The PPU faithfully translates Video RAM (VRAM) and Object Attribute Memory (OAM) into vivid pixels. We have gone a step further to introduce a fully scalable 16:9 pixel-perfect resolution pipeline.
+
+### Audio Processing Unit (APU) & GBSoundStream
+
+The audio subsystem simulates the custom sound chip of the DMG-01. It includes four distinct audio channels (Pulse 1 with sweep, Pulse 2, Wave, and Noise) mixed to produce stereo output. Real-time sound streaming is powered by a custom `GBSoundStream` utilizing SFML's audio playback engine. It features a lock-free Single-Producer Single-Consumer (SPSC) ring buffer architecture to prevent thread contention and audio stuttering.
 
 ## Capabilities and Controls
 
@@ -62,6 +69,7 @@ Gamepad Mappings:
   - Real-Time CPU Registers (AF, BC, DE, HL, SP, PC, and Flags)
   - Live Real-Time Opcode Trace
   - Interactive Virtual Gamepad
+  - Interactive Audio Mixer (Master & Per-Channel volume sliders, mute buttons)
   - Read/Write Bus Metrics
   - Live Hex-Byte ROM Monitoring
 - Fullscreen Mode (--fullscreen): Losslessly upscales both modes to 1920x1080 without distorting the strict pixel aspect ratio.
