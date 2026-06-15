@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 
+class APU;
 class Cartridge;
 class PPU;
 class Timer;
@@ -22,6 +23,7 @@ private:
     PPU* ppu = nullptr;
     Timer* timer = nullptr;
     InterruptController* ic = nullptr;
+    APU* apu = nullptr;
 
     std::array<u8, 0x2000> wram{}; // Work RAM (0xC000 - 0xDFFF)
     std::array<u8, 0x7F> hram{};   // High RAM (0xFF80 - 0xFFFE)
@@ -39,6 +41,7 @@ private:
 public:
     MMU();
     MMU(Cartridge& cartridge, PPU& ppu, Timer& timer, InterruptController& ic);
+    MMU(Cartridge& cartridge, PPU& ppu, Timer& timer, InterruptController& ic, APU& apu);
     ~MMU();
 
     [[nodiscard]] u8 read(u16 address) const;

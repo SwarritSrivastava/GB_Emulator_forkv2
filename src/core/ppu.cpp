@@ -460,6 +460,50 @@ void PPU::handleEvents(JoypadState& joypad) {
         if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
             if (mousePressed->button == sf::Mouse::Button::Left) {
                 sf::Vector2f mPos = window.mapPixelToCoords(mousePressed->position);
+
+                // Audio mixer slider interaction (Right Panel 2)
+                if (debugMode && apu) {
+                    const float rp2MixX = 1238.0f;
+                    const float rp2MixW = window_width - rp2MixX - 32.0f;
+                    const float mixGpY = 32.0f + 60.0f;
+                    const float mixerBaseY = mixGpY + 210.0f;
+                    const float sliderW = 36.0f;
+                    const float totalSliders = 5.0f;
+                    const float sliderSpacing = (rp2MixW - 32.0f) / totalSliders;
+                    const float sliderStartX = rp2MixX + 16.0f + (sliderSpacing - sliderW) / 2.0f;
+                    const float sliderTrackY = mixerBaseY + 40.0f;
+                    const float sliderTrackH = 80.0f;
+
+                    for (int i = 0; i < 5; i++) {
+                        float sx = sliderStartX + i * sliderSpacing;
+                        if (mPos.x >= sx - 5.0f && mPos.x <= sx + sliderW + 5.0f &&
+                            mPos.y >= sliderTrackY - 5.0f && mPos.y <= sliderTrackY + sliderTrackH + 5.0f) {
+                            draggingSlider = i;
+                            float pct = 1.0f - (mPos.y - sliderTrackY) / sliderTrackH;
+                            pct = std::max(0.0f, std::min(1.0f, pct));
+                            if (i == 0) {
+                                mixerMasterVol = pct;
+                                apu->set_volume(pct);
+                            } else {
+                                mixerChannelVol[i - 1] = pct;
+                                apu->set_channel_volume(i - 1, pct);
+                            }
+                            break;
+                        }
+                    }
+
+                    // Mute button interaction
+                    const float muteY = sliderTrackY + sliderTrackH + 20.0f;
+                    for (int i = 0; i < 4; i++) {
+                        float sx = sliderStartX + (i + 1) * sliderSpacing;
+                        if (mPos.x >= sx && mPos.x <= sx + sliderW &&
+                            mPos.y >= muteY && mPos.y <= muteY + 16.0f) {
+                            mixerChannelMuted[i] = !mixerChannelMuted[i];
+                            apu->set_channel_muted(i, mixerChannelMuted[i]);
+                        }
+                    }
+                }
+
                 const float rp2X = 1238.0f; 
                 const float rp2W = window_width - rp2X - 32.0f;
                 const float gpX = rp2X + (rp2W - 220.0f) / 2.0f;
@@ -479,6 +523,32 @@ void PPU::handleEvents(JoypadState& joypad) {
                 if (rectContains(gpX + 120.0f, gpY + 140.0f, 70.0f, 24.0f, mPos.x, mPos.y)) { clickableJoypad.start = !clickableJoypad.start; }
             }
         }
+
+        if (const auto* mouseReleased = event->getIf<sf::Event::MouseButtonReleased>()) {
+            if (mouseReleased->button == sf::Mouse::Button::Left) {
+                draggingSlider = -1;
+            }
+        }
+
+        if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>()) {
+            if (debugMode && apu && draggingSlider >= 0) {
+                sf::Vector2f mPos = window.mapPixelToCoords(mouseMoved->position);
+                const float mixGpY = 32.0f + 60.0f;
+                const float mixerBaseY = mixGpY + 210.0f;
+                const float sliderTrackY = mixerBaseY + 40.0f;
+                const float sliderTrackH = 80.0f;
+
+                float pct = 1.0f - (mPos.y - sliderTrackY) / sliderTrackH;
+                pct = std::max(0.0f, std::min(1.0f, pct));
+                if (draggingSlider == 0) {
+                    mixerMasterVol = pct;
+                    apu->set_volume(pct);
+                } else {
+                    mixerChannelVol[draggingSlider - 1] = pct;
+                    apu->set_channel_volume(draggingSlider - 1, pct);
+                }
+            }
+        }
     }
 
     joypad.up = physicalJoypad.up || clickableJoypad.up;
@@ -493,15 +563,17 @@ void PPU::handleEvents(JoypadState& joypad) {
 }
 
 void PPU::update(const float dtSeconds, const u64 cyclesExecuted) {
-    if (!debugMode) return;
-
-    timeAccumulator += dtSeconds;
+    // Status timer always counts down (both simple and debug mode)
     if (statusTimer > 0.0f) {
         statusTimer -= dtSeconds;
         if (statusTimer <= 0.0f) {
             statusMessage.clear();
         }
     }
+
+    if (!debugMode) return;
+
+    timeAccumulator += dtSeconds;
 
     if (timeAccumulator >= 0.5f) {
         timeAccumulator = 0.0f;
@@ -829,8 +901,99 @@ void PPU::drawPanels() {
     drawButton(gpX + 30.0f, gpY + 140.0f, 70.0f, 24.0f, "SELECT", currentJoypadState.select);
     drawButton(gpX + 120.0f, gpY + 140.0f, 70.0f, 24.0f, "START", currentJoypadState.start);
 
-    // ROM Bytes
-    float romY = gpY + 200.0f;
+    // ── Audio Mixer (Right Panel 2, below gamepad) ──
+    if (apu) {
+        const float mixerBaseY = gpY + 210.0f;
+        const float sliderW = 36.0f;
+        const float totalSliders = 5.0f;
+        const float sliderSpacing = (rp2W - 32.0f) / totalSliders;
+        const float sliderStartX = rp2X + 16.0f + (sliderSpacing - sliderW) / 2.0f;
+        const float sliderTrackY = mixerBaseY + 40.0f;
+        const float sliderTrackH = 80.0f;
+
+        // Section divider line
+        sf::RectangleShape divider(sf::Vector2f(rp2W - 32.0f, 1.0f));
+        divider.setPosition(sf::Vector2f(rp2X + 16.0f, mixerBaseY - 6.0f));
+        divider.setFillColor(panelBorderColor);
+        window.draw(divider);
+
+        drawText(sf::Vector2f(rp2X + 16.0f, mixerBaseY + 4.0f), "Audio Mixer", 16, titleColor);
+
+        const std::array<std::string, 5> labels = {"MST", "CH1", "CH2", "CH3", "CH4"};
+        const std::array<float, 5> volumes = {
+            mixerMasterVol,
+            mixerChannelVol[0], mixerChannelVol[1],
+            mixerChannelVol[2], mixerChannelVol[3]
+        };
+
+        for (int i = 0; i < 5; i++) {
+            float sx = sliderStartX + i * sliderSpacing;
+
+            // Slider track background
+            sf::RectangleShape track(sf::Vector2f(4.0f, sliderTrackH));
+            track.setPosition(sf::Vector2f(sx + (sliderW - 4.0f) / 2.0f, sliderTrackY));
+            track.setFillColor(sf::Color(25, 25, 35));
+            track.setOutlineColor(panelBorderColor);
+            track.setOutlineThickness(1.0f);
+            window.draw(track);
+
+            // Filled portion (from bottom up)
+            float fillH = sliderTrackH * volumes[i];
+            if (fillH > 0.5f) {
+                sf::RectangleShape fill(sf::Vector2f(4.0f, fillH));
+                fill.setPosition(sf::Vector2f(sx + (sliderW - 4.0f) / 2.0f, sliderTrackY + sliderTrackH - fillH));
+                sf::Color fillColor = (i == 0) ? sf::Color(0, 180, 255) : titleColor;
+                if (i > 0 && mixerChannelMuted[i - 1]) {
+                    fillColor = sf::Color(50, 50, 60);
+                }
+                fill.setFillColor(fillColor);
+                window.draw(fill);
+            }
+
+            // Knob / thumb
+            float knobY = sliderTrackY + sliderTrackH * (1.0f - volumes[i]) - 3.0f;
+            sf::RectangleShape knob(sf::Vector2f(14.0f, 6.0f));
+            knob.setPosition(sf::Vector2f(sx + (sliderW - 14.0f) / 2.0f, knobY));
+            knob.setFillColor(sf::Color(220, 220, 230));
+            knob.setOutlineColor(sf::Color(80, 80, 100));
+            knob.setOutlineThickness(1.0f);
+            window.draw(knob);
+
+            // Channel label below slider
+            float labelX = sx + (sliderW - labels[i].length() * 7.0f) / 2.0f;
+            drawText(sf::Vector2f(labelX, sliderTrackY + sliderTrackH + 6.0f), labels[i], 11,
+                     (i > 0 && mixerChannelMuted[i - 1]) ? sf::Color(70, 70, 90) : textColor);
+
+            // Percentage text above slider
+            int pct = static_cast<int>(volumes[i] * 100.0f);
+            std::string pctStr = std::to_string(pct) + "%";
+            float pctX = sx + (sliderW - pctStr.length() * 6.0f) / 2.0f;
+            drawText(sf::Vector2f(pctX, sliderTrackY - 14.0f), pctStr, 10,
+                     (i == 0) ? sf::Color(0, 180, 255) : highlightColor);
+
+            // Mute toggle for channels (not master)
+            if (i > 0) {
+                float muteY = sliderTrackY + sliderTrackH + 20.0f;
+                sf::RectangleShape muteBtn(sf::Vector2f(sliderW, 16.0f));
+                muteBtn.setPosition(sf::Vector2f(sx, muteY));
+                if (mixerChannelMuted[i - 1]) {
+                    muteBtn.setFillColor(errorColor);
+                    muteBtn.setOutlineColor(sf::Color(200, 40, 40));
+                } else {
+                    muteBtn.setFillColor(sf::Color(20, 20, 25));
+                    muteBtn.setOutlineColor(panelBorderColor);
+                }
+                muteBtn.setOutlineThickness(1.0f);
+                window.draw(muteBtn);
+                float muteLabelX = sx + (sliderW - 4.0f * 5.5f) / 2.0f;
+                drawText(sf::Vector2f(muteLabelX, muteY + 1.0f), mixerChannelMuted[i - 1] ? "MUTE" : " on ",
+                         9, mixerChannelMuted[i - 1] ? sf::Color::White : sf::Color(60, 60, 80));
+            }
+        }
+    }
+
+    // ROM Bytes (after mixer)
+    float romY = gpY + 420.0f;
     drawText(sf::Vector2f(rp2X + 16.0f, romY), "ROM Bytes", 18, titleColor);
     romY += 28.0f;
     if (!romInfo.rom_bytes.empty()) {
@@ -882,6 +1045,7 @@ void PPU::drawPanels() {
     drawText(sf::Vector2f(col3X, cpY + 12.0f), "System Hotkeys", 16, titleColor);
     drawText(sf::Vector2f(col3X, cpY + 36.0f), "R: Reset Emulator", 13, highlightColor);
     drawText(sf::Vector2f(col3X, cpY + 56.0f), "Space: Pause | N: Step", 13, highlightColor);
+
 }
 
 void PPU::drawText(const sf::Vector2f& pos, std::string_view text, const unsigned size, const sf::Color& color) {

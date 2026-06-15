@@ -1,4 +1,6 @@
 #include "../include/ProcessingUnit.hpp"
+#include "../include/apu.hpp"
+#include "../include/audio_stream.hpp"
 #include "../include/cartridge.hpp"
 #include "../include/interrupt_controller.hpp"
 #include "../include/mmu.hpp"
@@ -64,11 +66,13 @@ int main(const int argc, char **argv) {
     InterruptController ic;
     Timer timer(ic);
     PPU ppu(ic);
-    MMU mmu(cartridge, ppu, timer, ic);
+    APU apu;
+    MMU mmu(cartridge, ppu, timer, ic, apu);
 
     ProcessingUnit cpu;
     ppu.set_cpu(&cpu);
     ppu.set_mmu(&mmu);
+    ppu.set_apu(&apu);
 
     // Populate ROM Info for the debugger panel
     rom_header header{};
@@ -92,6 +96,10 @@ int main(const int argc, char **argv) {
     sf::Clock clock;
     u64 cycles = 0;
     int frame_count = 0;
+
+    // Start audio playback
+    GBSoundStream audio_stream(apu);
+    audio_stream.play();
 
     while (ppu.isOpen()) {
       ppu.handleEvents(joypad);
@@ -139,6 +147,7 @@ int main(const int argc, char **argv) {
             frame_cycles += used;
             ppu.step(used);
             mmu.step_timer(used);
+            apu.step(used);
 
             ppu.recordOpcode(pc_before, opcode);
             ppu.checkBreakpoint(pc_before);
@@ -168,6 +177,7 @@ int main(const int argc, char **argv) {
           cycles += static_cast<u64>(used);
           ppu.step(used);
           mmu.step_timer(used);
+          apu.step(used);
 
           ppu.recordOpcode(pc_before, opcode);
           ppu.checkBreakpoint(pc_before);
@@ -187,6 +197,9 @@ int main(const int argc, char **argv) {
     }
 
     std::cout << std::dec << "\n" << cycles << " cycles executed" << std::endl;
+
+    // Stop audio
+    audio_stream.stop();
   } catch (const std::exception &e) {
     std::cerr << "Error: " << e.what() << std::endl;
     return 1;

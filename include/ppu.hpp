@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ProcessingUnit.hpp"
+#include "apu.hpp"
 #include "mmu.hpp"
 #include "common.hpp"
 #include "interrupt_controller.hpp"
@@ -35,6 +36,7 @@ public:
 
     void set_mmu(MMU* m) { mmu = m; }
     void set_cpu(ProcessingUnit* c) { cpu = c; }
+    void set_apu(APU* a) { apu = a; }
     void set_rom_info(const RomInfo& info) { romInfo = info; }
     void step(int cycles);
     u8 read(u16 address) const;
@@ -81,6 +83,7 @@ private:
     InterruptController& ic;
     ProcessingUnit* cpu = nullptr;
     MMU* mmu = nullptr;
+    APU* apu = nullptr;
     RomInfo romInfo;
 
     // Rendering / SFML Window components
@@ -150,4 +153,10 @@ private:
     std::string statusMessage;
     float statusTimer{0.0f};
     u32 frameCounter{0};
+
+    // Audio mixer UI state (debug mode)
+    float mixerMasterVol{1.0f};
+    std::array<float, 4> mixerChannelVol{{1.0f, 1.0f, 1.0f, 1.0f}};
+    std::array<bool, 4> mixerChannelMuted{{false, false, false, false}};
+    int draggingSlider{-1}; // -1=none, 0=master, 1-4=channels
 };
