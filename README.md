@@ -127,5 +127,6 @@ We maintain extremely high standards for codebase integrity. Please refer to our
 
 Maintainers:
 
-- Jayesh Puri (@Jayesh-Dev21)
-- Swarit Srivastava (@swarritSrivastava)
+- Jayesh Puri ([@Jayesh-Dev21](https://github.com/Jayesh-Dev21))
+- Swarit Srivastava ([@swarritSrivastava](https://github.com/swarritSrivastava))
+
