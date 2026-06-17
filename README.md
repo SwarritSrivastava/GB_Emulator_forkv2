@@ -55,6 +55,28 @@ The emulator features two deeply integrated runtime modes: a seamless Standard M
 
 Gamepad Mappings:
 
+```
+                _n_________________
+                |_|_______________|_|
+                |  ,-------------.  |
+                | |  .---------.  | |
+                | |  |         |  | |
+                | |  |         |  | |
+                | |  |         |  | |
+                | |  |         |  | |
+                | |  `---------'  | |
+                | `---------------' |
+                |   _ GAME BOY      |
+   Up           | _| |_         ,-. | ----> Z
+Left/Right <--- ||_ O _|   ,-. "._,"|
+  Down          |  |_|    "._,"   A | ----> X
+                |    _  _    B      |
+                |   // //           |
+                |  // //    \\\\\\  | ----> Enter/Shift
+                |  `  `      \\\\\\ ,
+                |________...______,"
+```
+
 - Arrow Keys map to the D-Pad
 - 'Z' maps to the A Button
 - 'X' maps to the B Button
@@ -113,5 +135,6 @@ We maintain extremely high standards for codebase integrity. Please refer to our
 
 Maintainers:
 
-- Jayesh Puri (@Jayesh-Dev21)
-- Swarit Srivastava (@swarritSrivastava)
+- Jayesh Puri ([@Jayesh-Dev21](https://github.com/Jayesh-Dev21))
+- Swarit Srivastava ([@swarritSrivastava](https://github.com/swarritSrivastava))
+
