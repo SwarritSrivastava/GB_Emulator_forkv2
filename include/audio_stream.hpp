@@ -25,8 +25,8 @@ public:
     GBSoundStream& operator=(const GBSoundStream&) = delete;
 
 private:
-    // ~46ms of audio per chunk at 44100 Hz stereo (4096 samples = 2048 frames)
-    static constexpr std::size_t CHUNK_SIZE = 4096;
+    // ~12ms of audio per chunk at 44100 Hz stereo (1024 samples = 512 frames)
+    static constexpr std::size_t CHUNK_SIZE = 1024;
 
     bool onGetData(Chunk& data) override {
         std::size_t got = m_apu.read_samples(m_buffer.data(), CHUNK_SIZE);

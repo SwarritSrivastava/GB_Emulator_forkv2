@@ -341,6 +341,14 @@ void APU::generate_sample() {
 void APU::push_sample(std::int16_t left, std::int16_t right) {
   // Lock-free SPSC: only the emulation thread writes
   std::size_t wp = write_pos.load(std::memory_order_relaxed);
+  std::size_t rp = read_pos.load(std::memory_order_acquire);
+
+  // Overflow protection: ensure space for 2 samples before writing
+  std::size_t used = (wp >= rp) ? (wp - rp) : (BUFFER_SIZE - rp + wp);
+  if (used >= BUFFER_SIZE - 2) {
+    return; // Buffer full, drop sample to prevent corruption
+  }
+
   ring_buffer[wp] = left;
   wp = (wp + 1) % BUFFER_SIZE;
   ring_buffer[wp] = right;
@@ -381,10 +389,12 @@ void APU::step(int cycles) {
   cache_volume_state();
 
   if (!power_on) {
-    sample_timer += cycles;
-    while (sample_timer >= SAMPLE_PERIOD) {
-      sample_timer -= SAMPLE_PERIOD;
-      push_sample(0, 0);
+    for (int i = 0; i < cycles; i++) {
+      sample_timer += SAMPLE_RATE;
+      if (sample_timer >= CPU_CLOCK) {
+        sample_timer -= CPU_CLOCK;
+        push_sample(0, 0);
+      }
     }
     return;
   }
@@ -437,9 +447,9 @@ void APU::step(int cycles) {
     }
 
     // Downsample to 44100 Hz
-    sample_timer++;
-    if (sample_timer >= SAMPLE_PERIOD) {
-      sample_timer -= SAMPLE_PERIOD;
+    sample_timer += SAMPLE_RATE;
+    if (sample_timer >= CPU_CLOCK) {
+      sample_timer -= CPU_CLOCK;
       generate_sample();
     }
   }

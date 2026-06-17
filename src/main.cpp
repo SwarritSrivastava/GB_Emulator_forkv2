@@ -9,9 +9,12 @@
 #include "../include/success.hpp"
 #include "../include/timer.hpp"
 #include <SFML/Graphics.hpp>
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <iterator>
+#include <stdexcept>
+#include <thread>
 #include <stdexcept>
 
 static void update_joypad(MMU &mmu, const JoypadState &joy) {
@@ -101,6 +104,11 @@ int main(const int argc, char **argv) {
     GBSoundStream audio_stream(apu);
     audio_stream.play();
 
+    // Audio-driven pacing: target buffer fill level (stereo int16 samples).
+    // ~2048 samples ≈ 23ms of audio at 44100 Hz — low enough for responsive
+    // controls, high enough to absorb scheduling jitter.
+    constexpr std::size_t AUDIO_TARGET_SAMPLES = 2048;
+
     while (ppu.isOpen()) {
       ppu.handleEvents(joypad);
       update_joypad(mmu, joypad);
@@ -110,8 +118,6 @@ int main(const int argc, char **argv) {
         cpu.reset();
         ppu.clearResetRequest();
       }
-
-      const float dt = clock.restart().asSeconds();
 
       if (!ppu.isPaused()) {
         const int loops = ppu.isTurbo() ? 2 : 1;
@@ -168,6 +174,17 @@ int main(const int argc, char **argv) {
                     << ", exiting cleanly.\n";
           break;
         }
+
+        // ── Audio-driven frame pacing ──
+        // Sleep until the audio thread has consumed enough samples.
+        // This naturally locks emulation to ~59.7275 Hz (the Game Boy's
+        // true frame rate) instead of the host's 60 Hz vsync.
+        if (!ppu.isTurbo()) {
+          while (apu.buffered_samples() > AUDIO_TARGET_SAMPLES &&
+                 ppu.isOpen()) {
+            std::this_thread::sleep_for(std::chrono::microseconds(500));
+          }
+        }
       } else {
         if (ppu.isStepRequested()) {
           const u16 pc_before = cpu.get_pc();
@@ -184,8 +201,11 @@ int main(const int argc, char **argv) {
 
           ppu.clearStepRequest();
         }
+        // Sleep while paused to avoid busy-waiting
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
       }
 
+      const float dt = clock.restart().asSeconds();
       ppu.update(dt, cycles);
       ppu.render();
     }

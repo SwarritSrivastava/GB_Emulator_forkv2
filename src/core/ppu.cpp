@@ -1,4 +1,5 @@
 #include "../../include/ppu.hpp"
+#include "../../include/apu.hpp"
 #include "../../include/mmu.hpp"
 #include "../../include/cartridge.hpp"
 #include <filesystem>
@@ -294,7 +295,7 @@ void PPU::init_window(bool debug, std::string_view rom_title, bool fullscreen) {
         screenSprite.setPosition(sf::Vector2f(0.0f, 0.0f));
         screenSprite.setScale(sf::Vector2f(1.0f, 1.0f));
     }
-    window.setFramerateLimit(60);
+    // No frame rate limit — audio-driven pacing controls emulation speed
 
     (void)screenTexture.resize({screen_width, screen_height});
     screenSprite.setTexture(screenTexture);
@@ -919,7 +920,7 @@ void PPU::drawPanels() {
 
         drawText(sf::Vector2f(rp2X + 16.0f, mixerBaseY + 4.0f), "Audio Mixer", 16, titleColor);
 
-        const std::array<std::string, 5> labels = {"MST", "CH1", "CH2", "CH3", "CH4"};
+        const std::array<std::string_view, 5> labels = {"MST", "CH1", "CH2", "CH3", "CH4"};
         const std::array<float, 5> volumes = {
             mixerMasterVol,
             mixerChannelVol[0], mixerChannelVol[1],

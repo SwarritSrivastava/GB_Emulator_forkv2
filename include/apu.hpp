@@ -24,6 +24,13 @@ public:
   // Returns the number of samples actually read
   std::size_t read_samples(std::int16_t *out, std::size_t count);
 
+  // Query how many int16 samples are buffered (used for audio-driven pacing)
+  [[nodiscard]] std::size_t buffered_samples() const {
+    std::size_t wp = write_pos.load(std::memory_order_acquire);
+    std::size_t rp = read_pos.load(std::memory_order_acquire);
+    return (wp >= rp) ? (wp - rp) : (BUFFER_SIZE - rp + wp);
+  }
+
   // Volume control
   void set_volume(float vol) { master_volume.store(vol); }
   [[nodiscard]] float get_volume() const { return master_volume.load(); }
@@ -175,10 +182,10 @@ private:
   // Sample generation
   // =========================================================
 
-  // Accumulator for downsampling from CPU clock to SAMPLE_RATE
+  // Fixed-point accumulator for downsampling from CPU_CLOCK to SAMPLE_RATE.
+  // Accumulates SAMPLE_RATE each T-cycle; when >= CPU_CLOCK, emit one sample
+  // and subtract CPU_CLOCK.
   int sample_timer = 0;
-  static constexpr int SAMPLE_PERIOD =
-      CPU_CLOCK / SAMPLE_RATE; // 95 cycles per sample
 
   void generate_sample();
 

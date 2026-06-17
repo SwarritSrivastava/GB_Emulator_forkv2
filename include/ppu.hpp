@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ProcessingUnit.hpp"
-#include "apu.hpp"
 #include "mmu.hpp"
 #include "common.hpp"
 #include "interrupt_controller.hpp"
@@ -12,7 +11,7 @@
 #include <string_view>
 #include <vector>
 #include <memory>
-
+class APU;
 class MMU;
 
 class PPU {
